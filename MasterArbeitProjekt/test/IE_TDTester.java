@@ -24,7 +24,7 @@ import spinfo.tm.preprocessing.TrainingDataGenerator;
  * 
  */
 /*
- * TODO: map UUIDs to ClassifyUnits map jobAdIDs to jobAds
+ * TODO: map UUIDs to ClassifyUnits; map jobAdIDs to jobAds
  * 
  * pattern matching over whole text of job ad! (classification is carried out
  * before IE)

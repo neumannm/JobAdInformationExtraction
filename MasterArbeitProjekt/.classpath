@@ -3,7 +3,11 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="lib/anna-3.61.jar"/>
+	<classpathentry kind="lib" path="lib/anna-3.61.jar" sourcepath="/mate-tools/src">
+		<attributes>
+			<attribute name="javadoc_location" value="http://grepcode.com/project/repo1.maven.org/maven2/com.googlecode.mate-tools/anna/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/opennlp-maxent-3.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/opennlp-tools-1.5.3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>

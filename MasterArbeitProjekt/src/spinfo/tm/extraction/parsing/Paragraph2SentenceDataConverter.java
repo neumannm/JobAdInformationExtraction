@@ -1,6 +1,7 @@
 package spinfo.tm.extraction.parsing;
 
 import is2.data.SentenceData09;
+import is2.io.CONLLReader09;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -68,13 +69,18 @@ public class Paragraph2SentenceDataConverter {
 
 		for (String sentence : sentences) {
 			sentenceData = new SentenceData09();
+			
 			ArrayList<String> forms = new ArrayList<String>();
 			String[] tokens = tokenizeSentence(sentence);
-			forms.add("<root>");
+			forms.add(CONLLReader09.ROOT);
+			
 			for (String token : tokens)
 				forms.add(token);
 
+			//TODO: das muss doch einfacher gehen!
 			sentenceData.init(forms.toArray(new String[0]));
+			sentenceData.createWithRoot(sentenceData); //erzeugt neues _leeres_ SD Objekt mit Wurzel
+			sentenceData.forms = forms.toArray(new String[0]);
 			toReturn.add(sentenceData);
 		}
 

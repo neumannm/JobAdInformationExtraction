@@ -2,22 +2,25 @@ package spinfo.tm.extraction.parsing;
 
 import is2.data.SentenceData09;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import spinfo.tm.extraction.parsing.util.Relation;
 
 public class CompetenceFinder {
 
-	private Set<String> verbsOfInterest;
+	private Map<String, Relation> verbsOfInterest;
 
 	public CompetenceFinder() {
 		if (verbsOfInterest == null) {
-			verbsOfInterest = new HashSet<String>();
+			verbsOfInterest = new HashMap<String, Relation>();
 		}
 	}
 
-	public CompetenceFinder(Set<String> verbsOfInterest) {
+	public CompetenceFinder(Map<String, Relation> verbsOfInterest2) {
 		this();
-		this.verbsOfInterest = verbsOfInterest;
+		this.verbsOfInterest = verbsOfInterest2;
 	}
 
 	public boolean findCompetences(SentenceData09 sd) {
@@ -26,8 +29,8 @@ public class CompetenceFinder {
 		String[] lemmas = sd.plemmas;
 
 		for (int i = 0; i < lemmas.length; i++) {
-			if (verbsOfInterest.contains(lemmas[i])) {
-				process(lemmas[i], i + 1, sd);
+			if (verbsOfInterest.containsKey(lemmas[i])) {
+				process(lemmas[i], i + 1, sd); // i oder i+1?
 				return true;
 			}
 		}
