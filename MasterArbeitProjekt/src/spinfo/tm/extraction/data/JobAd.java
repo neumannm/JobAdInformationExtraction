@@ -6,8 +6,9 @@ import spinfo.tm.data.ClassifyUnit;
 
 /**
  * Class representing a job advertisement.
+ * 
  * @author neumannm
- *
+ * 
  */
 public class JobAd {
 
@@ -16,38 +17,52 @@ public class JobAd {
 	private String textContent;
 	private int ID;
 
+	/**
+	 * Constructor - sets content of this Job Ad.
+	 * 
+	 * @param content
+	 *            String content (=text) of Job Ad
+	 */
 	public JobAd(String content) {
 		setTextContent(content);
 	}
 
-	public void setClassifyUnits(List<ClassifyUnit> classifyUnits) {
-		this.classifyUnits = classifyUnits;
-	}
-
+	/**
+	 * Get classify units that belong to this Job Ad.
+	 * 
+	 * @return list of {@link ClassifyUnit}s
+	 */
 	public List<ClassifyUnit> getClassifyUnits() {
 		return classifyUnits;
 	}
 
-	public void setID(int iD) {
-		ID = iD;
-	}
-
+	/**
+	 * Get ID of this Job Ad.
+	 * 
+	 * @return ID
+	 */
 	public int getID() {
 		return ID;
 	}
 
-	public void setTemplate(Template template) {
-		this.template = template;
-	}
-
+	/**
+	 * Get the Job Ad's template
+	 * 
+	 * @return {@link Template}-Object
+	 */
 	public Template getTemplate() {
 		return template;
 	}
 
-	public void setTextContent(String textContent) {
+	private void setTextContent(String textContent) {
 		this.textContent = textContent;
 	}
 
+	/**
+	 * Get textual content of this Job Ad.
+	 * 
+	 * @return String that holds the content
+	 */
 	public String getTextContent() {
 		return textContent;
 	}

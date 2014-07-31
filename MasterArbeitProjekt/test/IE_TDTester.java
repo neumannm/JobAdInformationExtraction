@@ -60,7 +60,7 @@ public class IE_TDTester {
 				+ filteredParagraphs.size());
 
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
-				"trainingIE_140623.csv"), Class.COMPETENCE);
+				"trainingIE_140623.csv"), Class.COMPETENCE, classifyUnits);
 
 		gen.annotate(filteredParagraphs);
 
@@ -104,7 +104,7 @@ public class IE_TDTester {
 	@Test
 	public void testGetTrainingData() throws IOException {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
-				"data/trainingIE_140623.csv"), Class.COMPETENCE);
+				"data/trainingIE_140623.csv"), Class.COMPETENCE, classifyUnits);
 		Map<ClassifyUnit, Map<String, Integer>> templates;
 		try {
 			templates = gen.getTrainingData();
@@ -114,21 +114,6 @@ public class IE_TDTester {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-
-	// TODO: ...
-	@Test
-	public void testPatternMatching() throws IOException {
-		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
-				"data/trainingIE_140623.csv"), Class.COMPETENCE);
-
-		Map<ClassifyUnit, Map<String, Integer>> trainingData = gen
-				.getTrainingData();
-		PatternMatcher pm = new PatternMatcher();
-
-		for (ClassifyUnit cu : trainingData.keySet()) {
-			pm.guessClasses(cu);
 		}
 	}
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="public" author="true" classpath="lib/anna-3.61.jar:/home/mandy/eclipse/plugins/org.junit_4.10.0.v4_10_0_v20120426-0900/junit.jar:lib/opennlp-tools-1.5.3.jar:lib/opennlp-maxent-3.0.3.jar:/home/mandy/eclipse/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar" destdir="doc" doctitle="MAProject-InformationExtraction" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" sourcefiles="src/spinfo/tm/extraction/parsing/Paragraph2SentenceDataConverter.java" sourcepath="test:src" splitindex="true" use="true" version="true">
+            <link href="file:/home/mandy/git/MAProject/MasterArbeitProjekt/doc/"/>
+        </javadoc>
+    </target>
+</project>

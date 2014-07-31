@@ -8,18 +8,19 @@ import java.util.regex.Pattern;
 import spinfo.tm.data.ClassifyUnit;
 import spinfo.tm.extraction.data.Class;
 
+//TODO: Klasse soll nicht mehr schätzen zu welcher Klasse die CU gehört, sondern Inhalt extrahieren!
 public class PatternMatcher {
 
 	private Map<Pattern, Class> regExes;
 
-	//TODO: rename method, change return type
-	public void guessClasses(ClassifyUnit unitToClassify) {
+	// TODO: change return type
+	public void getContentOfInterest(ClassifyUnit unitToClassify) {
 		setupRegexes();
 
 		String content = unitToClassify.getContent();
-		
-		match(content);	
-		
+
+		match(content);
+
 	}
 
 	private Map<Class, Integer> match(String input) {

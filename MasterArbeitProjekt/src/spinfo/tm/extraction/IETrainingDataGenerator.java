@@ -29,8 +29,10 @@ public class IETrainingDataGenerator {
 	private Class classToAnnotate;
 	private File tdFile;
 	private Map<ClassifyUnit, Map<String, Integer>> trainedData;
+	private Map<UUID, ClassifyUnit> referenceUnits;
 
-	public IETrainingDataGenerator(File trainingDataFile, Class classToAnnotate) {
+	public IETrainingDataGenerator(File trainingDataFile,
+			Class classToAnnotate, Map<UUID, ClassifyUnit> classifyUnits) {
 		setClassToAnnotate(classToAnnotate);
 		try {
 			setTdFile(trainingDataFile);
@@ -38,6 +40,7 @@ public class IETrainingDataGenerator {
 			e.printStackTrace();
 		}
 		trainedData = new TreeMap<ClassifyUnit, Map<String, Integer>>();
+		referenceUnits = classifyUnits;
 	}
 
 	private void setTdFile(File trainingDataFile) throws IOException {
@@ -243,11 +246,9 @@ public class IETrainingDataGenerator {
 					contents.put(token, position);
 
 				} else if (splits.length == 0 && line.trim().isEmpty()) {
-					// TODO: how to correctly add data? how to get content of
-					// cu?
 					if (classID.equals(classToAnnotate)) {
-						trainedData.put(new ClassifyUnit("", parentID,
-								classifyUnitID), contents);
+						trainedData.put(referenceUnits.get(classifyUnitID),
+								contents);
 					}
 				} else {
 					in.close();

@@ -20,7 +20,11 @@ public enum Class {
 		this.setId(ID);
 		this.setDesc(desc);
 	}
-
+	
+	/**
+	 * Get the description for this item.
+	 * @return String representation
+	 */
 	public String getDesc() {
 		return desc;
 	}
@@ -28,12 +32,16 @@ public enum Class {
 	private void setDesc(String desc) {
 		this.desc = desc;
 	}
-
+	
+	/**
+	 * Get the item's ID.
+	 * @return ID
+	 */
 	public int getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	private void setId(int id) {
 		this.id = id;
 	}
 }

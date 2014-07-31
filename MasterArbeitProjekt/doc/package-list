@@ -1,0 +1,7 @@
+spinfo.tm.data
+spinfo.tm.extraction
+spinfo.tm.extraction.data
+spinfo.tm.extraction.parsing
+spinfo.tm.extraction.parsing.util
+spinfo.tm.extraction.pattern
+spinfo.tm.preprocessing
