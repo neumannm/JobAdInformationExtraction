@@ -2,7 +2,6 @@ package spinfo.tm.extraction.parsing;
 
 import is2.data.SentenceData09;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,9 +17,9 @@ public class CompetenceFinder {
 		}
 	}
 
-	public CompetenceFinder(Map<String, Relation> verbsOfInterest2) {
+	public CompetenceFinder(Map<String, Relation> verbsOfInterest) {
 		this();
-		this.verbsOfInterest = verbsOfInterest2;
+		this.verbsOfInterest = verbsOfInterest;
 	}
 
 	public boolean findCompetences(SentenceData09 sd) {
@@ -71,26 +70,33 @@ public class CompetenceFinder {
 						lemma.toUpperCase(), dependant, dependency));
 
 				// TODO: suche nach Objekt
-				String argument = getPhrase(i, sd);
+				String argument = getPhrase(i, sd, 1);
 			}
 		}
 
 	}
 	
-	private String getPhrase(int id, SentenceData09 sd){
+	private String getPhrase(int index, SentenceData09 sd, int indents){
+		int id = index + 1; //ID am Anfang der Zeile
 		String phrase = "";
 		
-		String lemma = sd.plemmas[id];
-		String form = sd.forms[id];		
+		String lemma = sd.plemmas[index];
+		String form = sd.forms[index];		
 		
 		int[] heads = sd.pheads;
 		for (int i = 0; i < heads.length; i++) {
-			if (i == id) {
-				String dependant = sd.plemmas[i];
+			if (heads[i] == id) {
+				String dependant = sd.forms[i];
 				String dependency = sd.plabels[i];
+				for (int j = 0; j < indents; j++) {
+					System.out.print("\t");
+				}
+				
 				System.out.println(String.format(
-						"\tFound dependant for lemma '%s':\t %s (DEP: %s )",
+						"Found dependant for lemma '%s':\t %s (DEP: %s )",
 						lemma.toUpperCase(), dependant, dependency));
+				
+				getPhrase(i, sd, indents++);
 			}
 		}
 		

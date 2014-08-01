@@ -6,9 +6,11 @@ import is2.parser.Parser;
 import is2.tag.Tagger;
 import is2.tools.Tool;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import spinfo.tm.data.ClassifyUnit;
 
@@ -20,49 +22,30 @@ public class ParagraphParser {
 	private Tool depParser;
 	private Paragraph2SentenceDataConverter conv = new Paragraph2SentenceDataConverter();
 
+	private final static Logger log = LogManager
+			.getLogger(ParagraphParser.class);
+
 	public ParagraphParser() {
-
+		System.setProperty("log4j.configurationFile", "utils/log4j2.xml");
 		setUpTools();
-
 	}
 
 	private void setUpTools() {
-		File toolsDir = new File("parsingTools");
+		log.info("\nReading the model of the lemmatizer");
+		lemmatizer = new Lemmatizer(
+				"models/ger-tagger+lemmatizer+morphology+graph-based-3.6/lemma-ger-3.6.model");
 
-		if (!toolsDir.exists() || !toolsDir.isDirectory()) {
-			toolsDir.mkdir();
-		}
+		log.info("\nReading the model of the morphologic tagger");
+		morphTagger = new is2.mtag.Tagger(
+				"models/ger-tagger+lemmatizer+morphology+graph-based-3.6/morphology-ger-3.6.model");
 
-		if (toolsDir.list().length == 0) {
-			System.out.println("\nReading the model of the lemmatizer");
-			lemmatizer = new Lemmatizer(
-					"models/ger-tagger+lemmatizer+morphology+graph-based-3.6/lemma-ger-3.6.model");
+		log.info("\nReading the model of the POS tagger");
+		posTagger = new Tagger(
+				"models/ger-tagger+lemmatizer+morphology+graph-based-3.6/tag-ger-3.6.model");
 
-			System.out.println("\nReading the model of the morphologic tagger");
-			morphTagger = new is2.mtag.Tagger(
-					"models/ger-tagger+lemmatizer+morphology+graph-based-3.6/morphology-ger-3.6.model");
-
-			System.out.println("\nReading the model of the POS tagger");
-			posTagger = new Tagger(
-					"models/ger-tagger+lemmatizer+morphology+graph-based-3.6/tag-ger-3.6.model");
-
-			System.out.println("\nReading the model of the dependency parser");
-			depParser = new Parser(
-					"models/ger-tagger+lemmatizer+morphology+graph-based-3.6/parser-ger-3.6.model");
-
-			serializeTools();
-		}
-
-		deserializeTools();
-	}
-
-	private void serializeTools() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void deserializeTools() {
-		// TODO Auto-generated method stub
+		log.info("\nReading the model of the dependency parser");
+		depParser = new Parser(
+				"models/ger-tagger+lemmatizer+morphology+graph-based-3.6/parser-ger-3.6.model");
 
 	}
 
@@ -72,16 +55,16 @@ public class ParagraphParser {
 		String paragraph = cu.getContent();
 		List<SentenceData09> processed = conv.convert(paragraph);
 		for (SentenceData09 sentenceData : processed) {
-			// System.out.println("Applying the lemmatizer");
+			log.info("Applying the lemmatizer");
 			sentenceData = lemmatizer.apply(sentenceData);
 
-			// System.out.println("\nApplying the morphologic tagger");
+			log.info("\nApplying the morphologic tagger");
 			sentenceData = morphTagger.apply(sentenceData);
 
-			// System.out.println("\nApplying the part-of-speech tagger");
+			log.info("\nApplying the part-of-speech tagger");
 			sentenceData = posTagger.apply(sentenceData);
 
-			// System.out.println("\nApplying the parser");
+			log.info("\nApplying the parser");
 			sentenceData = depParser.apply(sentenceData);
 
 			toReturn.add(sentenceData);

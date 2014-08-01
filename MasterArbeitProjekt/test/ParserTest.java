@@ -27,7 +27,7 @@ import spinfo.tm.preprocessing.TrainingDataGenerator;
 public class ParserTest {
 
 	private List<ClassifyUnit> paragraphs;
-	private Map<UUID, ClassifyUnit> classifyUnits;
+	private Map<UUID, ClassifyUnit> filteredClassifyUnits;
 
 	@Before
 	public void setUp() throws IOException {
@@ -49,10 +49,10 @@ public class ParserTest {
 		System.out.println("Anzahl ClassifyUnits gefiltert: "
 				+ filteredParagraphs.size());
 
-		classifyUnits = new HashMap<>();
+		filteredClassifyUnits = new HashMap<>();
 
 		for (ClassifyUnit cu : filteredParagraphs) {
-			classifyUnits.put(cu.getID(), cu);
+			filteredClassifyUnits.put(cu.getID(), cu);
 		}
 	}
 
@@ -63,9 +63,9 @@ public class ParserTest {
 		CONLLWriter09 writer = new is2.io.CONLLWriter09(w);
 
 		List<SentenceData09> parsed;
-		for (UUID cuID : classifyUnits.keySet()) {
+		for (UUID cuID : filteredClassifyUnits.keySet()) {
 
-			parsed = parser.parse(classifyUnits.get(cuID));
+			parsed = parser.parse(filteredClassifyUnits.get(cuID));
 			for (SentenceData09 sentenceData : parsed) {
 				writer.write(sentenceData, CONLLWriter09.NO_ROOT);
 			}
@@ -78,9 +78,9 @@ public class ParserTest {
 		ParagraphParser parser = new ParagraphParser();
 
 		List<SentenceData09> parsed = new ArrayList<SentenceData09>();
-		for (UUID cuID : classifyUnits.keySet()) {
+		for (UUID cuID : filteredClassifyUnits.keySet()) {
 
-			parsed.addAll(parser.parse(classifyUnits.get(cuID)));
+			parsed.addAll(parser.parse(filteredClassifyUnits.get(cuID)));
 		}
 
 		Map<String, Relation> verbsOfInterest = new HashMap<>();
