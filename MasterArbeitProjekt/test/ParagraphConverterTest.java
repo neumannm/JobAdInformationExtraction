@@ -21,9 +21,18 @@ public class ParagraphConverterTest {
 		List<SentenceData09> sentenceData = conv.convert(paragraph);
 		
 		for (SentenceData09 sentenceData09 : sentenceData) {
-			System.out.println(sentenceData09);
-		}
-		
+			String[] forms = sentenceData09.forms;
+			System.out.print("[");
+			for (String form : forms) {
+				System.out.print(form + " ");
+			}
+			System.out.println("]");
+			System.out.println(sentenceData09.oneLine());
+			
+			System.out.println(sentenceData09.toString());
+		}		
 	}
+	
+	
 
 }

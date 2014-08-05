@@ -23,8 +23,13 @@ public class JobAd {
 	 * @param content
 	 *            String content (=text) of Job Ad
 	 */
-	public JobAd(String content) {
+	public JobAd(int ID, String content) {
+		setID(ID);
 		setTextContent(content);
+	}
+
+	private void setID(int id) {
+		this.ID = id;		
 	}
 
 	/**
@@ -65,5 +70,13 @@ public class JobAd {
 	 */
 	public String getTextContent() {
 		return textContent;
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if(other instanceof JobAd){
+			return this.ID == ((JobAd) other).ID;
+		}
+		return super.equals(other);
 	}
 }

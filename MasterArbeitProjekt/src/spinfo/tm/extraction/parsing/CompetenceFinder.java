@@ -41,9 +41,10 @@ public class CompetenceFinder {
 		for (int i = 0; i < heads.length; i++) {
 			if (heads[i] == verbID) {
 				// lemma an dieser stelle hat als kopf das verb mit der geg. id
-				String dependant = sd.plemmas[i];
+				String dependant = sd.forms[i];// String dependant =
+												// sd.plemmas[i];
 				String dependency = sd.plabels[i];
-								
+
 				if ("SB".equals(dependency)) {
 					String sbPOS = sd.ppos[i];
 					// prüfe Subjekt: "wir", "Sie" oder was anderes?
@@ -60,9 +61,10 @@ public class CompetenceFinder {
 						// the competences
 					}
 				}
-				
+
 				if ("PD".equals(dependency)) {
-					System.out.println("Dependant '" + dependant + "' is possibly modifier for verb");
+					System.out.println("Dependant '" + dependant
+							+ "' is possibly modifier for verb");
 				}
 
 				System.out.println(String.format(
@@ -75,14 +77,14 @@ public class CompetenceFinder {
 		}
 
 	}
-	
-	private String getPhrase(int index, SentenceData09 sd, int indents){
-		int id = index + 1; //ID am Anfang der Zeile
+
+	private String getPhrase(int index, SentenceData09 sd, int indents) {
+		int id = index + 1; // ID am Anfang der Zeile
 		String phrase = "";
-		
+
 		String lemma = sd.plemmas[index];
-		String form = sd.forms[index];		
-		
+		String form = sd.forms[index];
+
 		int[] heads = sd.pheads;
 		for (int i = 0; i < heads.length; i++) {
 			if (heads[i] == id) {
@@ -91,17 +93,16 @@ public class CompetenceFinder {
 				for (int j = 0; j < indents; j++) {
 					System.out.print("\t");
 				}
-				
+
 				System.out.println(String.format(
 						"Found dependant for lemma '%s':\t %s (DEP: %s )",
 						lemma.toUpperCase(), dependant, dependency));
-				
+
 				getPhrase(i, sd, indents++);
 			}
 		}
-		
-		//TODO: rekursiv(?) alle Dependants von diesem Lemma einsammeln
-		
-		return phrase;		
+
+		//TODO: Phrase zusammensetzen
+		return phrase;
 	}
 }

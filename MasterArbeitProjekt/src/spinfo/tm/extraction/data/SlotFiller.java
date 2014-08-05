@@ -41,4 +41,9 @@ public class SlotFiller {
 	public int getPosition() {
 		return position;
 	}
+	
+	@Override
+	public String toString() {
+		return this.content + " (at " + this.position + ")";
+	}
 }

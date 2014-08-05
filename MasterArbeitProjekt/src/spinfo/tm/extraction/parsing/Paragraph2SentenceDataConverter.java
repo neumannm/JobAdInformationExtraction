@@ -91,16 +91,12 @@ public class Paragraph2SentenceDataConverter {
 
 			ArrayList<String> forms = new ArrayList<String>();
 			String[] tokens = tokenizeSentence(sentence);
-//			forms.add(CONLLReader09.ROOT);
+			forms.add(CONLLReader09.ROOT);
 
 			for (String token : tokens)
 				forms.add(token);
 
-			// TODO: das muss doch einfacher gehen!
 			sentenceData.init(forms.toArray(new String[0]));
-//			sentenceData.createWithRoot(sentenceData); // erzeugt neues _leeres_
-														// SD Objekt mit Wurzel
-//			sentenceData.forms = forms.toArray(new String[0]);
 			toReturn.add(sentenceData);
 		}
 

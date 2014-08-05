@@ -12,12 +12,16 @@ import org.junit.Test;
 import spinfo.tm.data.ClassifyUnit;
 import spinfo.tm.extraction.IETrainingDataGenerator;
 import spinfo.tm.extraction.data.Class;
+import spinfo.tm.extraction.data.JobAd;
+import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.extraction.pattern.PatternMatcher;
 import spinfo.tm.preprocessing.TrainingDataGenerator;
+import spinfo.tm.util.UniversalMapper;
 
 public class PatternMatchingTest {
 	private List<ClassifyUnit> paragraphs = new ArrayList<ClassifyUnit>();
 	private Map<UUID, ClassifyUnit> classifyUnits = new HashMap<UUID, ClassifyUnit>();
+	private Map<ClassifyUnit, JobAd> map;
 
 	@Before
 	public void setUp() throws IOException {
@@ -33,9 +37,10 @@ public class PatternMatchingTest {
 		for (ClassifyUnit cu : paragraphs) {
 			classifyUnits.put(cu.getID(), cu);
 		}
+		
+		map = UniversalMapper.map(paragraphs);
 	}
 
-	// TODO: ...
 	@Test
 	public void testPatternMatching() throws IOException {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
@@ -45,8 +50,20 @@ public class PatternMatchingTest {
 				.getTrainingData();
 		PatternMatcher pm = new PatternMatcher();
 
+		int count = 0;
 		for (ClassifyUnit cu : trainingData.keySet()) {
-			pm.getContentOfInterest(cu);
+//			System.out.println(cu);
+			
+			JobAd parent = map.get(cu);
+			List<SlotFiller> sf = pm.getContentOfInterest(cu, parent.getTemplate()); 
+			count += sf.size();
+			for (SlotFiller slotFiller : sf) {
+				System.out.println(slotFiller);
+			}
+			
+			System.out.println("\n***********************\n");
 		}
+		
+		System.out.println("Anzahl Ergebnisse: " + count);
 	}
 }
