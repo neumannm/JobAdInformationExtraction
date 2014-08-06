@@ -41,9 +41,27 @@ public class SlotFiller {
 	public int getPosition() {
 		return position;
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.content + " (at " + this.position + ")";
+	}
+
+	/*
+	 * TODO: ist es eine gute Idee, an dieser Stelle Case, Interpunktion etc. zu
+	 * ignorieren? Oder woanders? (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof SlotFiller) {
+			SlotFiller other = (SlotFiller) obj;
+			return this.content.trim().equalsIgnoreCase(other.content.trim()) /*
+													 * && this.position ==
+													 * other.position
+													 */;
+		}
+		return super.equals(obj);
 	}
 }

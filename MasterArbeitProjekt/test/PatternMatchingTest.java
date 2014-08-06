@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,12 +38,161 @@ public class PatternMatchingTest {
 		for (ClassifyUnit cu : paragraphs) {
 			classifyUnits.put(cu.getID(), cu);
 		}
-		
+
 		map = UniversalMapper.map(paragraphs);
 	}
 
+	// TODO: test each regex
 	@Test
-	public void testPatternMatching() throws IOException {
+	public void testWithDummyData() {
+		PatternMatcher pm = new PatternMatcher();
+
+		/* aufgelistete Anforderungen */
+		String content = "Unsere Anforderungen:\n" + "- Zuverlässigkeit"
+				+ "- Kompetenz" + "- Sie sind einfach ganz toll";
+		ClassifyUnit cu = new ClassifyUnit(content, 0);
+		List<SlotFiller> result = pm.getContentOfInterest(cu, null);
+		List<SlotFiller> vorlage = new ArrayList<SlotFiller>();
+		vorlage.add(new SlotFiller("Zuverlässigkeit", 0));
+		vorlage.add(new SlotFiller("Kompetenz", 0));
+		vorlage.add(new SlotFiller("Sie sind einfach ganz toll", 0));
+
+		for (SlotFiller slotFiller : vorlage) {
+			System.out.println(String.format("Vorlage: '%s' - contained: %s",
+					slotFiller, result.contains(slotFiller)));
+			if(!result.contains(slotFiller))
+				System.out.println("\tResult: " + result);
+			// Assert.assertTrue(String.format(
+						// "Result should contain '%s',  but didn't. (result: %s)",
+						// slotFiller.getContent(), result), result.contains(slotFiller));
+		}
+
+		/* 'sollte X sein/haben/mitbringen' */
+		content = "Der Bewerber sollte fit sein. "
+				+ "Die Bewerberin sollte viel Make-up haben. "
+				+ "Und der/die Bewerber/in sollte seine/ihre eigenen Klamotten mitbringen";
+		cu = new ClassifyUnit(content, 0);
+		result = pm.getContentOfInterest(cu, null);
+		vorlage = new ArrayList<SlotFiller>();
+		vorlage.add(new SlotFiller("fit", 0));
+		vorlage.add(new SlotFiller("viel Make-up", 0));
+		vorlage.add(new SlotFiller("seine/ihre eigenen Klamotten", 0));
+
+		for (SlotFiller slotFiller : vorlage) {
+			System.out.println(String.format("Vorlage: '%s' - contained: %s",
+					slotFiller, result.contains(slotFiller)));
+			if(!result.contains(slotFiller))
+				System.out.println("\tResult: " + result);
+		}
+
+		/* Jobbezeichnung */
+		content = "Wir suchen eine/n Bankkauffrau/-mann. Wir suchen weiterhin eine/n Frisör/in.";
+		cu = new ClassifyUnit(content, 0);
+		result = pm.getContentOfInterest(cu, null);
+		vorlage = new ArrayList<SlotFiller>();
+		vorlage.add(new SlotFiller("Bankkauffrau/-mann", 0));
+		vorlage.add(new SlotFiller("Frisör/in", 0));
+
+		for (SlotFiller slotFiller : vorlage) {
+			System.out.println(String.format("Vorlage: '%s' - contained: %s",
+					slotFiller, result.contains(slotFiller)));
+			if(!result.contains(slotFiller))
+				System.out.println("\tResult: " + result);
+		}
+
+		/*
+		 * 'ist|sind|wird|wäre(n) ...
+		 * wünschenswert|erforderlich|vorausgesetzt|gewünscht'
+		 */
+		content = "Zuverlässigkeit ist unbedingt erforderlich. "
+				+ "Weiterhin wird Wissen vorausgesetzt. Es wird außerdem gewünscht, "
+				+ "dass Sie nett sind. Gute Manieren wären wünschenswert."; // TODO
+		cu = new ClassifyUnit(content, 0);
+		result = pm.getContentOfInterest(cu, null);
+		vorlage = new ArrayList<SlotFiller>();
+		vorlage.add(new SlotFiller("Zuverlässigkeit", 0));
+		vorlage.add(new SlotFiller("weiterhin wird Wissen", 0));
+		vorlage.add(new SlotFiller("Gute Manieren", 0));
+
+		for (SlotFiller slotFiller : vorlage) {
+			System.out.println(String.format("Vorlage: '%s' - contained: %s",
+					slotFiller, result.contains(slotFiller)));
+			if(!result.contains(slotFiller))
+				System.out.println("\tResult: " + result);
+		}
+
+		/* vorausgesetzt wird X / Voraussetzung ist X */
+		content = "Vorausgesetzt wird gutes Benehmen. Voraussetzung ist unbedingt höfliches Auftreten. Und noch mehr.";
+		cu = new ClassifyUnit(content, 0);
+		result = pm.getContentOfInterest(cu, null);
+		vorlage = new ArrayList<SlotFiller>();
+		vorlage.add(new SlotFiller("gutes Benehmen", 0));
+		vorlage.add(new SlotFiller("unbedingt höfliches Auftreten", 0));
+
+		for (SlotFiller slotFiller : vorlage) {
+			System.out.println(String.format("Vorlage: '%s' - contained: %s",
+					slotFiller, result.contains(slotFiller)));
+			if(!result.contains(slotFiller))
+				System.out.println("\tResult: " + result);
+		}
+
+		/*
+		 * wird X vorausgesetzt / werden XY vorausgesetzt / wird X erwartet / werden XY
+		 * erwartet
+		 */
+		content = "Dass Sie schicke Anzüge besitzen wird vorausgesetzt. "
+				+ "Dass Sie gut riechen wird erwartet. Bereitschaft zu harter Arbeit wird erwartet. "
+				+ "Auch Stil und gutes Aussehen werden erwartet."; // TODO
+		cu = new ClassifyUnit(content, 0);
+		result = pm.getContentOfInterest(cu, null);
+		vorlage = new ArrayList<SlotFiller>();
+		vorlage.add(new SlotFiller("Dass Sie schicke Anzüge besitzen", 0));
+		vorlage.add(new SlotFiller("Dass Sie gut riechen", 0));
+		vorlage.add(new SlotFiller("Auch Stil und gutes Aussehen", 0));
+		vorlage.add(new SlotFiller("Bereitschaft zu harter Arbeit", 0));
+
+		for (SlotFiller slotFiller : vorlage) {
+			System.out.println(String.format("Vorlage: '%s' - contained: %s",
+					slotFiller, result.contains(slotFiller)));
+			if(!result.contains(slotFiller))
+				System.out.println("\tResult: " + result);
+		}
+
+		/* wir setzen X voraus / setzen wir X voraus */
+		content = "Darum setzen wir schicke Anzüge voraus. "
+				+ "Wir setzen dass Sie schön sind voraus. Außerdem müssen Sie klug sein."; // TODO
+		cu = new ClassifyUnit(content, 0);
+		result = pm.getContentOfInterest(cu, null);
+		vorlage = new ArrayList<SlotFiller>();
+		vorlage.add(new SlotFiller("schicke Anzüge", 0));
+		vorlage.add(new SlotFiller("dass Sie schön sind", 0));
+
+		for (SlotFiller slotFiller : vorlage) {
+			System.out.println(String.format("Vorlage: '%s' - contained: %s",
+					slotFiller, result.contains(slotFiller)));
+			if(!result.contains(slotFiller))
+				System.out.println("\tResult: " + result);
+		}
+
+		/* -heit/-keit */
+		content = "Wir wünschen uns Ehrlichkeit, Pünktlichkeit und Zuverlässigkeit. Aber nicht zu viel davon.";
+		cu = new ClassifyUnit(content, 0);
+		result = pm.getContentOfInterest(cu, null);
+		vorlage = new ArrayList<SlotFiller>();
+		vorlage.add(new SlotFiller("Ehrlichkeit", 0));
+		vorlage.add(new SlotFiller("Pünktlichkeit", 0));
+		vorlage.add(new SlotFiller("Zuverlässigkeit", 0));
+
+		for (SlotFiller slotFiller : vorlage) {
+			System.out.println(String.format("Vorlage: '%s' - contained: %s",
+					slotFiller, result.contains(slotFiller)));
+			if(!result.contains(slotFiller))
+				System.out.println("\tResult: " + result);
+		}
+	}
+
+	@Test
+	public void testWithRealData() throws IOException {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
 				"data/trainingIE_140623.csv"), Class.COMPETENCE, classifyUnits);
 
@@ -52,18 +202,19 @@ public class PatternMatchingTest {
 
 		int count = 0;
 		for (ClassifyUnit cu : trainingData.keySet()) {
-//			System.out.println(cu);
-			
+			// System.out.println(cu);
+
 			JobAd parent = map.get(cu);
-			List<SlotFiller> sf = pm.getContentOfInterest(cu, parent.getTemplate()); 
+			List<SlotFiller> sf = pm.getContentOfInterest(cu,
+					parent.getTemplate());
 			count += sf.size();
 			for (SlotFiller slotFiller : sf) {
 				System.out.println(slotFiller);
 			}
-			
+
 			System.out.println("\n***********************\n");
 		}
-		
+
 		System.out.println("Anzahl Ergebnisse: " + count);
 	}
 }

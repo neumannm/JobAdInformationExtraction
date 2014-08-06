@@ -83,7 +83,7 @@ public class PatternMatcher {
 		 * 'der Bewerber sollte X haben' 'die Bewerberin sollte X mitbringen'
 		 * 'der/die Bewerber/in sollte x sein'
 		 */
-		lookbehind = "\\bder(/die)? Bewerber(/?in)? sollte";
+		lookbehind = "\\b((der(/die)?)|die) Bewerber(/?in)? sollte";
 		lookahead = "sein|mitbringen|haben";
 		p = Pattern.compile("(?<=" + lookbehind + ")(.+?)(?=" + lookahead + ")", Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
@@ -98,10 +98,10 @@ public class PatternMatcher {
 
 		/*
 		 * 'X ist erforderlich'
-		 * TODO: evtl. die Modifikatoren in den Match aufnehmen
+		 * TODO: Modifikatoren in den Match aufnehmen? (geht nicht mit (.*)? o.ä.)
 		 */
-		lookahead = "(ist|sind|wird|wäre(n)?)?(.*)(wünschenswert|erforderlich|vorausgesetzt|gewünscht)";
-		p = Pattern.compile("(?<=\\.\\s?)(.+)(?=" + lookahead + ")");
+		lookahead = "(ist|sind|wird|wäre(n)?)?? (wünschenswert|erforderlich|vorausgesetzt|gewünscht)";
+		p = Pattern.compile("(?<=\\.\\s?)(.+?)(?=" + lookahead + ")");
 		regExes.put(p, Class.COMPETENCE);
 
 		/*
