@@ -67,17 +67,15 @@ public class PatternMatcher {
 		Pattern p;
 		String lookahead, lookbehind;
 
-		// Pattern p =
-		// Pattern.compile("unternehmen|wir sind|sind wir|(wir )?über uns",
-		// Pattern.CASE_INSENSITIVE);
-		// regExes.put(p, Class.COMPANY_DESC);
-
 		/*
 		 * lists element ((?>\P{M}\p{M}*)+) = any number of graphemes
+		 * 
+		 * TODO: funktioniert nicht richtig - matcht die gesamte Liste
 		 */
-		lookbehind = "^(-\\*|-|\\*|\\u2027|\\d(.?)?)\\p{Blank}?";
-		p = Pattern.compile("(?<=" + lookbehind + ")(?>\\P{M}\\p{M}*)+$", Pattern.MULTILINE);
-		regExes.put(p, Class.COMPANY_JOB); // class 2 and 3 (?)
+		lookbehind = "(-\\*|-|\\*|\\u2027|\\d(.?)?)\\p{Blank}?";
+		p = Pattern.compile("(?<=" + lookbehind + ")(?>\\P{M}\\p{M}*)+$",
+				Pattern.MULTILINE);
+		regExes.put(p, Class.COMPETENCE);
 
 		/*
 		 * 'der Bewerber sollte X haben' 'die Bewerberin sollte X mitbringen'
@@ -85,31 +83,34 @@ public class PatternMatcher {
 		 */
 		lookbehind = "\\b((der(/die)?)|die) Bewerber(/?in)? sollte";
 		lookahead = "sein|mitbringen|haben";
-		p = Pattern.compile("(?<=" + lookbehind + ")(.+?)(?=" + lookahead + ")", Pattern.CASE_INSENSITIVE);
+		p = Pattern.compile("(?<=" + lookbehind + ") ([^.\n]+?)(?=" + lookahead
+				+ ")", Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
 
 		/*
 		 * e.g. Bankkauffrau/-mann, Frisör/in
 		 */
 		p = Pattern.compile(
-				"\\p{javaUpperCase}?\\p{javaLowerCase}+/-?\\p{javaLowerCase}+",
+				"\\p{javaUpperCase}\\p{javaLowerCase}+/-?\\p{javaLowerCase}+",
 				Pattern.UNICODE_CASE);
 		regExes.put(p, Class.JOB_DESC);
 
 		/*
-		 * 'X ist erforderlich'
-		 * TODO: Modifikatoren in den Match aufnehmen? (geht nicht mit (.*)? o.ä.)
+		 * 'X ist erforderlich' TODO: Modifikatoren in den Match aufnehmen?
+		 * (geht nicht mit (.*)? o.ä.)
 		 */
 		lookahead = "(ist|sind|wird|wäre(n)?)?? (wünschenswert|erforderlich|vorausgesetzt|gewünscht)";
-		p = Pattern.compile("(?<=\\.\\s?)(.+?)(?=" + lookahead + ")");
+		p = Pattern.compile("(?<=\\.\\s?) ([^.\n]+?)(?=" + lookahead + ")");
 		regExes.put(p, Class.COMPETENCE);
 
 		/*
 		 * 'vorausgesetzt wird X'
+		 * 
 		 * TODO: evtl. die Modifikatoren in den Match aufnehmen
 		 */
-		lookbehind = "(vorausgesetzt wird | Voraussetzung ist )";
-		p = Pattern.compile("(?<=" + lookbehind + ")(.+?)(?=\\.)", Pattern.CASE_INSENSITIVE);
+		lookbehind = "(vorausgesetzt wird |Voraussetzung ist |wir erwarten |wünschen (?:wir )?uns )";
+		p = Pattern.compile("(?<=" + lookbehind + ")(.+?)(?=\\.)",
+				Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
 
 		/*
@@ -118,14 +119,14 @@ public class PatternMatcher {
 		lookahead = "(wird|werden) (vorausgesetzt|erwartet)";
 		p = Pattern.compile("(?<=(\\.\\s?)|^)(.+?)(?=" + lookahead + ")");
 		regExes.put(p, Class.COMPETENCE);
-		
+
 		/*
-		 * TODO: evtl. die Modifikatoren in den Match aufnehmen
+		 * TODO: evtl. Modifikatoren in den Match aufnehmen
 		 */
-		lookbehind = "(wir setzen | setzen wir)";
+		lookbehind = "(wir setzen | setzen wir )";
 		lookahead = "voraus\\.";
-		p = Pattern.compile("(?<=" + lookbehind + ")(.+?)(?=" + lookahead + ")",
-				Pattern.CASE_INSENSITIVE);
+		p = Pattern.compile("(?<=" + lookbehind + ")([^.\n]+?)(?=" + lookahead
+				+ ")", Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
 
 		/*
@@ -145,22 +146,62 @@ public class PatternMatcher {
 		/*
 		 * Kenntnisse, Erfahrungen von/in etwas
 		 */
+		lookahead = "\\.|\\n"; // bis zum Satzende oder Zeilenumbruch
+		p = Pattern
+				.compile("(Kenntnis(se)?|Erfahrung(en)?) (von|in|im|der|des) .+?(?="
+						+ lookahead + ")");
+		regExes.put(p, Class.COMPETENCE);
 		// ...
 
 		/*
 		 * Führerschein
+		 * 
+		 * TODO: Erfassen von Kl. ist nicht so gut wenn SentenceSplitter
+		 * dazwischen funkt
 		 */
+		lookahead = "\\.|\\n"; // bis zum Satzende oder Zeilenumbruch
+		p = Pattern.compile("(Führerschein|FS) (Klasse|Kl.)? (.+?)(?="
+				+ lookahead + ")");
+		regExes.put(p, Class.COMPETENCE);
 		// ...
 
 		/*
-		 * Berufsausbildung
+		 * Berufsausbildung (1)
 		 */
-		// ...
-		
+		lookbehind = "";
+		lookahead = "";
+		p = Pattern.compile(
+				"(?=(berufs)?ausbildung)[^.\n]+(?=abgeschlossen\\.)",
+				Pattern.CASE_INSENSITIVE);
+		regExes.put(p, Class.COMPETENCE);
+
 		/*
-		 * 'erwarten wir' oder 'erwarten wir', 'wir wünschen (uns)'
+		 * Berufsausbildung (2)
 		 */
+		lookbehind = "";
+		lookahead = "";
+		p = Pattern.compile("(?=abgeschlossene (berufs)?ausbildung)[^.\n]+",
+				Pattern.CASE_INSENSITIVE);
+		regExes.put(p, Class.COMPETENCE);
+
+		/*
+		 * 'erwarten wir'
+		 * 
+		 * lookbehind = ""; lookahead = ""; p = Pattern .compile("(?<=" +
+		 * lookbehind + ")(.+?)(?=" + lookahead + ")"); // regExes.put(p,
+		 * Class.COMPETENCE); // ...
+		 */
+
+		/*
+		 * 'Sie verfügen über / verfügen Sie über ...'
+		 */
+		lookbehind = "(Sie verfügen über)|(verfügen Sie über)|(Sie sind)|(Sie haben)";
+		lookahead = "";
+		p = Pattern.compile("(?<=" + lookbehind + ")[^.\n]+(?=" + lookahead
+				+ ")", Pattern.CASE_INSENSITIVE);
+		regExes.put(p, Class.COMPETENCE);
 		// ...
+
 	}
 
 	public Map<Pattern, Class> getRegExes() {

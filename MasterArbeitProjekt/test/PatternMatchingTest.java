@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,14 +43,28 @@ public class PatternMatchingTest {
 		map = UniversalMapper.map(paragraphs);
 	}
 
+	@Test
+	public void testSimple(){
+		String input = "Bitte senden Sie Ihre Bewerbung bis zum 31.03.2014 ein.";
+		/* regulärer Ausdruck für Datumsangaben: */
+		Pattern p = Pattern.compile("(0[1-9]|[12][0-9]|3[01])([- /.])(0?[1-9]|1[012])\\2(19|20)\\d\\d"); 
+		Matcher m = p.matcher(input);
+		while(m.find()){
+			System.out.println(m.group()); // 31.03.2014
+			System.out.println(m.start()); // 42
+			System.out.println(m.group(1)); // 31
+		}		
+	}
+	
 	// TODO: test each regex
 	@Test
 	public void testWithDummyData() {
+		
 		PatternMatcher pm = new PatternMatcher();
 
 		/* aufgelistete Anforderungen */
-		String content = "Unsere Anforderungen:\n" + "- Zuverlässigkeit"
-				+ "- Kompetenz" + "- Sie sind einfach ganz toll";
+		String content = "Unsere Anforderungen:\n" + "- Zuverlässigkeit\n"
+				+ "- Kompetenz\n" + "- Sie sind einfach ganz toll";
 		ClassifyUnit cu = new ClassifyUnit(content, 0);
 		List<SlotFiller> result = pm.getContentOfInterest(cu, null);
 		List<SlotFiller> vorlage = new ArrayList<SlotFiller>();
