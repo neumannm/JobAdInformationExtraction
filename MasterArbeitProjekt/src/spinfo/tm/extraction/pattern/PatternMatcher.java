@@ -18,6 +18,9 @@ import spinfo.tm.extraction.data.Template;
  * TODO: Ausfüllen der Templates
  * 
  * TODO: größere Matches gegenüber kleineren bevorzugen, wie lässt sich das hier umsetzen?
+ * 
+ * Idee: man könnte prüfen welche Teile übereinstimmen und nur diese zurückgeben - 
+ * Problem: übereinstimmender Teil könnte zu klein sein (aber besser als zu groß oder?)
  */
 public class PatternMatcher {
 
@@ -44,6 +47,7 @@ public class PatternMatcher {
 	}
 
 	// TODO: change return type?
+	// TODO: prefer longer matches to shorter ones?
 	private List<TokenPosPair> match(String input) {
 		List<TokenPosPair> tokensAndPositions = new ArrayList<>();
 
@@ -56,6 +60,9 @@ public class PatternMatcher {
 				token = m.group();
 				position = m.start();
 				tokensAndPositions.add(new TokenPosPair(token, position));
+				System.out.println(String.format(
+						"Matched %s at %s\n\twith Pattern %s", token, position,
+						pattern));
 			}
 		}
 		return tokensAndPositions;
@@ -69,11 +76,9 @@ public class PatternMatcher {
 
 		/*
 		 * lists element ((?>\P{M}\p{M}*)+) = any number of graphemes
-		 * 
-		 * TODO: funktioniert nicht richtig - matcht die gesamte Liste
 		 */
-		lookbehind = "(-\\*|-|\\*|\\u2027|\\d(.?)?)\\p{Blank}?";
-		p = Pattern.compile("(?<=" + lookbehind + ")(?>\\P{M}\\p{M}*)+$",
+		lookbehind = "^(-\\*|-|\\*|\\u2027|\\d(.?)?)\\p{Blank}?";
+		p = Pattern.compile("(?<=" + lookbehind + ")(?=(\\P{M}\\p{M}*)+$).+",
 				Pattern.MULTILINE);
 		regExes.put(p, Class.COMPETENCE);
 
@@ -96,32 +101,24 @@ public class PatternMatcher {
 		regExes.put(p, Class.JOB_DESC);
 
 		/*
-		 * 'X ist erforderlich' TODO: Modifikatoren in den Match aufnehmen?
-		 * (geht nicht mit (.*)? o.ä.)
-		 */
-		lookahead = "(ist|sind|wird|wäre(n)?)?? (wünschenswert|erforderlich|vorausgesetzt|gewünscht)";
+		 * 'X ist erforderlich' 
+		 * */
+		lookahead = "(ist|sind|wird|wäre(n)?)?? (wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet)";
 		p = Pattern.compile("(?<=\\.\\s?) ([^.\n]+?)(?=" + lookahead + ")");
 		regExes.put(p, Class.COMPETENCE);
 
 		/*
 		 * 'vorausgesetzt wird X'
 		 * 
-		 * TODO: evtl. die Modifikatoren in den Match aufnehmen
 		 */
 		lookbehind = "(vorausgesetzt wird |Voraussetzung ist |wir erwarten |wünschen (?:wir )?uns )";
 		p = Pattern.compile("(?<=" + lookbehind + ")(.+?)(?=\\.)",
 				Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
 
-		/*
-		 * TODO: evtl. die Modifikatoren in den Match aufnehmen
-		 */
-		lookahead = "(wird|werden) (vorausgesetzt|erwartet)";
-		p = Pattern.compile("(?<=(\\.\\s?)|^)(.+?)(?=" + lookahead + ")");
-		regExes.put(p, Class.COMPETENCE);
 
 		/*
-		 * TODO: evtl. Modifikatoren in den Match aufnehmen
+		 * 'wir setzen X voraus' | 'setzen wir X voraus'
 		 */
 		lookbehind = "(wir setzen | setzen wir )";
 		lookahead = "voraus\\.";
@@ -151,19 +148,15 @@ public class PatternMatcher {
 				.compile("(Kenntnis(se)?|Erfahrung(en)?) (von|in|im|der|des) .+?(?="
 						+ lookahead + ")");
 		regExes.put(p, Class.COMPETENCE);
-		// ...
 
 		/*
 		 * Führerschein
 		 * 
-		 * TODO: Erfassen von Kl. ist nicht so gut wenn SentenceSplitter
-		 * dazwischen funkt
 		 */
 		lookahead = "\\.|\\n"; // bis zum Satzende oder Zeilenumbruch
-		p = Pattern.compile("(Führerschein|FS) (Klasse|Kl.)? (.+?)(?="
+		p = Pattern.compile("(Führerschein|FS) (Klasse|Kl.)? .+?(?="
 				+ lookahead + ")");
 		regExes.put(p, Class.COMPETENCE);
-		// ...
 
 		/*
 		 * Berufsausbildung (1)
@@ -200,7 +193,6 @@ public class PatternMatcher {
 		p = Pattern.compile("(?<=" + lookbehind + ")[^.\n]+(?=" + lookahead
 				+ ")", Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
-		// ...
 
 	}
 

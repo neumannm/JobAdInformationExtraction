@@ -44,22 +44,43 @@ public class PatternMatchingTest {
 	}
 
 	@Test
-	public void testSimple(){
+	public void testSimple() {
 		String input = "Bitte senden Sie Ihre Bewerbung bis zum 31.03.2014 ein.";
 		/* regulärer Ausdruck für Datumsangaben: */
-		Pattern p = Pattern.compile("(0[1-9]|[12][0-9]|3[01])([- /.])(0?[1-9]|1[012])\\2(19|20)\\d\\d"); 
+		Pattern p = Pattern
+				.compile("(0[1-9]|[12][0-9]|3[01])([- /.])(0?[1-9]|1[012])\\2(19|20)\\d\\d");
 		Matcher m = p.matcher(input);
-		while(m.find()){
+		while (m.find()) {
+			System.out.println("\nNew Match:");
 			System.out.println(m.group()); // 31.03.2014
-			System.out.println(m.start()); // 42
-			System.out.println(m.group(1)); // 31
-		}		
+			System.out.println("Position: " + m.start()); // 42
+			for (int i = 0; i <= m.groupCount(); i++) {
+				System.out.println("Gruppe " + i + ": " + m.group(i));
+			}
+		}
+
+		System.out.println("*************************");
+
+		input = "Unsere Anforderungen:\n" + "- Zuverlässigkeit\n"
+				+ "- Kompetenz\n" + "- Sie sind einfach ganz toll";
+		String lookbehind = "^(-\\*|-|\\*|\\u2027|\\d(.?)?)\\p{Blank}?";
+		p = Pattern.compile("(?<=" + lookbehind + ")(?=(\\P{M}\\p{M}*)+$).+",
+				Pattern.MULTILINE);
+		m = p.matcher(input);
+		while (m.find()) {
+			System.out.println("\nNew Match:");
+			System.out.println(m.group());
+			System.out.println("Position: " + m.start());
+			for (int i = 0; i <= m.groupCount(); i++) {
+				System.out.println("Gruppe " + i + ": " + m.group(i));
+			}
+		}
 	}
-	
+
 	// TODO: test each regex
 	@Test
 	public void testWithDummyData() {
-		
+
 		PatternMatcher pm = new PatternMatcher();
 
 		/* aufgelistete Anforderungen */
@@ -75,11 +96,11 @@ public class PatternMatchingTest {
 		for (SlotFiller slotFiller : vorlage) {
 			System.out.println(String.format("Vorlage: '%s' - contained: %s",
 					slotFiller, result.contains(slotFiller)));
-			if(!result.contains(slotFiller))
+			if (!result.contains(slotFiller))
 				System.out.println("\tResult: " + result);
 			// Assert.assertTrue(String.format(
-						// "Result should contain '%s',  but didn't. (result: %s)",
-						// slotFiller.getContent(), result), result.contains(slotFiller));
+			// "Result should contain '%s',  but didn't. (result: %s)",
+			// slotFiller.getContent(), result), result.contains(slotFiller));
 		}
 
 		/* 'sollte X sein/haben/mitbringen' */
@@ -96,7 +117,7 @@ public class PatternMatchingTest {
 		for (SlotFiller slotFiller : vorlage) {
 			System.out.println(String.format("Vorlage: '%s' - contained: %s",
 					slotFiller, result.contains(slotFiller)));
-			if(!result.contains(slotFiller))
+			if (!result.contains(slotFiller))
 				System.out.println("\tResult: " + result);
 		}
 
@@ -111,7 +132,7 @@ public class PatternMatchingTest {
 		for (SlotFiller slotFiller : vorlage) {
 			System.out.println(String.format("Vorlage: '%s' - contained: %s",
 					slotFiller, result.contains(slotFiller)));
-			if(!result.contains(slotFiller))
+			if (!result.contains(slotFiller))
 				System.out.println("\tResult: " + result);
 		}
 
@@ -132,7 +153,7 @@ public class PatternMatchingTest {
 		for (SlotFiller slotFiller : vorlage) {
 			System.out.println(String.format("Vorlage: '%s' - contained: %s",
 					slotFiller, result.contains(slotFiller)));
-			if(!result.contains(slotFiller))
+			if (!result.contains(slotFiller))
 				System.out.println("\tResult: " + result);
 		}
 
@@ -147,13 +168,13 @@ public class PatternMatchingTest {
 		for (SlotFiller slotFiller : vorlage) {
 			System.out.println(String.format("Vorlage: '%s' - contained: %s",
 					slotFiller, result.contains(slotFiller)));
-			if(!result.contains(slotFiller))
+			if (!result.contains(slotFiller))
 				System.out.println("\tResult: " + result);
 		}
 
 		/*
-		 * wird X vorausgesetzt / werden XY vorausgesetzt / wird X erwartet / werden XY
-		 * erwartet
+		 * wird X vorausgesetzt / werden XY vorausgesetzt / wird X erwartet /
+		 * werden XY erwartet
 		 */
 		content = "Dass Sie schicke Anzüge besitzen wird vorausgesetzt. "
 				+ "Dass Sie gut riechen wird erwartet. Bereitschaft zu harter Arbeit wird erwartet. "
@@ -169,7 +190,7 @@ public class PatternMatchingTest {
 		for (SlotFiller slotFiller : vorlage) {
 			System.out.println(String.format("Vorlage: '%s' - contained: %s",
 					slotFiller, result.contains(slotFiller)));
-			if(!result.contains(slotFiller))
+			if (!result.contains(slotFiller))
 				System.out.println("\tResult: " + result);
 		}
 
@@ -185,7 +206,7 @@ public class PatternMatchingTest {
 		for (SlotFiller slotFiller : vorlage) {
 			System.out.println(String.format("Vorlage: '%s' - contained: %s",
 					slotFiller, result.contains(slotFiller)));
-			if(!result.contains(slotFiller))
+			if (!result.contains(slotFiller))
 				System.out.println("\tResult: " + result);
 		}
 
@@ -201,7 +222,7 @@ public class PatternMatchingTest {
 		for (SlotFiller slotFiller : vorlage) {
 			System.out.println(String.format("Vorlage: '%s' - contained: %s",
 					slotFiller, result.contains(slotFiller)));
-			if(!result.contains(slotFiller))
+			if (!result.contains(slotFiller))
 				System.out.println("\tResult: " + result);
 		}
 	}
