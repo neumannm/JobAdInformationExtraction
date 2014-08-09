@@ -2,11 +2,22 @@ package spinfo.tm.extraction.parsing;
 
 import is2.data.SentenceData09;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import spinfo.tm.data.ClassifyUnit;
+import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.extraction.parsing.util.Relation;
 
+/**
+ * Use parsed data to find Comnpetences by inspecting dependency relations
+ * between sentence constituents.
+ * 
+ * @author neumannm
+ * 
+ */
 public class CompetenceFinder {
 
 	private Map<String, Relation> verbsOfInterest;
@@ -22,18 +33,24 @@ public class CompetenceFinder {
 		this.verbsOfInterest = verbsOfInterest;
 	}
 
-	public boolean findCompetences(SentenceData09 sd) {
-		System.out.println("\n" + sd.toString());
+	public List<SlotFiller> findCompetences(ClassifyUnit cu) {
+		List<SlotFiller> results = new ArrayList<SlotFiller>();
 
-		String[] lemmas = sd.plemmas;
+		List<SentenceData09> parsedCU = cu.getSentenceData();
 
-		for (int i = 0; i < lemmas.length; i++) {
-			if (verbsOfInterest.containsKey(lemmas[i])) {
-				process(lemmas[i], i + 1, sd); // i oder i+1?
-				return true;
+		for (SentenceData09 sd : parsedCU) {
+			System.out.println("\n" + sd.toString());
+
+			String[] lemmas = sd.plemmas;
+
+			for (int i = 0; i < lemmas.length; i++) {
+				if (verbsOfInterest.containsKey(lemmas[i])) {
+					process(lemmas[i], i + 1, sd);
+					// return true;
+				}
 			}
 		}
-		return false;
+		return results;
 	}
 
 	private void process(String lemma, int verbID, SentenceData09 sd) {
@@ -102,7 +119,7 @@ public class CompetenceFinder {
 			}
 		}
 
-		//TODO: Phrase zusammensetzen
+		// TODO: Phrase zusammensetzen
 		return phrase;
 	}
 }

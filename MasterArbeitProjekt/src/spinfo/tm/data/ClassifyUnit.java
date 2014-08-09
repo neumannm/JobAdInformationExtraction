@@ -1,5 +1,7 @@
 package spinfo.tm.data;
 
+import is2.data.SentenceData09;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -7,6 +9,8 @@ import java.util.UUID;
  * A basic unit for all classify tasks.
  * 
  * @author jhermes
+ * 
+ * @author neumannm
  *
  */
 public class ClassifyUnit implements Comparable<ClassifyUnit>{
@@ -19,6 +23,7 @@ public class ClassifyUnit implements Comparable<ClassifyUnit>{
 	private List<String> FeatureUnits;
 	private double[] FeatureVector;
 	private boolean[] classIDs;
+	private List<SentenceData09> sentenceData; //new: results from parser (parsed this.content)
 	private static int NUMBEROFCLASSES;
 	
 	public boolean[] getClassIDs() {
@@ -92,5 +97,9 @@ public class ClassifyUnit implements Comparable<ClassifyUnit>{
 	@Override
 	public int compareTo(ClassifyUnit other) {
 		return this.id.compareTo(other.id);
+	}
+
+	public List<SentenceData09> getSentenceData() {
+		return this.sentenceData;
 	}
 }

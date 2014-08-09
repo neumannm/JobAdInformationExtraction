@@ -7,7 +7,9 @@ import is2.tag.Tagger;
 import is2.tools.Tool;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,28 +51,44 @@ public class ParagraphParser {
 
 	}
 
+	public Map<ClassifyUnit, List<SentenceData09>> parse(List<ClassifyUnit> cus) {
+		Map<ClassifyUnit, List<SentenceData09>> toReturn = new HashMap<ClassifyUnit, List<SentenceData09>>();
+
+		for (ClassifyUnit classifyUnit : cus) {
+			List<SentenceData09> parsed = parse(classifyUnit);
+			toReturn.put(classifyUnit, parsed);
+		}
+
+		return toReturn;
+	}
+
 	public List<SentenceData09> parse(ClassifyUnit cu) {
 		List<SentenceData09> toReturn = new ArrayList<SentenceData09>();
 
 		String paragraph = cu.getContent();
 		List<SentenceData09> processed = conv.convert(paragraph);
 		for (SentenceData09 sentenceData : processed) {
-			log.info("Applying the lemmatizer");
-			sentenceData = lemmatizer.apply(sentenceData);
-
-			log.info("\nApplying the morphologic tagger");
-			sentenceData = morphTagger.apply(sentenceData);
-
-			log.info("\nApplying the part-of-speech tagger");
-			sentenceData = posTagger.apply(sentenceData);
-
-			log.info("\nApplying the parser");
-			sentenceData = depParser.apply(sentenceData);
-
+			sentenceData = applyTools(sentenceData);
 			toReturn.add(sentenceData);
 		}
 
 		return toReturn;
+	}
+
+	public SentenceData09 applyTools(SentenceData09 sentenceData) {
+		log.info("Applying the lemmatizer");
+		sentenceData = lemmatizer.apply(sentenceData);
+
+		log.info("\nApplying the morphologic tagger");
+		sentenceData = morphTagger.apply(sentenceData);
+
+		log.info("\nApplying the part-of-speech tagger");
+		sentenceData = posTagger.apply(sentenceData);
+
+		log.info("\nApplying the parser");
+		sentenceData = depParser.apply(sentenceData);
+
+		return sentenceData;
 	}
 
 	public void resetLemmatizer(String model) {

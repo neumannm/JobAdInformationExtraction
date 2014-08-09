@@ -24,8 +24,8 @@ public class SentenceDataReader {
 	public static List<SentenceData09> readFromFile(String path) {
 		List<SentenceData09> toReturn = new LinkedList<>();
 
-		CONLLReader09 reader = new CONLLReader09(path, true);
-
+		CONLLReader09 reader = new CONLLReader09(path, true);		
+		
 		SentenceData09 nextCONLL09;
 		while ((nextCONLL09 = reader.getNextCoNLL09()) != null) {
 			toReturn.add(nextCONLL09);
