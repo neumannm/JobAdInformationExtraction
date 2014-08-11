@@ -5,7 +5,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ ParagraphConverterTest.class, /* IE_TDTester.class, */
-ParserTest.class, PatternMatchingTest.class })
+ParserTest.class, PatternMatchingTest.class, CompetenceFinderTest.class})
 public class AllTests {
 
 	@BeforeClass

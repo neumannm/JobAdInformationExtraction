@@ -5,17 +5,17 @@ import is2.data.SentenceData09;
 import java.util.List;
 import java.util.UUID;
 
-/** 
+/**
  * A basic unit for all classify tasks.
  * 
  * @author jhermes
  * 
  * @author neumannm
- *
+ * 
  */
-public class ClassifyUnit implements Comparable<ClassifyUnit>{
+public class ClassifyUnit implements Comparable<ClassifyUnit> {
 
-	//private static int count;
+	// private static int count;
 	private String content;
 	private int parentID;
 	private int actualClassID;
@@ -23,18 +23,19 @@ public class ClassifyUnit implements Comparable<ClassifyUnit>{
 	private List<String> FeatureUnits;
 	private double[] FeatureVector;
 	private boolean[] classIDs;
-	private List<SentenceData09> sentenceData; //new: results from parser (parsed this.content)
+	private List<SentenceData09> sentenceData; // new: results from parser
+												// (parsed this.content)
 	private static int NUMBEROFCLASSES;
-	
+
 	public boolean[] getClassIDs() {
 		return classIDs;
 	}
-	
-	public static void setNumberOfClasses(int numberOfClasses){
+
+	public static void setNumberOfClasses(int numberOfClasses) {
 		NUMBEROFCLASSES = numberOfClasses;
 	}
-	
-	public static int getNumberOfClasses(){
+
+	public static int getNumberOfClasses() {
 		return NUMBEROFCLASSES;
 	}
 
@@ -49,11 +50,11 @@ public class ClassifyUnit implements Comparable<ClassifyUnit>{
 		this.classIDs = new boolean[4];
 		this.id = id;
 	}
-	
-	public ClassifyUnit(String content, int parentID){
+
+	public ClassifyUnit(String content, int parentID) {
 		this(content, parentID, UUID.randomUUID());
 	}
-	
+
 	public List<String> getFeatureUnits() {
 		return FeatureUnits;
 	}
@@ -61,7 +62,7 @@ public class ClassifyUnit implements Comparable<ClassifyUnit>{
 	public void setFeatureUnits(List<String> featureUnits) {
 		FeatureUnits = featureUnits;
 	}
-	
+
 	public double[] getFeatureVector() {
 		return FeatureVector;
 	}
@@ -69,8 +70,8 @@ public class ClassifyUnit implements Comparable<ClassifyUnit>{
 	public void setFeatureVector(double[] featureVector) {
 		FeatureVector = featureVector;
 	}
-	
-	public UUID getID(){
+
+	public UUID getID() {
 		return id;
 	}
 
@@ -81,9 +82,9 @@ public class ClassifyUnit implements Comparable<ClassifyUnit>{
 	public int getParentID() {
 		return parentID;
 	}
-	
-	public String toString(){
-		return parentID + "\t" + actualClassID + "\t" +  content + "\n";
+
+	public String toString() {
+		return parentID + "\t" + actualClassID + "\t" + content + "\n";
 	}
 
 	public int getActualClassID() {
@@ -101,5 +102,9 @@ public class ClassifyUnit implements Comparable<ClassifyUnit>{
 
 	public List<SentenceData09> getSentenceData() {
 		return this.sentenceData;
+	}
+
+	public void setSentenceData(List<SentenceData09> data) {
+		this.sentenceData = data;
 	}
 }

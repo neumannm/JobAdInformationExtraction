@@ -2,17 +2,11 @@ import is2.data.SentenceData09;
 import is2.io.CONLLReader09;
 import is2.io.CONLLWriter09;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +18,8 @@ import org.junit.Test;
 import spinfo.tm.data.ClassifyUnit;
 import spinfo.tm.extraction.ClassFilter;
 import spinfo.tm.extraction.data.Class;
-import spinfo.tm.extraction.parsing.CompetenceFinder;
 import spinfo.tm.extraction.parsing.Paragraph2SentenceDataConverter;
 import spinfo.tm.extraction.parsing.ParagraphParser;
-import spinfo.tm.extraction.parsing.util.Relation;
-import spinfo.tm.extraction.parsing.util.SentenceDataReader;
 import spinfo.tm.preprocessing.TrainingDataGenerator;
 
 public class ParserTest {
@@ -42,7 +33,6 @@ public class ParserTest {
 	@Before
 	public void setUp() throws IOException {
 		File trainingDataFile = new File(TRAININGDATAFILE);
-		/* Training data generation */
 		TrainingDataGenerator tdg = new TrainingDataGenerator(trainingDataFile);
 
 		paragraphs = tdg.getTrainingData();
@@ -82,85 +72,6 @@ public class ParserTest {
 		writer.finishWriting();
 	}
 
-	//TODO: rewrite test
-	@Test
-	public void testCompetenceFinder() throws IOException {
-
-		List<SentenceData09> parsed = getParsedSentencesFromClassifyUnits(filteredClassifyUnits);
-
-		Map<String, Relation> verbsOfInterest = new HashMap<>();
-		verbsOfInterest.put("haben", Relation.OBJECT);
-		verbsOfInterest.put("sein", Relation.BOTH);
-		verbsOfInterest.put("verfügen", Relation.OBJECT);
-		verbsOfInterest.put("suchen", Relation.OBJECT);
-		verbsOfInterest.put("sollen", Relation.BOTH); // meistens 'sollte', also
-														// VMFIN (finites
-														// Modalverb)
-		verbsOfInterest.put("setzen", Relation.OBJECT); // 'setzen voraus'
-		verbsOfInterest.put("werden", Relation.SUBJECT); // 'wird vorausgesetzt'
-
-		CompetenceFinder finder = new CompetenceFinder(verbsOfInterest);
-
-		for (SentenceData09 sentenceData : parsed) {
-			finder.findCompetences(sentenceData);
-		}
-	}
-
-	private List<SentenceData09> getParsedSentencesFromClassifyUnits(
-			Map<UUID, ClassifyUnit> filteredClassifyUnits2) {
-		List<SentenceData09> parsed = null;
-
-		File parsedFile = new File(TRAININGDATAPARSEDFILE);
-		if (!parsedFile.exists()) {
-			ParagraphParser parser = new ParagraphParser();
-
-			parsed = new ArrayList<SentenceData09>();
-			for (UUID cuID : filteredClassifyUnits.keySet()) {
-				parsed.addAll(parser.parse(filteredClassifyUnits.get(cuID)));
-			}
-		}
-
-		else {
-			parsed = readParsedSentencesFromFile();
-		}
-
-		return parsed;
-	}
-
-	private List<SentenceData09> readParsedSentencesFromFile() {
-		return null;
-	}
-
-	/*
-	 * Funktioniert nicht genauso wie wenn man die Sätze parst - kein <root>
-	 * Token! Also erst parsen, in Datei schreiben und von da wieder auslesen??
-	 * Oder das mit dem Einlesen einfach sein lassen...
-	 */
-	//TODO: rewrite test
-	@Test
-	public void testReadFromFile() {
-		List<SentenceData09> data = SentenceDataReader
-				.readFromFile("data/parsedGoodSentences.csv");
-
-		Map<String, Relation> verbsOfInterest = new HashMap<>();
-		verbsOfInterest.put("haben", Relation.OBJECT);
-		verbsOfInterest.put("sein", null); // kann beides sein
-		verbsOfInterest.put("verfügen", Relation.OBJECT);
-		verbsOfInterest.put("suchen", Relation.OBJECT);
-		verbsOfInterest.put("sollen", null); // meistens 'sollte', also VMFIN
-												// (finites Modalverb) //kann
-												// beides sein
-		verbsOfInterest.put("setzen", Relation.OBJECT); // 'setzen voraus'
-		verbsOfInterest.put("werden", Relation.SUBJECT); // 'wird vorausgesetzt'
-
-		CompetenceFinder finder = new CompetenceFinder(verbsOfInterest);
-
-		for (SentenceData09 sentenceData : data) {
-			// System.out.println(sentenceData);
-			finder.findCompetences(sentenceData);
-		}
-	}
-
 	@Test
 	public void testWritingAndReadingParsedData() {
 		ParagraphParser parser = new ParagraphParser();
@@ -176,7 +87,6 @@ public class ParserTest {
 
 		int i = 0;
 		for (SentenceData09 sentenceData09 : sentenceData) {
-			String[] forms = sentenceData09.forms;
 			System.out.println(sentenceData09.toString());
 
 			saveToFile(sentenceData09, i);
@@ -189,12 +99,11 @@ public class ParserTest {
 			System.out.println("**************\nParsed:\n*******************");
 			SentenceData09 parsed = parser.applyTools(sentenceData09);
 			System.out.println(parsed);
-			
+
 			i++;
-			
+
 			System.out.println("#########################");
 		}
-
 	}
 
 	private SentenceData09 readFromFile(int i) {
@@ -220,7 +129,5 @@ public class ParserTest {
 		} finally {
 			pw.close();
 		}
-
 	}
-
 }
