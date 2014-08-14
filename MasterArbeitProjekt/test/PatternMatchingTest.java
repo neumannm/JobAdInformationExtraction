@@ -253,4 +253,14 @@ public class PatternMatchingTest {
 
 		System.out.println("Anzahl Ergebnisse: " + count);
 	}
+	
+	@Test
+	public void printRegExes(){
+		PatternMatcher pm = new PatternMatcher();
+		Map<Pattern, Class> regExes = pm.getRegExes();
+		for (Pattern p : regExes.keySet()) {
+			System.out.println(p.pattern());
+			System.out.println();
+		}
+	}
 }

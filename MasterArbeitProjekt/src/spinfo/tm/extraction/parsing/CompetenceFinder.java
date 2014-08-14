@@ -3,15 +3,12 @@ package spinfo.tm.extraction.parsing;
 import is2.data.SentenceData09;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import spinfo.tm.data.ClassifyUnit;
 import spinfo.tm.extraction.data.SlotFiller;
-import spinfo.tm.extraction.parsing.util.Relation;
 
 /**
  * Use parsed data to find Competences by inspecting dependency relations
@@ -25,15 +22,15 @@ import spinfo.tm.extraction.parsing.util.Relation;
  */
 public class CompetenceFinder {
 
-	private Map<String, Relation> verbsOfInterest;
+	private List<String> verbsOfInterest;
 
 	public CompetenceFinder() {
 		if (verbsOfInterest == null) {
-			verbsOfInterest = new HashMap<String, Relation>();
+			verbsOfInterest = new ArrayList<String>();
 		}
 	}
 
-	public CompetenceFinder(Map<String, Relation> verbsOfInterest) {
+	public CompetenceFinder(List<String> verbsOfInterest) {
 		this();
 		this.verbsOfInterest = verbsOfInterest;
 	}
@@ -44,29 +41,15 @@ public class CompetenceFinder {
 		List<SentenceData09> parsedCU = cu.getSentenceData();
 
 		for (SentenceData09 sd : parsedCU) {
-			System.out.println("\n" + sd.toString());
+			// System.out.println("\n" + sd.toString());
 
 			String[] lemmas = sd.plemmas;
 
 			for (int i = 0; i < lemmas.length; i++) {
-				if (verbsOfInterest.containsKey(lemmas[i])) {
+				if (verbsOfInterest.contains(lemmas[i])) {
 					List<SlotFiller> filler = new ArrayList<>();
-					switch (verbsOfInterest.get(lemmas[i])) {
-					case OBJECT: {
-						filler.addAll(getObjects(lemmas[i], i + 1, sd));
-						break;
-					}
-					case SUBJECT: {
-						filler.add(getSubject(lemmas[i], i + 1, sd));
-						break;
-					}
-					case BOTH: {
-						filler.addAll(getSubjAndObj(lemmas[i], i + 1, sd));
-						break;
-					}
-					default:
-						break;
-					}
+
+					filler.addAll(lookForCompetences(lemmas[i], i + 1, sd));
 
 					/*
 					 * add result to list of results
@@ -79,7 +62,7 @@ public class CompetenceFinder {
 		return results;
 	}
 
-	private List<SlotFiller> getSubjAndObj(String lemma, int verbID,
+	private List<SlotFiller> lookForCompetences(String lemma, int verbID,
 			SentenceData09 sd) {
 		List<SlotFiller> filler = new ArrayList<>();
 
@@ -97,7 +80,7 @@ public class CompetenceFinder {
 					 * check subject: is it a noun phrase or pronoun?
 					 */
 					if ("PPER".equals(sbPOS)
-							&& ("wir".equals(dependant) || "sie"
+							&& ("wir".equals(dependantLemma) || "Sie"
 									.equals(dependant))) {
 						System.out.println("Subject is a Pronoun");
 						/*
@@ -113,55 +96,45 @@ public class CompetenceFinder {
 						 */
 						String argument = getPhrase(i, sd,
 								new TreeSet<Integer>());
-						// ...
-						// einzige Möglichkeit für position ist Token-Nr.! Die
-						// sich aber definitiv von der Token-Nr. aus dem
-						// Training
-						// unterscheiden wird, da hier Interpunktionen
-						// mitgezählt werden!
-						filler.add(new SlotFiller(argument, -1));
+
+						/*
+						 * einzige Möglichkeit für position ist Token-Nr.! Die
+						 * sich aber definitiv von der Token-Nr. aus dem
+						 * Training unterscheiden wird, da hier Interpunktionen
+						 * mitgezählt werden! Außerdem wird pro Satz neu
+						 * nummeriert.
+						 * 
+						 * --> TODO: Trainingsdaten ändern? (neu
+						 * trainieren mit anderem Tokenizer)
+						 */
+						filler.add(new SlotFiller(argument, i + 1));
 					}
 				}
 
-				if ("PD".equals(dependency)) {
-					System.out.println("Dependant '" + dependant
-							+ "' is possibly modifier for verb");
-					// TODO ?
-				}
-			}
-		}
-		return filler;
-	}
-
-	private SlotFiller getSubject(String lemma, int verbID, SentenceData09 sd) {
-		SlotFiller filler = null;
-		int[] heads = sd.pheads;
-		for (int i = 0; i < heads.length; i++) {
-			if (heads[i] == verbID) {
-				// lemma an dieser stelle hat als kopf das verb mit der geg. id
-				String dependant = sd.forms[i];
-				String dependantLemma = sd.plemmas[i];
-				String dependency = sd.plabels[i];
-
-				if ("SB".equals(dependency)) {
-					String sbPOS = sd.ppos[i];
-					// prüfe Subjekt: "wir", "Sie" oder was anderes?
-					if ("PPER".equals(sbPOS)
-							&& ("wir".equals(dependant) || "sie"
-									.equals(dependant))) {
-						System.out.println("Subject is a Pronoun");
-
-					} else if ("NN".equals(sbPOS)) {
-						System.out.println("Subject is a Noun");
-						String argument = getPhrase(i, sd,
-								new TreeSet<Integer>());
-						return new SlotFiller(argument, -1);
+				/*
+				 * tried to make use of modifiers but they are not connected to
+				 * the object but to the verb... is that a problem??
+				 */
+				else if ("PD".equals(dependency)) {
+					System.out
+							.println(String
+									.format("\tDependant '%s' is possibly modifier for verb %s (REL: %s, POS: %s)",
+											dependant, lemma, dependency,
+											sd.ppos[i]));
+					if ("ADJD".equals(sd.ppos[i])) {
+						// TODO predicate modifier for competence
 					}
-				}
-
-				if ("PD".equals(dependency)) {
-					System.out.println("Dependant '" + dependant
-							+ "' is possibly modifier for verb");
+					if ("NN".equals(sd.ppos[i])) {
+						// TODO predicate is possibly also competence (like in
+						// 'erforderlich sind Sprachkenntnisse' etc.)
+					}
+				} else if ("MO".equals(dependency)) {
+					System.out
+							.println(String
+									.format("\tDependant '%s' is possibly modifier for verb %s (REL: %s, POS: %s)",
+											dependant, lemma, dependency,
+											sd.ppos[i]));
+					// TODO use modifier for competence
 				}
 			}
 		}
@@ -177,11 +150,11 @@ public class CompetenceFinder {
 			if (heads[i] == verbID) {
 				// lemma an dieser stelle hat als kopf das verb mit der geg. id
 				String dependant = sd.forms[i];
-				String dependantLemma = sd.plemmas[i];
+				// String dependantLemma = sd.plemmas[i];
 				String dependency = sd.plabels[i];
 
 				if ("OA".equals(dependency) || "OA2".equals(dependency)
-						|| "OC".equals(dependency)) {
+						|| "OC".equals(dependency) || "OP".equals(dependency)) {
 					System.out.println(String.format(
 							"Found object for verb '%s':\t %s (DEP: %s )",
 							lemma.toUpperCase(), dependant, dependency));
@@ -191,7 +164,7 @@ public class CompetenceFinder {
 					// aber definitiv von der Token-Nr. aus dem Training
 					// unterscheiden wird, da hier Interpunktionen mitgezählt
 					// werden!
-					filler.add(new SlotFiller(argument, -1));
+					filler.add(new SlotFiller(argument, i + 1));
 				}
 			}
 		}
@@ -230,6 +203,9 @@ public class CompetenceFinder {
 			sb.append(sd.forms[i]).append(" ");
 		}
 
-		return sb.toString();
+		/*
+		 * Entferne Leerzeichen vor Satzzeichen
+		 */
+		return sb.toString().replaceAll("\\s(?=[.,:?!\"'*\\-\\(\\)])", "");
 	}
 }

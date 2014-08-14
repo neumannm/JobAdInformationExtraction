@@ -2,12 +2,12 @@ import is2.data.SentenceData09;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import spinfo.tm.data.ClassifyUnit;
@@ -16,7 +16,6 @@ import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.extraction.parsing.CompetenceFinder;
 import spinfo.tm.extraction.parsing.ParagraphParser;
-import spinfo.tm.extraction.parsing.util.Relation;
 import spinfo.tm.extraction.parsing.util.SentenceDataReader;
 import spinfo.tm.preprocessing.TrainingDataGenerator;
 
@@ -24,7 +23,7 @@ public class CompetenceFinderTest {
 
 	private List<ClassifyUnit> paragraphs;
 	private Map<UUID, ClassifyUnit> filteredClassifyUnits;
-	private Map<String, Relation> verbsOfInterest;
+	private List<String> verbsOfInterest;
 
 	private static final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
 	private static final String TRAININGDATAPARSEDFILE = "data/SingleClassTrainingDataParsed.txt";
@@ -56,16 +55,17 @@ public class CompetenceFinderTest {
 			filteredClassifyUnits.put(cu.getID(), cu);
 		}
 
-		verbsOfInterest = new HashMap<>();
-		verbsOfInterest.put("haben", Relation.OBJECT);
-		verbsOfInterest.put("sein", Relation.BOTH);
-		verbsOfInterest.put("verfügen", Relation.OBJECT);
-		verbsOfInterest.put("suchen", Relation.OBJECT);
-		verbsOfInterest.put("sollen", Relation.BOTH); // meistens 'sollte', also
-														// VMFIN
-		// (finites Modalverb)
-		verbsOfInterest.put("setzen", Relation.OBJECT); // 'setzen voraus'
-		verbsOfInterest.put("werden", Relation.SUBJECT); // 'wird vorausgesetzt'
+		verbsOfInterest = new ArrayList<>();
+		verbsOfInterest.add("haben");
+		verbsOfInterest.add("sein");
+		verbsOfInterest.add("verfügen");
+		verbsOfInterest.add("suchen");
+		verbsOfInterest.add("sollen"); // meistens 'sollte', also VMFIN (finites Modalverb)
+		verbsOfInterest.add("setzen"); // 'setzen voraus'
+		verbsOfInterest.add("werden"); // 'wird vorausgesetzt'
+		verbsOfInterest.add("wünschen"); // 'wir wünschen uns'
+		verbsOfInterest.add("müssen"); // 'Sie müssen'
+		verbsOfInterest.add("erwarten"); // 'wir erwarten'
 
 		System.out
 				.println("####################DONE SETUP######################");
@@ -88,16 +88,19 @@ public class CompetenceFinderTest {
 
 	@Test
 	public void testWithDummyData() {
-		verbsOfInterest = new HashMap<>();
-		verbsOfInterest.put("haben", Relation.OBJECT);
-		verbsOfInterest.put("sein", Relation.BOTH);
-		verbsOfInterest.put("verfügen", Relation.OBJECT);
-		verbsOfInterest.put("suchen", Relation.OBJECT);
-		verbsOfInterest.put("sollen", Relation.BOTH); // meistens 'sollte', also
-														// VMFIN
-		// (finites Modalverb)
-		verbsOfInterest.put("setzen", Relation.OBJECT); // 'setzen voraus'
-		verbsOfInterest.put("werden", Relation.SUBJECT); // 'wird vorausgesetzt'
+		verbsOfInterest = new ArrayList<>();
+		verbsOfInterest.add("haben");
+		verbsOfInterest.add("sein");
+		verbsOfInterest.add("verfügen");
+		verbsOfInterest.add("suchen");
+		verbsOfInterest.add("sollen"); // meistens 'sollte', also VMFIN (finites Modalverb)
+		verbsOfInterest.add("setzen"); // 'setzen voraus'
+		verbsOfInterest.add("werden"); // 'wird vorausgesetzt'
+		verbsOfInterest.add("wünschen"); // 'wir wünschen uns'
+		verbsOfInterest.add("müssen"); // 'Sie müssen'
+		verbsOfInterest.add("erwarten"); // 'wir erwarten'
+		verbsOfInterest.add("benötigen"); // 'Sie benötigen'
+
 
 		String paragraph = "Ideal ist, wenn Sie viel positive Energie haben, gerne Verantwortung übernehmen "
 				+ "und gerne Mitarbeiter führen. Gebraucht werden auch gute Englischkenntnisse und Führerschein"

@@ -88,7 +88,7 @@ public class PatternMatcher {
 		 */
 		lookbehind = "\\b((der(/die)?)|die) Bewerber(/?in)? sollte";
 		lookahead = "sein|mitbringen|haben";
-		p = Pattern.compile("(?<=" + lookbehind + ") ([^.\n]+?)(?=" + lookahead
+		p = Pattern.compile("(?<=" + lookbehind + ") ([^.\\n]+?)(?=" + lookahead
 				+ ")", Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
 
@@ -104,7 +104,7 @@ public class PatternMatcher {
 		 * 'X ist erforderlich' 
 		 * */
 		lookahead = "(ist|sind|wird|wäre(n)?)?? (wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet)";
-		p = Pattern.compile("(?<=\\.\\s?) ([^.\n]+?)(?=" + lookahead + ")");
+		p = Pattern.compile(/*(?<=\\.\\s?) */"([^.\\n]+?)(?=" + lookahead + ")");
 		regExes.put(p, Class.COMPETENCE);
 
 		/*
@@ -122,7 +122,7 @@ public class PatternMatcher {
 		 */
 		lookbehind = "(wir setzen | setzen wir )";
 		lookahead = "voraus\\.";
-		p = Pattern.compile("(?<=" + lookbehind + ")([^.\n]+?)(?=" + lookahead
+		p = Pattern.compile("(?<=" + lookbehind + ")([^.\\n]+?)(?=" + lookahead
 				+ ")", Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
 
@@ -164,7 +164,7 @@ public class PatternMatcher {
 		lookbehind = "";
 		lookahead = "";
 		p = Pattern.compile(
-				"(?=(berufs)?ausbildung)[^.\n]+(?=abgeschlossen\\.)",
+				"(?=(berufs)?ausbildung)[^.\\n]+(?=abgeschlossen\\.)",
 				Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
 
@@ -173,7 +173,7 @@ public class PatternMatcher {
 		 */
 		lookbehind = "";
 		lookahead = "";
-		p = Pattern.compile("(?=abgeschlossene (berufs)?ausbildung)[^.\n]+",
+		p = Pattern.compile("(?=abgeschlossene (berufs)?ausbildung)[^.\\n]+",
 				Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
 
@@ -190,7 +190,7 @@ public class PatternMatcher {
 		 */
 		lookbehind = "(Sie verfügen über)|(verfügen Sie über)|(Sie sind)|(Sie haben)";
 		lookahead = "";
-		p = Pattern.compile("(?<=" + lookbehind + ")[^.\n]+(?=" + lookahead
+		p = Pattern.compile("(?<=" + lookbehind + ")[^\\.\\n]+(?=" + lookahead
 				+ ")", Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
 
