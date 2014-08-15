@@ -51,25 +51,26 @@ public class ParagraphParser {
 
 	}
 
-	public Map<ClassifyUnit, List<SentenceData09>> parse(List<ClassifyUnit> cus) {
-		Map<ClassifyUnit, List<SentenceData09>> toReturn = new HashMap<ClassifyUnit, List<SentenceData09>>();
+	public List<ClassifyUnit> parse(List<ClassifyUnit> cus) {
+		List<ClassifyUnit> toReturn = new ArrayList<ClassifyUnit>();
 
 		for (ClassifyUnit classifyUnit : cus) {
-			List<SentenceData09> parsed = parse(classifyUnit);
-			toReturn.put(classifyUnit, parsed);
+			Map<String, SentenceData09> parsed = parse(classifyUnit);
+			classifyUnit.setSentenceData(parsed);
 		}
 
 		return toReturn;
 	}
 
-	public List<SentenceData09> parse(ClassifyUnit cu) {
-		List<SentenceData09> toReturn = new ArrayList<SentenceData09>();
+	public Map<String, SentenceData09> parse(ClassifyUnit cu) {
+		Map<String, SentenceData09> toReturn = new HashMap<String, SentenceData09>();
 
 		String paragraph = cu.getContent();
-		List<SentenceData09> processed = conv.convert(paragraph);
-		for (SentenceData09 sentenceData : processed) {
-			sentenceData = applyTools(sentenceData);
-			toReturn.add(sentenceData);
+		Map<String, SentenceData09> processed = conv.convert(paragraph);
+		SentenceData09 sentenceData;
+		for (String sentence : processed.keySet()) {
+			sentenceData = applyTools(processed.get(sentence));
+			toReturn.put(sentence, sentenceData);
 		}
 
 		return toReturn;

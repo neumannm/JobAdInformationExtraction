@@ -7,7 +7,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
@@ -79,8 +80,8 @@ public class Paragraph2SentenceDataConverter {
 	 *            Paragraph to be converted
 	 * @return List of {@link SentenceData09} Objects
 	 */
-	public List<SentenceData09> convert(String paragraph) {
-		List<SentenceData09> toReturn = new ArrayList<SentenceData09>();
+	public Map<String, SentenceData09> convert(String paragraph) {
+		Map<String, SentenceData09> toReturn = new HashMap<String, SentenceData09>();
 
 		String[] sentences = splitIntoSentences(paragraph);
 
@@ -97,7 +98,7 @@ public class Paragraph2SentenceDataConverter {
 				forms.add(token);
 
 			sentenceData.init(forms.toArray(new String[0]));
-			toReturn.add(sentenceData);
+			toReturn.put(sentence,sentenceData);
 		}
 
 		return toReturn;

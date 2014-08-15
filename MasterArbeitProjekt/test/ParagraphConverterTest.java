@@ -1,6 +1,7 @@
 import is2.data.SentenceData09;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -17,9 +18,10 @@ public class ParagraphConverterTest {
 				+ " Klasse B (3). Außerdem sollten Sie idealerweise ausgelernt haben und mindestens schon einmal "
 				+ "in einer Klinik gearbeitet haben und die Abläufe kennen.";
 
-		List<SentenceData09> sentenceData = conv.convert(paragraph);
+		Map<String, SentenceData09> converted = conv.convert(paragraph);
 
-		for (SentenceData09 sentenceData09 : sentenceData) {
+		for (String sentence : converted.keySet()) {
+			SentenceData09 sentenceData09 = converted.get(sentence);
 			String[] forms = sentenceData09.forms;
 			System.out.print("[");
 			for (String form : forms) {

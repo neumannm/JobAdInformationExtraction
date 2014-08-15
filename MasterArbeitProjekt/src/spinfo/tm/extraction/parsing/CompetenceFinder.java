@@ -4,6 +4,7 @@ import is2.data.SentenceData09;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -38,10 +39,12 @@ public class CompetenceFinder {
 	public List<SlotFiller> findCompetences(ClassifyUnit cu) {
 		List<SlotFiller> results = new ArrayList<SlotFiller>();
 
-		List<SentenceData09> parsedCU = cu.getSentenceData();
+		Map<String, SentenceData09> parsedCU = cu.getSentenceData();
+		SentenceData09 sd;
+		for (String sentence : parsedCU.keySet()) {
+			sd = parsedCU.get(sentence);
 
-		for (SentenceData09 sd : parsedCU) {
-			// System.out.println("\n" + sd.toString());
+			System.out.println("\n" + sd.toString());
 
 			String[] lemmas = sd.plemmas;
 
@@ -49,7 +52,7 @@ public class CompetenceFinder {
 				if (verbsOfInterest.contains(lemmas[i])) {
 					List<SlotFiller> filler = new ArrayList<>();
 
-					filler.addAll(lookForCompetences(lemmas[i], i + 1, sd));
+					filler.addAll(lookForCompetences(lemmas[i], i + 1, sd, cu));
 
 					/*
 					 * add result to list of results
@@ -63,7 +66,7 @@ public class CompetenceFinder {
 	}
 
 	private List<SlotFiller> lookForCompetences(String lemma, int verbID,
-			SentenceData09 sd) {
+			SentenceData09 sd, ClassifyUnit cu) {
 		List<SlotFiller> filler = new ArrayList<>();
 
 		int[] heads = sd.pheads;
@@ -86,7 +89,7 @@ public class CompetenceFinder {
 						/*
 						 * Process, i.e. look for competences in verb's objects
 						 */
-						filler.addAll(getObjects(lemma, verbID, sd));
+						filler.addAll(getObjects(lemma, verbID, sd, cu));
 					} else if ("NN".equals(sbPOS)) {
 						System.out.println(String.format(
 								"Subject is a Noun (%s)", dependant));
@@ -104,10 +107,10 @@ public class CompetenceFinder {
 						 * mitgezählt werden! Außerdem wird pro Satz neu
 						 * nummeriert.
 						 * 
-						 * --> TODO: Trainingsdaten ändern? (neu
-						 * trainieren mit anderem Tokenizer)
+						 * --> TODO: Trainingsdaten ändern? (neu trainieren mit
+						 * anderem Tokenizer)
 						 */
-						filler.add(new SlotFiller(argument, i + 1));
+						filler.add(new SlotFiller(argument, cu.getID()));
 					}
 				}
 
@@ -142,7 +145,7 @@ public class CompetenceFinder {
 	}
 
 	private List<SlotFiller> getObjects(String lemma, int verbID,
-			SentenceData09 sd) {
+			SentenceData09 sd, ClassifyUnit cu) {
 		List<SlotFiller> filler = new ArrayList<>();
 
 		int[] heads = sd.pheads;
@@ -159,12 +162,8 @@ public class CompetenceFinder {
 							"Found object for verb '%s':\t %s (DEP: %s )",
 							lemma.toUpperCase(), dependant, dependency));
 					String argument = getPhrase(i, sd, new TreeSet<Integer>());
-					// ...
-					// einzige Möglichkeit für position ist Token-Nr.! Die sich
-					// aber definitiv von der Token-Nr. aus dem Training
-					// unterscheiden wird, da hier Interpunktionen mitgezählt
-					// werden!
-					filler.add(new SlotFiller(argument, i + 1));
+					
+					filler.add(new SlotFiller(argument, cu.getID()));
 				}
 			}
 		}

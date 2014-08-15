@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import spinfo.tm.data.ClassifyUnit;
@@ -25,8 +24,7 @@ public class PatternMatchingTest {
 	private Map<UUID, ClassifyUnit> classifyUnits = new HashMap<UUID, ClassifyUnit>();
 	private Map<ClassifyUnit, JobAd> map;
 
-	@Before
-	public void setUp() throws IOException {
+	private void setUp() throws IOException {
 		File trainingDataFile = new File(
 				"data/SingleClassTrainingDataFiltered.csv");
 		/* Training data generation */
@@ -89,19 +87,11 @@ public class PatternMatchingTest {
 		ClassifyUnit cu = new ClassifyUnit(content, 0);
 		List<SlotFiller> result = pm.getContentOfInterest(cu, null);
 		List<SlotFiller> vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Zuverlässigkeit", 0));
-		vorlage.add(new SlotFiller("Kompetenz", 0));
-		vorlage.add(new SlotFiller("Sie sind einfach ganz toll", 0));
+		vorlage.add(new SlotFiller("Zuverlässigkeit", cu.getID()));
+		vorlage.add(new SlotFiller("Kompetenz", cu.getID()));
+		vorlage.add(new SlotFiller("Sie sind einfach ganz toll", cu.getID()));
 
-		for (SlotFiller slotFiller : vorlage) {
-			System.out.println(String.format("Vorlage: '%s' - contained: %s",
-					slotFiller, result.contains(slotFiller)));
-			if (!result.contains(slotFiller))
-				System.out.println("\tResult: " + result);
-			// Assert.assertTrue(String.format(
-			// "Result should contain '%s',  but didn't. (result: %s)",
-			// slotFiller.getContent(), result), result.contains(slotFiller));
-		}
+		printResults(vorlage, result);
 
 		/* 'sollte X sein/haben/mitbringen' */
 		content = "Der Bewerber sollte fit sein. "
@@ -110,31 +100,21 @@ public class PatternMatchingTest {
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("fit", 0));
-		vorlage.add(new SlotFiller("viel Make-up", 0));
-		vorlage.add(new SlotFiller("seine/ihre eigenen Klamotten", 0));
+		vorlage.add(new SlotFiller("fit", cu.getID()));
+		vorlage.add(new SlotFiller("viel Make-up", cu.getID()));
+		vorlage.add(new SlotFiller("seine/ihre eigenen Klamotten", cu.getID()));
 
-		for (SlotFiller slotFiller : vorlage) {
-			System.out.println(String.format("Vorlage: '%s' - contained: %s",
-					slotFiller, result.contains(slotFiller)));
-			if (!result.contains(slotFiller))
-				System.out.println("\tResult: " + result);
-		}
+		printResults(vorlage, result);
 
 		/* Jobbezeichnung */
 		content = "Wir suchen eine/n Bankkauffrau/-mann. Wir suchen weiterhin eine/n Frisör/in.";
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Bankkauffrau/-mann", 0));
-		vorlage.add(new SlotFiller("Frisör/in", 0));
+		vorlage.add(new SlotFiller("Bankkauffrau/-mann", cu.getID()));
+		vorlage.add(new SlotFiller("Frisör/in", cu.getID()));
 
-		for (SlotFiller slotFiller : vorlage) {
-			System.out.println(String.format("Vorlage: '%s' - contained: %s",
-					slotFiller, result.contains(slotFiller)));
-			if (!result.contains(slotFiller))
-				System.out.println("\tResult: " + result);
-		}
+		printResults(vorlage, result);
 
 		/*
 		 * 'ist|sind|wird|wäre(n) ...
@@ -146,31 +126,21 @@ public class PatternMatchingTest {
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Zuverlässigkeit", 0));
-		vorlage.add(new SlotFiller("weiterhin wird Wissen", 0));
-		vorlage.add(new SlotFiller("Gute Manieren", 0));
+		vorlage.add(new SlotFiller("Zuverlässigkeit", cu.getID()));
+		vorlage.add(new SlotFiller("weiterhin wird Wissen", cu.getID()));
+		vorlage.add(new SlotFiller("Gute Manieren", cu.getID()));
 
-		for (SlotFiller slotFiller : vorlage) {
-			System.out.println(String.format("Vorlage: '%s' - contained: %s",
-					slotFiller, result.contains(slotFiller)));
-			if (!result.contains(slotFiller))
-				System.out.println("\tResult: " + result);
-		}
+		printResults(vorlage, result);
 
 		/* vorausgesetzt wird X / Voraussetzung ist X */
 		content = "Vorausgesetzt wird gutes Benehmen. Voraussetzung ist unbedingt höfliches Auftreten. Und noch mehr.";
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("gutes Benehmen", 0));
-		vorlage.add(new SlotFiller("unbedingt höfliches Auftreten", 0));
+		vorlage.add(new SlotFiller("gutes Benehmen", cu.getID()));
+		vorlage.add(new SlotFiller("unbedingt höfliches Auftreten", cu.getID()));
 
-		for (SlotFiller slotFiller : vorlage) {
-			System.out.println(String.format("Vorlage: '%s' - contained: %s",
-					slotFiller, result.contains(slotFiller)));
-			if (!result.contains(slotFiller))
-				System.out.println("\tResult: " + result);
-		}
+		printResults(vorlage, result);
 
 		/*
 		 * wird X vorausgesetzt / werden XY vorausgesetzt / wird X erwartet /
@@ -182,17 +152,13 @@ public class PatternMatchingTest {
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Dass Sie schicke Anzüge besitzen", 0));
-		vorlage.add(new SlotFiller("Dass Sie gut riechen", 0));
-		vorlage.add(new SlotFiller("Auch Stil und gutes Aussehen", 0));
-		vorlage.add(new SlotFiller("Bereitschaft zu harter Arbeit", 0));
+		vorlage.add(new SlotFiller("Dass Sie schicke Anzüge besitzen", cu
+				.getID()));
+		vorlage.add(new SlotFiller("Dass Sie gut riechen", cu.getID()));
+		vorlage.add(new SlotFiller("Auch Stil und gutes Aussehen", cu.getID()));
+		vorlage.add(new SlotFiller("Bereitschaft zu harter Arbeit", cu.getID()));
 
-		for (SlotFiller slotFiller : vorlage) {
-			System.out.println(String.format("Vorlage: '%s' - contained: %s",
-					slotFiller, result.contains(slotFiller)));
-			if (!result.contains(slotFiller))
-				System.out.println("\tResult: " + result);
-		}
+		printResults(vorlage, result);
 
 		/* wir setzen X voraus / setzen wir X voraus */
 		content = "Darum setzen wir schicke Anzüge voraus. "
@@ -200,35 +166,41 @@ public class PatternMatchingTest {
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("schicke Anzüge", 0));
-		vorlage.add(new SlotFiller("dass Sie schön sind", 0));
+		vorlage.add(new SlotFiller("schicke Anzüge", cu.getID()));
+		vorlage.add(new SlotFiller("dass Sie schön sind", cu.getID()));
 
-		for (SlotFiller slotFiller : vorlage) {
-			System.out.println(String.format("Vorlage: '%s' - contained: %s",
-					slotFiller, result.contains(slotFiller)));
-			if (!result.contains(slotFiller))
-				System.out.println("\tResult: " + result);
-		}
+		printResults(vorlage, result);
 
 		/* -heit/-keit */
 		content = "Wir wünschen uns Ehrlichkeit, Pünktlichkeit und Zuverlässigkeit. Aber nicht zu viel davon.";
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Ehrlichkeit", 0));
-		vorlage.add(new SlotFiller("Pünktlichkeit", 0));
-		vorlage.add(new SlotFiller("Zuverlässigkeit", 0));
+		vorlage.add(new SlotFiller("Ehrlichkeit", cu.getID()));
+		vorlage.add(new SlotFiller("Pünktlichkeit", cu.getID()));
+		vorlage.add(new SlotFiller("Zuverlässigkeit", cu.getID()));
 
+		printResults(vorlage, result);
+
+	}
+
+	private void printResults(List<SlotFiller> vorlage, List<SlotFiller> result) {
 		for (SlotFiller slotFiller : vorlage) {
 			System.out.println(String.format("Vorlage: '%s' - contained: %s",
 					slotFiller, result.contains(slotFiller)));
 			if (!result.contains(slotFiller))
 				System.out.println("\tResult: " + result);
+			// Assert.assertTrue(String.format(
+			// "Result should contain '%s',  but didn't. (result: %s)",
+			// slotFiller.getContent(), result), result.contains(slotFiller));
 		}
+		System.out.println();
 	}
 
 	@Test
 	public void testWithRealData() throws IOException {
+		setUp();
+
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
 				"data/trainingIE_140623.csv"), Class.COMPETENCE, classifyUnits);
 
@@ -253,9 +225,9 @@ public class PatternMatchingTest {
 
 		System.out.println("Anzahl Ergebnisse: " + count);
 	}
-	
+
 	@Test
-	public void printRegExes(){
+	public void printRegExes() {
 		PatternMatcher pm = new PatternMatcher();
 		Map<Pattern, Class> regExes = pm.getRegExes();
 		for (Pattern p : regExes.keySet()) {

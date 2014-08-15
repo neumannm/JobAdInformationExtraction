@@ -61,12 +61,12 @@ public class ParserTest {
 		Writer w = new PrintWriter("output.csv");
 		CONLLWriter09 writer = new is2.io.CONLLWriter09(w);
 
-		List<SentenceData09> parsed;
+		Map<String, SentenceData09> parsed;
 		for (UUID cuID : filteredClassifyUnits.keySet()) {
 
 			parsed = parser.parse(filteredClassifyUnits.get(cuID));
-			for (SentenceData09 sentenceData : parsed) {
-				writer.write(sentenceData, CONLLWriter09.NO_ROOT);
+			for (String sentence : parsed.keySet()) {
+				writer.write(parsed.get(sentence), CONLLWriter09.NO_ROOT);
 			}
 		}
 		writer.finishWriting();
@@ -83,10 +83,10 @@ public class ParserTest {
 				+ " Klasse B (3). Außerdem sollten Sie idealerweise ausgelernt haben und mindestens schon einmal "
 				+ "in einer Klinik gearbeitet haben und die Abläufe kennen.";
 
-		List<SentenceData09> sentenceData = conv.convert(paragraph);
+		Map<String, SentenceData09> sentenceData = conv.convert(paragraph);
 
 		int i = 0;
-		for (SentenceData09 sentenceData09 : sentenceData) {
+		for (SentenceData09 sentenceData09 : sentenceData.values()) {
 			System.out.println(sentenceData09.toString());
 
 			saveToFile(sentenceData09, i);

@@ -26,7 +26,6 @@ public class CompetenceFinderTest {
 	private List<String> verbsOfInterest;
 
 	private static final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
-	private static final String TRAININGDATAPARSEDFILE = "data/SingleClassTrainingDataParsed.txt";
 
 	public void setUp() throws IOException {
 		File trainingDataFile = new File(TRAININGDATAFILE);
@@ -50,7 +49,7 @@ public class CompetenceFinderTest {
 		ParagraphParser parser = new ParagraphParser();
 
 		for (ClassifyUnit cu : filteredParagraphs) {
-			List<SentenceData09> parse = parser.parse(cu);
+			Map<String, SentenceData09> parse = parser.parse(cu);
 			cu.setSentenceData(parse);
 			filteredClassifyUnits.put(cu.getID(), cu);
 		}
@@ -109,7 +108,7 @@ public class CompetenceFinderTest {
 
 		ClassifyUnit cu = new ClassifyUnit(paragraph, 0);
 		ParagraphParser parser = new ParagraphParser();
-		List<SentenceData09> parse = parser.parse(cu);
+		Map<String, SentenceData09> parse = parser.parse(cu);
 		cu.setSentenceData(parse);
 
 		CompetenceFinder finder = new CompetenceFinder(verbsOfInterest);
@@ -134,9 +133,8 @@ public class CompetenceFinderTest {
 
 		CompetenceFinder finder = new CompetenceFinder(verbsOfInterest);
 
-		ClassifyUnit cu = new ClassifyUnit(null, 0);
-		cu.setSentenceData(data);
-
-		finder.findCompetences(cu);
+//		List<SlotFiller> competences = finder.findCompetences(cu);
+//		System.out.println(competences);
+//		System.out.println("****************\n");
 	}
 }

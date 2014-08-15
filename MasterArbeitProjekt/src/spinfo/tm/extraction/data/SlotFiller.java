@@ -1,5 +1,7 @@
 package spinfo.tm.extraction.data;
 
+import java.util.UUID;
+
 /**
  * Slotfiller for an Information Extraction Template.
  * 
@@ -9,19 +11,19 @@ package spinfo.tm.extraction.data;
 public class SlotFiller {
 
 	private String content;
-	private int position;
+	private UUID classifyUnitID;
 
 	/**
 	 * Constructor for a Slot Filler
 	 * 
 	 * @param token
 	 *            Token for Slot Filler
-	 * @param pos
+	 * @param cuID
 	 *            Position in Text
 	 */
-	public SlotFiller(String token, int pos) {
+	public SlotFiller(String token, UUID cuID) {
 		this.content = token;
-		this.position = pos;
+		this.classifyUnitID = cuID;
 	}
 
 	/**
@@ -38,18 +40,17 @@ public class SlotFiller {
 	 * 
 	 * @return position
 	 */
-	public int getPosition() {
-		return position;
+	public UUID getClassifyUnitID() {
+		return classifyUnitID;
 	}
 
 	@Override
 	public String toString() {
-		return this.content + " (at " + this.position + ")";
+		return this.content + " (at " + this.classifyUnitID + ")";
 	}
 
 	/*
-	 * TODO: ist es eine gute Idee, an dieser Stelle Case, Interpunktion etc. zu
-	 * ignorieren? Oder woanders? (non-Javadoc)
+	 * (non-Javadoc)
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -57,10 +58,8 @@ public class SlotFiller {
 	public boolean equals(Object obj) {
 		if (obj instanceof SlotFiller) {
 			SlotFiller other = (SlotFiller) obj;
-			return this.content.trim().equalsIgnoreCase(other.content.trim()) /*
-													 * && this.position ==
-													 * other.position
-													 */;
+			return this.content.trim().equalsIgnoreCase(other.content.trim())
+					&& this.classifyUnitID.equals(other.classifyUnitID);
 		}
 		return super.equals(obj);
 	}

@@ -14,10 +14,7 @@ import spinfo.tm.data.ClassifyUnit;
 import spinfo.tm.extraction.ClassFilter;
 import spinfo.tm.extraction.IETrainingDataGenerator;
 import spinfo.tm.extraction.data.Class;
-import spinfo.tm.extraction.data.JobAd;
-import spinfo.tm.extraction.pattern.PatternMatcher;
 import spinfo.tm.preprocessing.TrainingDataGenerator;
-import spinfo.tm.util.UniversalMapper;
 
 /**
  * Test Class for Information Extraction Training.

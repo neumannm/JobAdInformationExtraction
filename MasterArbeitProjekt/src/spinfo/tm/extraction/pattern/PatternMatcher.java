@@ -30,7 +30,7 @@ public class PatternMatcher {
 		setupRegexes();
 	}
 
-	// TODO: change return type
+	// TODO: do something with template?
 	public List<SlotFiller> getContentOfInterest(ClassifyUnit unitToClassify,
 			Template template) {
 		List<SlotFiller> toReturn = new ArrayList<SlotFiller>();
@@ -40,13 +40,13 @@ public class PatternMatcher {
 		// List of matches for 1 classifyUnit:
 		List<TokenPosPair> results = match(content);
 		for (TokenPosPair result : results) {
-			toReturn.add(new SlotFiller(result.getToken(), result.getPosition()));
+			toReturn.add(new SlotFiller(result.getToken(), unitToClassify
+					.getID()));
 		}
 
 		return toReturn;
 	}
 
-	// TODO: change return type?
 	// TODO: prefer longer matches to shorter ones?
 	private List<TokenPosPair> match(String input) {
 		List<TokenPosPair> tokensAndPositions = new ArrayList<>();
@@ -61,8 +61,8 @@ public class PatternMatcher {
 				position = m.start();
 				tokensAndPositions.add(new TokenPosPair(token, position));
 				System.out.println(String.format(
-						"Matched %s at %s\n\twith Pattern %s", token, position,
-						pattern));
+						"Matched %s at position %s\n\twith Pattern %s", token,
+						position, pattern.pattern()));
 			}
 		}
 		return tokensAndPositions;
@@ -88,8 +88,8 @@ public class PatternMatcher {
 		 */
 		lookbehind = "\\b((der(/die)?)|die) Bewerber(/?in)? sollte";
 		lookahead = "sein|mitbringen|haben";
-		p = Pattern.compile("(?<=" + lookbehind + ") ([^.\\n]+?)(?=" + lookahead
-				+ ")", Pattern.CASE_INSENSITIVE);
+		p = Pattern.compile("(?<=" + lookbehind + ") ([^.\\n]+?)(?="
+				+ lookahead + ")", Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
 
 		/*
@@ -101,21 +101,36 @@ public class PatternMatcher {
 		regExes.put(p, Class.JOB_DESC);
 
 		/*
-		 * 'X ist erforderlich' 
-		 * */
-		lookahead = "(ist|sind|wird|wäre(n)?)?? (wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet)";
-		p = Pattern.compile(/*(?<=\\.\\s?) */"([^.\\n]+?)(?=" + lookahead + ")");
+		 * 'X ist erforderlich'
+		 */
+		lookahead = "(ist|sind|wird|wäre(n)?) (wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet)";
+		p = Pattern.compile("([^.\\n]+?)(?=" + lookahead + ")");
+		regExes.put(p, Class.COMPETENCE);
+
+		/*
+		 * '... wird X erwartet' etc.
+		 */
+		lookbehind = "ist|sind|wird|wäre(n)?+";
+		lookahead = "wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet";
+		p = Pattern.compile("(?<=" + lookbehind + ")([^.\\n]+?)(" + lookahead
+				+ ")");
+		regExes.put(p, Class.COMPETENCE);
+
+		/*
+		 * 'erwartet wird X' etc.
+		 */
+		lookbehind = "(wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet) (ist|sind|wird|wäre(n)?+)";
+		p = Pattern.compile("(?<=" + lookbehind + ")([^.\\n]+)",
+				Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
 
 		/*
 		 * 'vorausgesetzt wird X'
-		 * 
 		 */
 		lookbehind = "(vorausgesetzt wird |Voraussetzung ist |wir erwarten |wünschen (?:wir )?uns )";
 		p = Pattern.compile("(?<=" + lookbehind + ")(.+?)(?=\\.)",
 				Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
-
 
 		/*
 		 * 'wir setzen X voraus' | 'setzen wir X voraus'
@@ -151,7 +166,6 @@ public class PatternMatcher {
 
 		/*
 		 * Führerschein
-		 * 
 		 */
 		lookahead = "\\.|\\n"; // bis zum Satzende oder Zeilenumbruch
 		p = Pattern.compile("(Führerschein|FS) (Klasse|Kl.)? .+?(?="
@@ -189,9 +203,8 @@ public class PatternMatcher {
 		 * 'Sie verfügen über / verfügen Sie über ...'
 		 */
 		lookbehind = "(Sie verfügen über)|(verfügen Sie über)|(Sie sind)|(Sie haben)";
-		lookahead = "";
-		p = Pattern.compile("(?<=" + lookbehind + ")[^\\.\\n]+(?=" + lookahead
-				+ ")", Pattern.CASE_INSENSITIVE);
+		p = Pattern.compile("(?<=" + lookbehind + ")[^\\.\\n]+",
+				Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
 
 	}
