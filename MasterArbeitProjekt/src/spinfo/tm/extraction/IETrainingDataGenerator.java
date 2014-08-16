@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +17,7 @@ import java.util.UUID;
 
 import spinfo.tm.data.ClassifyUnit;
 import spinfo.tm.extraction.data.Class;
-import spinfo.tm.preprocessing.FeatureUnitTokenizer;
+import spinfo.tm.preprocessing.OpenNLPTokenizer;
 
 /**
  * Class to annotate tokens of ClassifyUnits manually, if they are Information
@@ -73,7 +75,7 @@ public class IETrainingDataGenerator {
 						+ "\nDrücken Sie 'x', wenn kein passendes Token vorhanden ist.\n");
 		String answer;
 
-		FeatureUnitTokenizer tokenizer = new FeatureUnitTokenizer();
+		OpenNLPTokenizer tokenizer = new OpenNLPTokenizer();
 
 		paragraphLoop: for (int i = start; i < paragraphsOfInterest.size(); i++) {
 			ClassifyUnit item = paragraphsOfInterest.get(i);
@@ -81,7 +83,13 @@ public class IETrainingDataGenerator {
 			System.out.println("ITEM " + (i + 1) + " von "
 					+ paragraphsOfInterest.size() + ": " + itemText);
 
-			List<String> tokens = tokenizer.tokenize(itemText);
+			String[] sentences = tokenizer.splitIntoSentences(itemText);
+
+			List<String> tokens = new ArrayList<>();
+			for (String sentence : sentences) {
+				tokens.addAll(Arrays.asList(tokenizer
+						.tokenizeSentence(sentence)));
+			}
 
 			for (int j = 0; j < tokens.size(); j++) {
 				System.out.println("TOKEN\t" + (j + 1) + ": " + tokens.get(j));
@@ -155,6 +163,9 @@ public class IETrainingDataGenerator {
 			try {
 				int start = Integer.parseInt(tokenPositions[0]);
 				int end = Integer.parseInt(tokenPositions[1]);
+
+				if (end >= tokens.size() || start < 1)
+					throw new IllegalArgumentException();
 
 				token = accumulateTokens(tokens, start - 1, end - 1);
 				tokenPosition = start - 1;

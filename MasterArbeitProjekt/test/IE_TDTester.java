@@ -60,7 +60,7 @@ public class IE_TDTester {
 				+ filteredParagraphs.size());
 
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
-				"trainingIE_140623.csv"), Class.COMPETENCE, classifyUnits);
+				"trainingIE_140816.csv"), Class.COMPETENCE, classifyUnits);
 
 		gen.annotate(filteredParagraphs);
 
