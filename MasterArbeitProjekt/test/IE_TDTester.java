@@ -104,7 +104,7 @@ public class IE_TDTester {
 	@Test
 	public void testGetTrainingData() throws IOException {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
-				"data/trainingIE_140623.csv"), Class.COMPETENCE, classifyUnits);
+				"data/trainingIE_140816.csv"), Class.COMPETENCE, classifyUnits);
 		Map<ClassifyUnit, Map<String, Integer>> templates;
 		try {
 			templates = gen.getTrainingData();

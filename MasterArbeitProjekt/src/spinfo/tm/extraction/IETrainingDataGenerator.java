@@ -164,7 +164,7 @@ public class IETrainingDataGenerator {
 				int start = Integer.parseInt(tokenPositions[0]);
 				int end = Integer.parseInt(tokenPositions[1]);
 
-				if (end >= tokens.size() || start < 1)
+				if (end > tokens.size() || start < 1)
 					throw new IllegalArgumentException();
 
 				token = accumulateTokens(tokens, start - 1, end - 1);
@@ -181,12 +181,18 @@ public class IETrainingDataGenerator {
 		return toReturn;
 	}
 
-	private String accumulateTokens(List<String> tokens, int start, int end) {
+	private String accumulateTokens(List<String> tokens, int start, int end) {		
+		/*
+		 * Phrase zusammensetzen
+		 */		
 		StringBuffer sb = new StringBuffer();
 		for (int i = start; i <= end; i++) {
-			sb.append(tokens.get(i) + " ");
+			sb.append(tokens.get(i)).append(" ");
 		}
-		return sb.toString().trim();
+		/*
+		 * Entferne Leerzeichen vor Satzzeichen
+		 */
+		return sb.toString().replaceAll("\\s(?=[.,:?!\"'*\\-\\(\\)])", "").trim();
 	}
 
 	private void writeToFile(Map<ClassifyUnit, Map<String, Integer>> data)
