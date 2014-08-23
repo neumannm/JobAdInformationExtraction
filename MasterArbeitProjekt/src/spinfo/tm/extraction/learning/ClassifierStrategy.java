@@ -1,10 +1,12 @@
 package spinfo.tm.extraction.learning;
 
 import spinfo.tm.extraction.data.Class;
+import spinfo.tm.extraction.data.SlotFiller;
+import spinfo.tm.extraction.data.SlotFillingAnchor;
 
 public interface ClassifierStrategy {
 
-	String classify(String token);
+	Class classify(SlotFillingAnchor token);
 
-	ClassifierStrategy train(String token, Class c);
+	ClassifierStrategy train(SlotFillingAnchor anchor, Class c);
 }

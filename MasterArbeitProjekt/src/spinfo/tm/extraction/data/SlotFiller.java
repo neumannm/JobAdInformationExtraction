@@ -1,6 +1,5 @@
 package spinfo.tm.extraction.data;
 
-import java.util.UUID;
 
 /**
  * Slotfiller for an Information Extraction Template.
@@ -11,7 +10,8 @@ import java.util.UUID;
 public class SlotFiller {
 
 	private String content;
-	private UUID classifyUnitID;
+	private int tokenPos;
+	private Class c;
 
 	/**
 	 * Constructor for a Slot Filler
@@ -19,11 +19,19 @@ public class SlotFiller {
 	 * @param token
 	 *            Token for Slot Filler
 	 * @param cuID
-	 *            Position in Text
+	 *            ClassifyUnit the filler belongs to
 	 */
-	public SlotFiller(String token, UUID cuID) {
+	public SlotFiller(String token, int tokenPos) {
 		this.content = token;
-		this.classifyUnitID = cuID;
+		this.tokenPos = tokenPos;
+	}
+
+	public void setC(Class c) {
+		this.c = c;
+	}
+
+	public Class getC() {
+		return c;
 	}
 
 	/**
@@ -40,13 +48,13 @@ public class SlotFiller {
 	 * 
 	 * @return position
 	 */
-	public UUID getClassifyUnitID() {
-		return classifyUnitID;
+	public int getTokenPosition() {
+		return tokenPos;
 	}
 
 	@Override
 	public String toString() {
-		return this.content + " (at " + this.classifyUnitID + ")";
+		return this.content + " (at " + this.tokenPos + ")";
 	}
 
 	/*
@@ -59,7 +67,7 @@ public class SlotFiller {
 		if (obj instanceof SlotFiller) {
 			SlotFiller other = (SlotFiller) obj;
 			return this.content.trim().equalsIgnoreCase(other.content.trim())
-					&& this.classifyUnitID.equals(other.classifyUnitID);
+					&& this.tokenPos == other.tokenPos;
 		}
 		return super.equals(obj);
 	}

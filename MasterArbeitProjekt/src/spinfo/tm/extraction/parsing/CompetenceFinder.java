@@ -101,16 +101,9 @@ public class CompetenceFinder {
 								new TreeSet<Integer>());
 
 						/*
-						 * einzige Möglichkeit für position ist Token-Nr.! Die
-						 * sich aber definitiv von der Token-Nr. aus dem
-						 * Training unterscheiden wird, da hier Interpunktionen
-						 * mitgezählt werden! Außerdem wird pro Satz neu
-						 * nummeriert.
-						 * 
-						 * --> TODO: Trainingsdaten ändern? (neu trainieren mit
-						 * anderem Tokenizer)
+						 * Achtung: pro Satz wird neu nummeriert. Token pos stimmt nicht
 						 */
-						filler.add(new SlotFiller(argument, cu.getID()));
+						filler.add(new SlotFiller(argument, i));
 					}
 				}
 
@@ -163,7 +156,7 @@ public class CompetenceFinder {
 							lemma.toUpperCase(), dependant, dependency));
 					String argument = getPhrase(i, sd, new TreeSet<Integer>());
 					
-					filler.add(new SlotFiller(argument, cu.getID()));
+					filler.add(new SlotFiller(argument, i));
 				}
 			}
 		}

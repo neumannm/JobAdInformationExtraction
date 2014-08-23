@@ -19,6 +19,8 @@ import spinfo.tm.extraction.data.Template;
  * 
  * TODO: größere Matches gegenüber kleineren bevorzugen, wie lässt sich das hier umsetzen?
  * 
+ * TODO: token position wird hier anders berechnet, nämlich als Zeichenposition!
+ * 
  * Idee: man könnte prüfen welche Teile übereinstimmen und nur diese zurückgeben - 
  * Problem: übereinstimmender Teil könnte zu klein sein (aber besser als zu groß oder?)
  */
@@ -30,21 +32,19 @@ public class PatternMatcher {
 		setupRegexes();
 	}
 
-	// TODO: do something with template?
-	public List<SlotFiller> getContentOfInterest(ClassifyUnit unitToClassify,
+	public Template getContentOfInterest(ClassifyUnit unitToClassify,
 			Template template) {
-		List<SlotFiller> toReturn = new ArrayList<SlotFiller>();
 
 		String content = unitToClassify.getContent();
 
 		// List of matches for 1 classifyUnit:
 		List<TokenPosPair> results = match(content);
 		for (TokenPosPair result : results) {
-			toReturn.add(new SlotFiller(result.getToken(), unitToClassify
-					.getID()));
+			template.addContent(new SlotFiller(result.getToken(), result
+					.getPosition()));
 		}
 
-		return toReturn;
+		return template;
 	}
 
 	// TODO: prefer longer matches to shorter ones?

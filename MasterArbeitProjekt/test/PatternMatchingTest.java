@@ -15,6 +15,7 @@ import spinfo.tm.extraction.IETrainingDataGenerator;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.JobAd;
 import spinfo.tm.extraction.data.SlotFiller;
+import spinfo.tm.extraction.data.Template;
 import spinfo.tm.extraction.pattern.PatternMatcher;
 import spinfo.tm.preprocessing.TrainingDataGenerator;
 import spinfo.tm.util.UniversalMapper;
@@ -85,11 +86,11 @@ public class PatternMatchingTest {
 		String content = "Unsere Anforderungen:\n" + "- Zuverlässigkeit\n"
 				+ "- Kompetenz\n" + "- Sie sind einfach ganz toll";
 		ClassifyUnit cu = new ClassifyUnit(content, 0);
-		List<SlotFiller> result = pm.getContentOfInterest(cu, null);
+		Template result = pm.getContentOfInterest(cu, null);
 		List<SlotFiller> vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Zuverlässigkeit", cu.getID()));
-		vorlage.add(new SlotFiller("Kompetenz", cu.getID()));
-		vorlage.add(new SlotFiller("Sie sind einfach ganz toll", cu.getID()));
+		vorlage.add(new SlotFiller("Zuverlässigkeit", 5));
+		vorlage.add(new SlotFiller("Kompetenz", 7));
+		vorlage.add(new SlotFiller("Sie sind einfach ganz toll", 9));
 
 		printResults(vorlage, result);
 
@@ -100,9 +101,9 @@ public class PatternMatchingTest {
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("fit", cu.getID()));
-		vorlage.add(new SlotFiller("viel Make-up", cu.getID()));
-		vorlage.add(new SlotFiller("seine/ihre eigenen Klamotten", cu.getID()));
+		vorlage.add(new SlotFiller("fit", 4));
+		vorlage.add(new SlotFiller("viel Make-up", 10));
+		vorlage.add(new SlotFiller("seine/ihre eigenen Klamotten", 18));
 
 		printResults(vorlage, result);
 
@@ -111,8 +112,8 @@ public class PatternMatchingTest {
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Bankkauffrau/-mann", cu.getID()));
-		vorlage.add(new SlotFiller("Frisör/in", cu.getID()));
+		vorlage.add(new SlotFiller("Bankkauffrau/-mann", 4));
+		vorlage.add(new SlotFiller("Frisör/in", 10));
 
 		printResults(vorlage, result);
 
@@ -126,9 +127,9 @@ public class PatternMatchingTest {
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Zuverlässigkeit", cu.getID()));
-		vorlage.add(new SlotFiller("weiterhin wird Wissen", cu.getID()));
-		vorlage.add(new SlotFiller("Gute Manieren", cu.getID()));
+		vorlage.add(new SlotFiller("Zuverlässigkeit", 1));
+		vorlage.add(new SlotFiller("weiterhin wird Wissen", 6));
+		vorlage.add(new SlotFiller("Gute Manieren", 21));
 
 		printResults(vorlage, result);
 
@@ -137,8 +138,8 @@ public class PatternMatchingTest {
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("gutes Benehmen", cu.getID()));
-		vorlage.add(new SlotFiller("unbedingt höfliches Auftreten", cu.getID()));
+		vorlage.add(new SlotFiller("gutes Benehmen", 3));
+		vorlage.add(new SlotFiller("unbedingt höfliches Auftreten", 8));
 
 		printResults(vorlage, result);
 
@@ -152,11 +153,10 @@ public class PatternMatchingTest {
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Dass Sie schicke Anzüge besitzen", cu
-				.getID()));
-		vorlage.add(new SlotFiller("Dass Sie gut riechen", cu.getID()));
-		vorlage.add(new SlotFiller("Auch Stil und gutes Aussehen", cu.getID()));
-		vorlage.add(new SlotFiller("Bereitschaft zu harter Arbeit", cu.getID()));
+		vorlage.add(new SlotFiller("Dass Sie schicke Anzüge besitzen", 0));
+		vorlage.add(new SlotFiller("Dass Sie gut riechen", 9));
+		vorlage.add(new SlotFiller("Auch Stil und gutes Aussehen", 23));
+		vorlage.add(new SlotFiller("Bereitschaft zu harter Arbeit", 16));
 
 		printResults(vorlage, result);
 
@@ -166,8 +166,8 @@ public class PatternMatchingTest {
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("schicke Anzüge", cu.getID()));
-		vorlage.add(new SlotFiller("dass Sie schön sind", cu.getID()));
+		vorlage.add(new SlotFiller("schicke Anzüge", 4));
+		vorlage.add(new SlotFiller("dass Sie schön sind", 10));
 
 		printResults(vorlage, result);
 
@@ -176,19 +176,19 @@ public class PatternMatchingTest {
 		cu = new ClassifyUnit(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Ehrlichkeit", cu.getID()));
-		vorlage.add(new SlotFiller("Pünktlichkeit", cu.getID()));
-		vorlage.add(new SlotFiller("Zuverlässigkeit", cu.getID()));
+		vorlage.add(new SlotFiller("Ehrlichkeit", 4));
+		vorlage.add(new SlotFiller("Pünktlichkeit", 6));
+		vorlage.add(new SlotFiller("Zuverlässigkeit", 8));
 
 		printResults(vorlage, result);
 
 	}
 
-	private void printResults(List<SlotFiller> vorlage, List<SlotFiller> result) {
+	private void printResults(List<SlotFiller> vorlage, Template result) {
 		for (SlotFiller slotFiller : vorlage) {
 			System.out.println(String.format("Vorlage: '%s' - contained: %s",
-					slotFiller, result.contains(slotFiller)));
-			if (!result.contains(slotFiller))
+					slotFiller, result.getContent().contains(slotFiller)));
+			if (!result.getContent().contains(slotFiller))
 				System.out.println("\tResult: " + result);
 			// Assert.assertTrue(String.format(
 			// "Result should contain '%s',  but didn't. (result: %s)",
@@ -213,10 +213,9 @@ public class PatternMatchingTest {
 			// System.out.println(cu);
 
 			JobAd parent = map.get(cu);
-			List<SlotFiller> sf = pm.getContentOfInterest(cu,
-					parent.getTemplate());
-			count += sf.size();
-			for (SlotFiller slotFiller : sf) {
+			Template result = pm.getContentOfInterest(cu, parent.getTemplate());
+			count += result.size();
+			for (SlotFiller slotFiller : result.getContent()) {
 				System.out.println(slotFiller);
 			}
 

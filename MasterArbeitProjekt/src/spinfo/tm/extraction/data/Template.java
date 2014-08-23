@@ -1,18 +1,18 @@
 package spinfo.tm.extraction.data;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class representing an Information Extraction Template.
  * 
- * @author mandy
+ * @author neumannm
  * 
  */
 public class Template {
 
 	private static int count;
-	private Map<Class, SlotFiller> content = new TreeMap<>();
+	private List<SlotFiller> content = new ArrayList<>();
 	private int jobAdID;
 	private int id;
 
@@ -34,21 +34,10 @@ public class Template {
 	 *            Class of content to be added
 	 * @param f
 	 *            Conent to be added
-	 * @return updated instance of Template
+	 * @return true iff adding was successful
 	 */
-	public SlotFiller addContent(Class c, SlotFiller f) {
-		return content.put(c, f);
-	}
-
-	/**
-	 * Get all content that belongs to a specific class.
-	 * 
-	 * @param c
-	 *            Class
-	 * @return SlotFiller associated with this class
-	 */
-	public SlotFiller getContentForClass(Class c) {
-		return content.get(c);
+	public boolean addContent(SlotFiller f) {
+		return content.add(f);
 	}
 
 	private void setParentID(int parentID) {
@@ -77,9 +66,22 @@ public class Template {
 		return id;
 	}
 
+	/**
+	 * Get the template's content
+	 * 
+	 * @return SlotFillers
+	 */
+	public List<SlotFiller> getContent() {
+		return content;
+	}
+
 	@Override
 	public String toString() {
 		return String.format("Template for jobAd with ID %s. Content: %s",
 				jobAdID, content);
+	}
+
+	public int size() {
+		return this.content.size();
 	}
 }
