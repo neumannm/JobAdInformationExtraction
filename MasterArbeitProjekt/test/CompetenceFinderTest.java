@@ -21,7 +21,6 @@ import spinfo.tm.preprocessing.TrainingDataGenerator;
 
 public class CompetenceFinderTest {
 
-	private List<ClassifyUnit> paragraphs;
 	private Map<UUID, ClassifyUnit> filteredClassifyUnits;
 	private List<String> verbsOfInterest;
 
@@ -31,7 +30,7 @@ public class CompetenceFinderTest {
 		File trainingDataFile = new File(TRAININGDATAFILE);
 		TrainingDataGenerator tdg = new TrainingDataGenerator(trainingDataFile);
 
-		paragraphs = tdg.getTrainingData();
+		List<ClassifyUnit> paragraphs = tdg.getTrainingData();
 		System.out.println("Anzahl ClassifyUnits insgesamt: "
 				+ paragraphs.size());
 
@@ -49,8 +48,7 @@ public class CompetenceFinderTest {
 		ParagraphParser parser = new ParagraphParser();
 
 		for (ClassifyUnit cu : filteredParagraphs) {
-			Map<String, SentenceData09> parse = parser.parse(cu);
-			cu.setSentenceData(parse);
+			parser.parse(cu);
 			filteredClassifyUnits.put(cu.getID(), cu);
 		}
 
@@ -59,7 +57,8 @@ public class CompetenceFinderTest {
 		verbsOfInterest.add("sein");
 		verbsOfInterest.add("verfügen");
 		verbsOfInterest.add("suchen");
-		verbsOfInterest.add("sollen"); // meistens 'sollte', also VMFIN (finites Modalverb)
+		verbsOfInterest.add("sollen"); // meistens 'sollte', also VMFIN (finites
+										// Modalverb)
 		verbsOfInterest.add("setzen"); // 'setzen voraus'
 		verbsOfInterest.add("werden"); // 'wird vorausgesetzt'
 		verbsOfInterest.add("wünschen"); // 'wir wünschen uns'
@@ -92,14 +91,14 @@ public class CompetenceFinderTest {
 		verbsOfInterest.add("sein");
 		verbsOfInterest.add("verfügen");
 		verbsOfInterest.add("suchen");
-		verbsOfInterest.add("sollen"); // meistens 'sollte', also VMFIN (finites Modalverb)
+		verbsOfInterest.add("sollen"); // meistens 'sollte', also VMFIN (finites
+										// Modalverb)
 		verbsOfInterest.add("setzen"); // 'setzen voraus'
 		verbsOfInterest.add("werden"); // 'wird vorausgesetzt'
 		verbsOfInterest.add("wünschen"); // 'wir wünschen uns'
 		verbsOfInterest.add("müssen"); // 'Sie müssen'
 		verbsOfInterest.add("erwarten"); // 'wir erwarten'
 		verbsOfInterest.add("benötigen"); // 'Sie benötigen'
-
 
 		String paragraph = "Ideal ist, wenn Sie viel positive Energie haben, gerne Verantwortung übernehmen "
 				+ "und gerne Mitarbeiter führen. Gebraucht werden auch gute Englischkenntnisse und Führerschein"
@@ -108,8 +107,7 @@ public class CompetenceFinderTest {
 
 		ClassifyUnit cu = new ClassifyUnit(paragraph, 0);
 		ParagraphParser parser = new ParagraphParser();
-		Map<String, SentenceData09> parse = parser.parse(cu);
-		cu.setSentenceData(parse);
+		parser.parse(cu);
 
 		CompetenceFinder finder = new CompetenceFinder(verbsOfInterest);
 
@@ -133,8 +131,8 @@ public class CompetenceFinderTest {
 
 		CompetenceFinder finder = new CompetenceFinder(verbsOfInterest);
 
-//		List<SlotFiller> competences = finder.findCompetences(cu);
-//		System.out.println(competences);
-//		System.out.println("****************\n");
+		// List<SlotFiller> competences = finder.findCompetences(cu);
+		// System.out.println(competences);
+		// System.out.println("****************\n");
 	}
 }

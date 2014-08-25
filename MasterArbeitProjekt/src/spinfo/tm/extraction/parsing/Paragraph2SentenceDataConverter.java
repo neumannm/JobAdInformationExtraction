@@ -27,29 +27,28 @@ public class Paragraph2SentenceDataConverter {
 	 *            Paragraph to be converted
 	 * @return List of {@link SentenceData09} Objects
 	 */
-	public Map<String, SentenceData09> convert(String paragraph) {
-		Map<String, SentenceData09> toReturn = new HashMap<String, SentenceData09>();
+	public Map<Integer, SentenceData09> convert(String paragraph) {
+		Map<Integer, SentenceData09> toReturn = new HashMap<>();
 
 		OpenNLPTokenizer splitter = new OpenNLPTokenizer();
 		String[] sentences = splitter.splitIntoSentences(paragraph);
 
 		SentenceData09 sentenceData;
 
-		for (String sentence : sentences) {
+		for (int i = 0; i < sentences.length; i++) {
+			
 			sentenceData = new SentenceData09();
 
 			ArrayList<String> forms = new ArrayList<String>();
-			String[] tokens = splitter.tokenizeSentence(sentence);
+			String[] tokens = splitter.tokenizeSentence(sentences[i]);
 			forms.add(CONLLReader09.ROOT);
 
 			for (String token : tokens)
 				forms.add(token);
 
 			sentenceData.init(forms.toArray(new String[0]));
-			toReturn.put(sentence, sentenceData);
+			toReturn.put(i, sentenceData);
 		}
-
 		return toReturn;
 	}
-
 }

@@ -63,11 +63,13 @@ public class ParserTest {
 
 		Map<String, SentenceData09> parsed;
 		for (UUID cuID : filteredClassifyUnits.keySet()) {
+			ClassifyUnit classifyUnit = filteredClassifyUnits.get(cuID);
+			parser.parse(classifyUnit);
 
-			parsed = parser.parse(filteredClassifyUnits.get(cuID));
-			for (String sentence : parsed.keySet()) {
-				writer.write(parsed.get(sentence), CONLLWriter09.NO_ROOT);
-			}
+//			for (Integer sentence : classifyUnit.getSentenceData().keySet()) {
+//				writer.write(classifyUnit.getSentenceData().get(sentence),
+//						CONLLWriter09.NO_ROOT);
+//			}
 		}
 		writer.finishWriting();
 	}
@@ -83,7 +85,7 @@ public class ParserTest {
 				+ " Klasse B (3). Außerdem sollten Sie idealerweise ausgelernt haben und mindestens schon einmal "
 				+ "in einer Klinik gearbeitet haben und die Abläufe kennen.";
 
-		Map<String, SentenceData09> sentenceData = conv.convert(paragraph);
+		Map<Integer, SentenceData09> sentenceData = conv.convert(paragraph);
 
 		int i = 0;
 		for (SentenceData09 sentenceData09 : sentenceData.values()) {

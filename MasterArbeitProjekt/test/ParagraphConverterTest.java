@@ -18,9 +18,9 @@ public class ParagraphConverterTest {
 				+ " Klasse B (3). Außerdem sollten Sie idealerweise ausgelernt haben und mindestens schon einmal "
 				+ "in einer Klinik gearbeitet haben und die Abläufe kennen.";
 
-		Map<String, SentenceData09> converted = conv.convert(paragraph);
+		Map<Integer, SentenceData09> converted = conv.convert(paragraph);
 
-		for (String sentence : converted.keySet()) {
+		for (Integer sentence : converted.keySet()) {
 			SentenceData09 sentenceData09 = converted.get(sentence);
 			String[] forms = sentenceData09.forms;
 			System.out.print("[");

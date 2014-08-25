@@ -6,8 +6,6 @@ import is2.parser.Parser;
 import is2.tag.Tagger;
 import is2.tools.Tool;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import spinfo.tm.data.ClassifyUnit;
+import spinfo.tm.extraction.parsing.util.SentenceDataConverter;
 
 public class ParagraphParser {
 
@@ -52,28 +51,22 @@ public class ParagraphParser {
 	}
 
 	public List<ClassifyUnit> parse(List<ClassifyUnit> cus) {
-		List<ClassifyUnit> toReturn = new ArrayList<ClassifyUnit>();
-
 		for (ClassifyUnit classifyUnit : cus) {
-			Map<String, SentenceData09> parsed = parse(classifyUnit);
-			classifyUnit.setSentenceData(parsed);
+			parse(classifyUnit);
 		}
-
-		return toReturn;
+		return cus;
 	}
 
-	public Map<String, SentenceData09> parse(ClassifyUnit cu) {
-		Map<String, SentenceData09> toReturn = new HashMap<String, SentenceData09>();
-
+	public void parse(ClassifyUnit cu) {
 		String paragraph = cu.getContent();
-		Map<String, SentenceData09> processed = conv.convert(paragraph);
+		Map<Integer, SentenceData09> processed = conv.convert(paragraph);
 		SentenceData09 sentenceData;
-		for (String sentence : processed.keySet()) {
+		for (Integer sentence : processed.keySet()) {
 			sentenceData = applyTools(processed.get(sentence));
-			toReturn.put(sentence, sentenceData);
+			processed.put(sentence, sentenceData);
 		}
 
-		return toReturn;
+		cu.setSentenceData(SentenceDataConverter.convert(processed, cu.getID()));
 	}
 
 	public SentenceData09 applyTools(SentenceData09 sentenceData) {

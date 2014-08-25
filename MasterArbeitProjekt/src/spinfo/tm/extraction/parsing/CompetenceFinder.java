@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import spinfo.tm.data.ClassifyUnit;
+import spinfo.tm.data.Sentence;
 import spinfo.tm.extraction.data.SlotFiller;
 
 /**
@@ -39,14 +40,14 @@ public class CompetenceFinder {
 	public List<SlotFiller> findCompetences(ClassifyUnit cu) {
 		List<SlotFiller> results = new ArrayList<SlotFiller>();
 
-		Map<String, SentenceData09> parsedCU = cu.getSentenceData();
-		SentenceData09 sd;
-		for (String sentence : parsedCU.keySet()) {
+		Map<Integer, Sentence> parsedCU = cu.getSentenceData();
+		Sentence sd;
+		for (Integer sentence : parsedCU.keySet()) {
 			sd = parsedCU.get(sentence);
 
 			System.out.println("\n" + sd.toString());
 
-			String[] lemmas = sd.plemmas;
+			String[] lemmas = sd.getLemmas();
 
 			for (int i = 0; i < lemmas.length; i++) {
 				if (verbsOfInterest.contains(lemmas[i])) {
@@ -66,19 +67,19 @@ public class CompetenceFinder {
 	}
 
 	private List<SlotFiller> lookForCompetences(String lemma, int verbID,
-			SentenceData09 sd, ClassifyUnit cu) {
+			Sentence sd, ClassifyUnit cu) {
 		List<SlotFiller> filler = new ArrayList<>();
 
-		int[] heads = sd.pheads;
+		int[] heads = sd.getHeads();
 		for (int i = 0; i < heads.length; i++) {
 			if (heads[i] == verbID) {
 				// lemma an dieser stelle hat als kopf das verb mit der geg. id
-				String dependant = sd.forms[i];
-				String dependantLemma = sd.plemmas[i];
-				String dependency = sd.plabels[i];
+				String dependant = sd.getTokens()[i];
+				String dependantLemma = sd.getLemmas()[i];
+				String dependency = sd.getDepLabels()[i];
 
 				if ("SB".equals(dependency)) {
-					String sbPOS = sd.ppos[i];
+					String sbPOS = sd.getPOSTags()[i];
 					/*
 					 * check subject: is it a noun phrase or pronoun?
 					 */
@@ -101,7 +102,8 @@ public class CompetenceFinder {
 								new TreeSet<Integer>());
 
 						/*
-						 * Achtung: pro Satz wird neu nummeriert. Token pos stimmt nicht
+						 * Achtung: pro Satz wird neu nummeriert. Token pos
+						 * stimmt nicht
 						 */
 						filler.add(new SlotFiller(argument, i));
 					}
@@ -116,11 +118,11 @@ public class CompetenceFinder {
 							.println(String
 									.format("\tDependant '%s' is possibly modifier for verb %s (REL: %s, POS: %s)",
 											dependant, lemma, dependency,
-											sd.ppos[i]));
-					if ("ADJD".equals(sd.ppos[i])) {
+											sd.getPOSTags()[i]));
+					if ("ADJD".equals(sd.getPOSTags()[i])) {
 						// TODO predicate modifier for competence
 					}
-					if ("NN".equals(sd.ppos[i])) {
+					if ("NN".equals(sd.getPOSTags()[i])) {
 						// TODO predicate is possibly also competence (like in
 						// 'erforderlich sind Sprachkenntnisse' etc.)
 					}
@@ -129,7 +131,7 @@ public class CompetenceFinder {
 							.println(String
 									.format("\tDependant '%s' is possibly modifier for verb %s (REL: %s, POS: %s)",
 											dependant, lemma, dependency,
-											sd.ppos[i]));
+											sd.getPOSTags()[i]));
 					// TODO use modifier for competence
 				}
 			}
@@ -137,17 +139,17 @@ public class CompetenceFinder {
 		return filler;
 	}
 
-	private List<SlotFiller> getObjects(String lemma, int verbID,
-			SentenceData09 sd, ClassifyUnit cu) {
+	private List<SlotFiller> getObjects(String lemma, int verbID, Sentence sd,
+			ClassifyUnit cu) {
 		List<SlotFiller> filler = new ArrayList<>();
 
-		int[] heads = sd.pheads;
+		int[] heads = sd.getHeads();
 		for (int i = 0; i < heads.length; i++) {
 			if (heads[i] == verbID) {
 				// lemma an dieser stelle hat als kopf das verb mit der geg. id
-				String dependant = sd.forms[i];
+				String dependant = sd.getTokens()[i];
 				// String dependantLemma = sd.plemmas[i];
-				String dependency = sd.plabels[i];
+				String dependency = sd.getDepLabels()[i];
 
 				if ("OA".equals(dependency) || "OA2".equals(dependency)
 						|| "OC".equals(dependency) || "OP".equals(dependency)) {
@@ -155,7 +157,7 @@ public class CompetenceFinder {
 							"Found object for verb '%s':\t %s (DEP: %s )",
 							lemma.toUpperCase(), dependant, dependency));
 					String argument = getPhrase(i, sd, new TreeSet<Integer>());
-					
+
 					filler.add(new SlotFiller(argument, i));
 				}
 			}
@@ -163,15 +165,14 @@ public class CompetenceFinder {
 		return filler;
 	}
 
-	private String getPhrase(int index, SentenceData09 sd,
-			Set<Integer> components) {
+	private String getPhrase(int index, Sentence sd, Set<Integer> components) {
 
 		int id = index + 1; // ID am Anfang der Zeile
 
 		// String lemma = sd.plemmas[index];
 		// String form = sd.forms[index];
 
-		int[] heads = sd.pheads;
+		int[] heads = sd.getHeads();
 		for (int i = 0; i < heads.length; i++) {
 			if (heads[i] == id) {
 				// String dependant = sd.forms[i];
@@ -192,7 +193,7 @@ public class CompetenceFinder {
 		 */
 		StringBuffer sb = new StringBuffer();
 		for (Integer i : components) {
-			sb.append(sd.forms[i]).append(" ");
+			sb.append(sd.getTokens()[i]).append(" ");
 		}
 
 		/*
