@@ -19,7 +19,7 @@ Parent ID	Unit ID	Class	Token	Position
 			Auffassungsgabe	68
 			Ausbildung	29
 			Reisebereitschaft	39
-			Deutsch-	57
+			Englischkenntnisse	60
 			Studiums	15
 			Lernbereitschaft	64
 				
@@ -34,13 +34,13 @@ Parent ID	Unit ID	Class	Token	Position
 248356	96a0a7c9-9340-4f28-a06a-b4d8113cd5aa	COMPETENCE	Arbeiten	3
 			FS	5
 				
-339900	984c7a10-3af0-4abc-9c7f-fec4b5244065	COMPETENCE	Deutsch-	22
+339900	984c7a10-3af0-4abc-9c7f-fec4b5244065	COMPETENCE	Englischkenntnisse	24
 			Bereitschaft	17
 			Studium	6
 			Teamfähigkeit	32
 			Belastbarkeit	30
 				
-208745	9acd41cf-2033-4285-9dc6-491df37b7107	COMPETENCE	Kooperations-	16
+208745	9acd41cf-2033-4285-9dc6-491df37b7107	COMPETENCE	Kommunikationsfähigkeit	18
 			Arbeiten	14
 			Flexibilität	20
 			Erfahrungen	7
@@ -163,7 +163,7 @@ Parent ID	Unit ID	Class	Token	Position
 			Berufsausbildung	104
 			Kommunikationsvermögen	122
 			Führerschein	141
-			EDV-	135
+			Kenntnisse	136
 			Eigeninitiative	124
 			Fachkenntnisse	119
 			Flexibilität	126
@@ -290,7 +290,7 @@ Parent ID	Unit ID	Class	Token	Position
 			Ausbildung	5
 			Kenntnisse	22
 				
-105466	0b377227-ed53-465d-93c6-cc5b5c7c4a0c	COMPETENCE	Fach-)	15
+105466	0b377227-ed53-465d-93c6-cc5b5c7c4a0c	COMPETENCE	Fach-)Hochschulstudium	15
 			Ausbildung	51
 			Berufserfahrung	55
 			Ausbildung	36
@@ -309,7 +309,7 @@ Parent ID	Unit ID	Class	Token	Position
 			Bereitschaft	47
 				
 268456	1a063537-24fa-4d81-8749-a99fb396d1cf	COMPETENCE	Verständnis	95
-			Deutsch-	64
+			Englischkenntnisse	66
 			Reisebereitschaft	102
 			Kommunikationsfähigkeit	87
 			Arbeiten	93
@@ -425,7 +425,7 @@ Parent ID	Unit ID	Class	Token	Position
 			Ausbildung	5
 			Freude	17
 				
-74900	45a86b68-8615-42b9-a83a-fdb76cf1562d	COMPETENCE	Englisch-	32
+74900	45a86b68-8615-42b9-a83a-fdb76cf1562d	COMPETENCE	Deutschkenntnisse	34
 			-Kenntnisse	22
 			-Führerschein	42
 			-Eigeninitiative	35
@@ -590,4 +590,4 @@ Parent ID	Unit ID	Class	Token	Position
 			Ausbildung	8
 			Kommunikations	34
 			Berufserfahrung	17
-			service-	27
+			kundenorientiert	29

@@ -1,7 +1,9 @@
 package spinfo.tm.extraction.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class representing an Information Extraction Template.
@@ -12,7 +14,7 @@ import java.util.List;
 public class Template {
 
 	private static int count;
-	private List<SlotFiller> content = new ArrayList<>();
+	private Map<Class, List<SlotFiller>> content = new HashMap<>();
 	private int jobAdID;
 	private int id;
 
@@ -33,11 +35,14 @@ public class Template {
 	 * @param c
 	 *            Class of content to be added
 	 * @param f
-	 *            Conent to be added
+	 *            Content to be added
 	 * @return true iff adding was successful
 	 */
-	public boolean addContent(SlotFiller f) {
-		return content.add(f);
+	public boolean addContent(SlotFiller f, Class c) {
+		if (!content.containsKey(c) || content.get(c) == null) {
+			content.put(c, new ArrayList<SlotFiller>());
+		}
+		return content.get(c).add(f);
 	}
 
 	private void setParentID(int parentID) {
@@ -71,8 +76,16 @@ public class Template {
 	 * 
 	 * @return SlotFillers
 	 */
-	public List<SlotFiller> getContent() {
+	public Map<Class, List<SlotFiller>> getContent() {
 		return content;
+	}
+
+	/**
+	 * @param c
+	 * @return
+	 */
+	public List<SlotFiller> getContentForClass(Class c) {
+		return content.get(c);
 	}
 
 	@Override
@@ -81,6 +94,9 @@ public class Template {
 				jobAdID, content);
 	}
 
+	/**
+	 * @return
+	 */
 	public int size() {
 		return this.content.size();
 	}

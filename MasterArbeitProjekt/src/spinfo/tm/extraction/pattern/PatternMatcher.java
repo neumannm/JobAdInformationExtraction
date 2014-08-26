@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 import spinfo.tm.data.ClassifyUnit;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
-import spinfo.tm.extraction.data.Template;
 
 /*
  * Soll über RegExes die Kompetenzen aus den Paragraphen ziehen.
@@ -32,19 +31,18 @@ public class PatternMatcher {
 		setupRegexes();
 	}
 
-	public Template getContentOfInterest(ClassifyUnit unitToClassify,
-			Template template) {
+	public List<SlotFiller> getContentOfInterest(ClassifyUnit unitToClassify,
+			List<SlotFiller> list) {
 
 		String content = unitToClassify.getContent();
 
 		// List of matches for 1 classifyUnit:
 		List<TokenPosPair> results = match(content);
 		for (TokenPosPair result : results) {
-			template.addContent(new SlotFiller(result.getToken(), result
-					.getPosition()));
+			list.add(new SlotFiller(result.getToken(), result.getPosition()));
 		}
 
-		return template;
+		return list;
 	}
 
 	// TODO: prefer longer matches to shorter ones?

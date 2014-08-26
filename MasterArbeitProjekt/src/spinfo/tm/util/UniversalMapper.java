@@ -1,34 +1,42 @@
 package spinfo.tm.util;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import spinfo.tm.data.ClassifyUnit;
-import spinfo.tm.extraction.data.JobAd;
 
-/*
- * Idee: Zugriff von ClassifyUnit auf Parent-JobAd haben (weil JobAd wiederum das Template verwaltet)
- */
 public class UniversalMapper {
 
-	private static Map<ClassifyUnit, JobAd> cuJobadMap = new HashMap<ClassifyUnit, JobAd>();
 	private static Map<UUID, ClassifyUnit> cuIDMap = new HashMap<>();
+	private static final String ALLCLASSIFYUNITSFILE = "data/allClassifyUnits.bin";
 
-	public static Map<ClassifyUnit, JobAd> map(List<ClassifyUnit> cus) {
-
-		for (ClassifyUnit cu : cus) {
-			int parentID = cu.getParentID();
-			JobAd jobAd = new JobAd(parentID, null);
-			cuJobadMap.put(cu, jobAd);
-			cuIDMap.put(cu.getID(), cu);
+	static {
+		ObjectInputStream is = null;
+		try {
+			is = new ObjectInputStream(
+					new FileInputStream(ALLCLASSIFYUNITSFILE));
+			Object readObject;
+			while ((readObject = is.readObject()) != null) {
+				if (readObject instanceof ClassifyUnit) {
+					ClassifyUnit cu = (ClassifyUnit) readObject;
+					cuIDMap.put(cu.getID(), cu);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		return cuJobadMap;
-	}
-
-	public static JobAd getJobAdForCU(ClassifyUnit unitToClassify) {
-		return cuJobadMap.get(unitToClassify);
 	}
 
 	public static ClassifyUnit getCUforID(UUID id) {

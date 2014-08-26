@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -17,7 +16,10 @@ import java.util.UUID;
 
 import spinfo.tm.data.ClassifyUnit;
 import spinfo.tm.extraction.data.Class;
+import spinfo.tm.extraction.data.SlotFiller;
+import spinfo.tm.extraction.data.Template;
 import spinfo.tm.preprocessing.OpenNLPTokenizer;
+import spinfo.tm.util.UniversalMapper;
 
 /**
  * Class to annotate tokens of ClassifyUnits manually, if they are Information
@@ -30,8 +32,7 @@ public class IETrainingDataGenerator {
 
 	private Class classToAnnotate;
 	private File tdFile;
-	private Map<ClassifyUnit, Map<String, Integer>> trainedData;
-	private Map<UUID, ClassifyUnit> referenceUnits;
+	private Map<ClassifyUnit, List<SlotFiller>> trainedData;
 
 	public IETrainingDataGenerator(File trainingDataFile,
 			Class classToAnnotate, Map<UUID, ClassifyUnit> classifyUnits) {
@@ -41,8 +42,7 @@ public class IETrainingDataGenerator {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		trainedData = new TreeMap<ClassifyUnit, Map<String, Integer>>();
-		referenceUnits = classifyUnits;
+		trainedData = new TreeMap<ClassifyUnit, List<SlotFiller>>();
 	}
 
 	private void setTdFile(File trainingDataFile) throws IOException {
@@ -62,8 +62,6 @@ public class IETrainingDataGenerator {
 		 * + start);
 		 */
 
-		getTrainingData();
-
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
 		System.out
@@ -76,9 +74,10 @@ public class IETrainingDataGenerator {
 		String answer;
 
 		OpenNLPTokenizer tokenizer = new OpenNLPTokenizer();
-
+		Template template;
 		paragraphLoop: for (int i = start; i < paragraphsOfInterest.size(); i++) {
 			ClassifyUnit item = paragraphsOfInterest.get(i);
+
 			String itemText = item.getContent().trim();
 			System.out.println("ITEM " + (i + 1) + " von "
 					+ paragraphsOfInterest.size() + ": " + itemText);
@@ -102,8 +101,6 @@ public class IETrainingDataGenerator {
 			if (answer.equals("x")) {
 				continue paragraphLoop;
 			} else {
-				trainedData.put(item, new HashMap<String, Integer>());
-
 				String[] answers = answer.split(",\\s?");
 				for (String ans : answers) {
 					try {
@@ -112,11 +109,8 @@ public class IETrainingDataGenerator {
 						String token = (String) result[0];
 						int position = (int) result[1];
 
-						/*
-						 * geändert damit das funktioniert: ClassifyUnit
-						 * implements Comparable
-						 */
-						trainedData.get(item).put(token, position);
+						SlotFiller filler = new SlotFiller(token, position);
+						trainedData.get(item).add(filler);
 
 					} catch (IllegalArgumentException e) {
 						System.out
@@ -181,10 +175,10 @@ public class IETrainingDataGenerator {
 		return toReturn;
 	}
 
-	private String accumulateTokens(List<String> tokens, int start, int end) {		
+	private String accumulateTokens(List<String> tokens, int start, int end) {
 		/*
 		 * Phrase zusammensetzen
-		 */		
+		 */
 		StringBuffer sb = new StringBuffer();
 		for (int i = start; i <= end; i++) {
 			sb.append(tokens.get(i)).append(" ");
@@ -192,24 +186,23 @@ public class IETrainingDataGenerator {
 		/*
 		 * Entferne Leerzeichen vor Satzzeichen
 		 */
-		return sb.toString().replaceAll("\\s(?=[.,:?!\"'*\\-\\(\\)])", "").trim();
+		return sb.toString().replaceAll("\\s(?=[.,:?!\"'*\\-\\(\\)])", "")
+				.trim();
 	}
 
-	private void writeToFile(Map<ClassifyUnit, Map<String, Integer>> data)
+	private void writeToFile(Map<ClassifyUnit, List<SlotFiller>> trainedData2)
 			throws IOException {
 		PrintWriter out = new PrintWriter(new FileWriter(tdFile));
 
-		out.println("Parent ID\tUnit ID\tClass\tToken\tPosition");
-		for (ClassifyUnit cu : data.keySet()) {
+		out.println("JobAd ID\tUnit ID\tClass\tToken\tPosition");
+		for (ClassifyUnit cu : trainedData2.keySet()) {
 			out.print(cu.getParentID() + "\t"); // id of job ad
-			out.print(cu.getID() + "\t"); // own id
+			out.print(cu.getID() + "\t"); // CU ID
 			out.print(classToAnnotate + "\t"); // which class
-			Map<String, Integer> unitInfo = data.get(cu);
-			for (String token : unitInfo.keySet()) {
-				out.print(token);
-				out.print("\t");
-				out.print(unitInfo.get(token)); // position in tokens
-				out.print("\n\t\t\t");
+			for (SlotFiller sf : trainedData2.get(cu)) {
+				out.print(sf.getContent() + "\t");
+				out.print(sf.getTokenPosition() + "\t");
+				out.print("\n\t\t");
 			}
 			out.println();
 		}
@@ -227,45 +220,43 @@ public class IETrainingDataGenerator {
 	 * @return List of manually annotated IETemplates
 	 * @throws IOException
 	 */
-	public Map<ClassifyUnit, Map<String, Integer>> getTrainingData()
+	public Map<ClassifyUnit, List<SlotFiller>> getTrainingData()
 			throws IOException {
 
 		if (trainedData.isEmpty()) {
-			trainedData = new TreeMap<ClassifyUnit, Map<String, Integer>>();
+			trainedData = new TreeMap<ClassifyUnit, List<SlotFiller>>();
 
 			BufferedReader in = new BufferedReader(new FileReader(tdFile));
 			String line = in.readLine();// 1st line contains headings
 
-			Map<String, Integer> contents = null;
-
 			Class classID = null;
-			int parentID = 0;
-			UUID classifyUnitID = null;
+			int jobAdID = 0;
+			UUID cuID = null;
 
 			while ((line = in.readLine()) != null) {
 
 				String[] splits = line.split("\t");
-				if (splits.length == 5) {
+				List<SlotFiller> content = null;
+				if (splits.length == 4) {
+					content = new ArrayList<SlotFiller>();
 
 					if (splits[0].length() > 0 && splits[1].length() > 0
 							&& splits[2].length() > 0) {
-						// new classifyUnit
-						parentID = Integer.parseInt(splits[0]);
-						classifyUnitID = UUID.fromString(splits[1]);
+						// new SlotFiller
+						jobAdID = Integer.parseInt(splits[0]);
+						cuID = UUID.fromString(splits[1]);
 						classID = Class.valueOf(splits[2]);
-
-						contents = new HashMap<String, Integer>();
 					}
 
-					String token = splits[3];
-					int position = Integer.parseInt(splits[4]);
+					String token = splits[2];
+					int position = Integer.parseInt(splits[3]);
 
-					contents.put(token, position);
+					content.add(new SlotFiller(token, position));
 
 				} else if (splits.length == 0 && line.trim().isEmpty()) {
 					if (classID.equals(classToAnnotate)) {
-						trainedData.put(referenceUnits.get(classifyUnitID),
-								contents);
+						trainedData.put(UniversalMapper.getCUforID(cuID),
+								content);
 					}
 				} else {
 					in.close();
@@ -275,15 +266,5 @@ public class IETrainingDataGenerator {
 			in.close();
 		}
 		return trainedData;
-	}
-
-	// Tweak to get ClassifyUnit by ID
-	private Map<UUID, ClassifyUnit> mapUUIDsToUnits(List<ClassifyUnit> cus) {
-		Map<UUID, ClassifyUnit> map = new HashMap<UUID, ClassifyUnit>();
-
-		for (ClassifyUnit cu : cus) {
-			map.put(cu.getID(), cu);
-		}
-		return map;
 	}
 }

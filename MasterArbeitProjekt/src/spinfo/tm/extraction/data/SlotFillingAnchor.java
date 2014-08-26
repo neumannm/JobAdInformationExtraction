@@ -46,7 +46,7 @@ public class SlotFillingAnchor {
 	public UUID getParentUUID() {
 		return parentUUID;
 	}
-	
+
 	public int getTokenPos() {
 		return tokenPos;
 	}
@@ -61,5 +61,11 @@ public class SlotFillingAnchor {
 
 	public Class getC() {
 		return this.c;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Anchor '%s' (at %s) from CU %s", this.token,
+				this.tokenPos, this.parentUUID);
 	}
 }

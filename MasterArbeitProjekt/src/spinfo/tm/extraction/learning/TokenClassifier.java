@@ -24,7 +24,7 @@ public class TokenClassifier {
 	}
 
 	private void train(Set<SlotFillingAnchor> trainingTokens) {
-		/* Wir trainieren mit jedem Dokument: */
+		/* Wir trainieren mit jedem Token: */
 		for (SlotFillingAnchor filler : trainingTokens) {
 			/* Delegieren das eigentliche Training an unsere Strategie: */
 			this.classifier = classifier.train(filler, filler.getC());
@@ -43,9 +43,8 @@ public class TokenClassifier {
 			/* Wie beim Training delegieren wir an die Strategie: */
 			Class classLabel = classifier.classify(document);
 			/*
-			 * Und speichern wie im Seminar vorgeschlagen wurde, die Ergebnisse
-			 * in einer Map, um die fehleranfälligen korrespondierenden Listen
-			 * zu vermeiden:
+			 * Und speichern die Ergebnisse in einer Map, um die
+			 * fehleranfälligen korrespondierenden Listen zu vermeiden:
 			 */
 			resultClasses.put(document, classLabel);
 		}

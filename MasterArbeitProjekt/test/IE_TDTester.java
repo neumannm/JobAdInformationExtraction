@@ -14,6 +14,7 @@ import spinfo.tm.data.ClassifyUnit;
 import spinfo.tm.extraction.ClassFilter;
 import spinfo.tm.extraction.IETrainingDataGenerator;
 import spinfo.tm.extraction.data.Class;
+import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.preprocessing.TrainingDataGenerator;
 
 /**
@@ -34,18 +35,19 @@ public class IE_TDTester {
 
 	@Before
 	public void setUp() throws IOException {
-		File trainingDataFile = new File("data/SingleClassTrainingDataFiltered.csv");
+		File trainingDataFile = new File(
+				"data/SingleClassTrainingDataFiltered.csv");
 		/* Training data generation */
 		TrainingDataGenerator tdg = new TrainingDataGenerator(trainingDataFile);
 
 		paragraphs = tdg.getTrainingData();
 		System.out.println("Anzahl ClassifyUnits insgesamt: "
 				+ paragraphs.size());
-		
+
 		for (ClassifyUnit cu : paragraphs) {
 			classifyUnits.put(cu.getID(), cu);
 		}
-		
+
 	}
 
 	@Test
@@ -64,16 +66,15 @@ public class IE_TDTester {
 
 		gen.annotate(filteredParagraphs);
 
-		Map<ClassifyUnit, Map<String, Integer>> templates = gen
-				.getTrainingData();
+		Map<ClassifyUnit, List<SlotFiller>> templates = gen.getTrainingData();
 
 		Assert.assertNotNull(templates);
 		Assert.assertFalse(templates.isEmpty());
 
 		for (ClassifyUnit cu : templates.keySet()) {
 			System.out.println(cu);
-			for (String token : templates.get(cu).keySet()) {
-				System.out.println(token);
+			for (SlotFiller content : templates.get(cu)) {
+				System.out.println(content);
 			}
 		}
 	}
@@ -105,7 +106,7 @@ public class IE_TDTester {
 	public void testGetTrainingData() throws IOException {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
 				"data/trainingIE_140816.csv"), Class.COMPETENCE, classifyUnits);
-		Map<ClassifyUnit, Map<String, Integer>> templates;
+		Map<ClassifyUnit, List<SlotFiller>> templates;
 		try {
 			templates = gen.getTrainingData();
 			for (ClassifyUnit cu : templates.keySet()) {

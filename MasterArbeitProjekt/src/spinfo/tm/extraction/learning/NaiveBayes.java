@@ -17,7 +17,7 @@ public class NaiveBayes implements ClassifierStrategy {
 	 * term frequencies:
 	 */
 	private Map<Class, Map<String, Integer>> termFrequenciesForClasses = new HashMap<Class, Map<String, Integer>>();
-	private int docCount = 0;
+	private int tokenCount = 0;
 
 	@Override
 	public Class classify(final SlotFillingAnchor doc) {
@@ -52,7 +52,7 @@ public class NaiveBayes implements ClassifierStrategy {
 	private float prior(final Class c) {
 		/* The relative frequency of the class: */
 		Integer classCount = classFrequencies.get(c);
-		float prior = (float) Math.log(classCount / (float) docCount);
+		float prior = (float) Math.log(classCount / (float) tokenCount);
 		return prior;
 	}
 
@@ -93,7 +93,7 @@ public class NaiveBayes implements ClassifierStrategy {
 		 * Wir zählen mit, wie viele SlotFiller wir insgesamt haben, für die
 		 * Berechnung der A-Priori-Wahrscheinlichkeit ('prior probability')
 		 */
-		docCount++;
+		tokenCount++;
 
 		Integer classCount = classFrequencies.get(c);
 		if (classCount == null) {
@@ -124,7 +124,7 @@ public class NaiveBayes implements ClassifierStrategy {
 		 * 
 		 * TODO: macht keinen Sinn...
 		 */
-		// termCount.put(term, count + anchor.getTermFrequencyOf(term));
+		termCount.put(term, count + /*anchor.getTermFrequencyOf(term)*/ 1);
 
 		termFrequenciesForClasses.put(c, termCount);
 		return this;

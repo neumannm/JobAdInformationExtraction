@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ public class Preparation {
 	private static List<Sentence> savedSentences = new ArrayList<>();
 
 	private static final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
+	private static final String ALLCLASSIFYUNITSFILE = "data/allClassifyUnits.bin";
 	private static final String OUTPUTFILE = "parsedSentences.bin";
 
 	/*
@@ -48,56 +50,11 @@ public class Preparation {
 				// }
 				savedSentences.addAll(paragraph.getSentenceData().values());
 			}
-			saveToFile(savedSentences);
+			saveToFile(savedSentences, OUTPUTFILE);
 
 			System.out.println("Number of sentences: " + savedSentences.size());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private static List<Sentence> readFromFile(String file) {
-		List<Sentence> toReturn = new ArrayList<>();
-		ObjectInputStream is = null;
-
-		try {
-			is = new ObjectInputStream(new FileInputStream(file));
-			Object readObject = is.readObject();
-			if (readObject instanceof List<?>) {
-				toReturn = (List<Sentence>) readObject;
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return toReturn;
-	}
-
-	private static void saveToFile(List<Sentence> savedParagraphs) {
-		ObjectOutputStream os = null;
-		try {
-			os = new ObjectOutputStream(new FileOutputStream(OUTPUTFILE));
-			os.writeObject(savedParagraphs);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				os.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -108,7 +65,8 @@ public class Preparation {
 		List<ClassifyUnit> paragraphs = tdg.getTrainingData();
 		System.out.println("Anzahl ClassifyUnits insgesamt: "
 				+ paragraphs.size());
-
+		saveToFile(paragraphs, ALLCLASSIFYUNITSFILE);
+		
 		Class[] classesToAnnotate = { Class.COMPETENCE,
 				Class.COMPANY_COMPETENCE, Class.JOB_COMPETENCE };
 
@@ -123,10 +81,29 @@ public class Preparation {
 		filteredParagraphs = parser.parse(filteredParagraphs);
 	}
 
+	private static void saveToFile(Collection<?> data, String fileName) {
+		ObjectOutputStream os = null;
+		try {
+			os = new ObjectOutputStream(new FileOutputStream(fileName));
+			for (Object o : data) {
+				os.writeObject(o);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				os.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	@Before
 	public void setUp() throws IOException {
 		readAndFilterParagraphs();
-		UniversalMapper.map(filteredParagraphs);
 	}
 
 	@Test
@@ -141,5 +118,30 @@ public class Preparation {
 			cu = UniversalMapper.getCUforID(sentence.getClassifyUnitID());
 			System.out.println(cu);
 		}
+	}
+
+	private static List<Sentence> readFromFile(String file) {
+		List<Sentence> toReturn = new ArrayList<>();
+		ObjectInputStream is = null;
+		try {
+			is = new ObjectInputStream(new FileInputStream(file));
+			Object readObject;
+			while ((readObject = is.readObject()) != null) {
+				if (readObject instanceof Sentence) {
+					toReturn.add((Sentence) readObject);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return toReturn;
 	}
 }

@@ -28,6 +28,9 @@ public class NaiveBayesClassificationTest {
 
 			Map<SlotFillingAnchor, Class> classified = tokenClassifier
 					.classify(trainingSet);
+			for (SlotFillingAnchor c : classified.keySet()) {
+				System.out.println(classified.get(c) + ":\t" + c);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

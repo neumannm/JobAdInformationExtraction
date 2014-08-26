@@ -13,17 +13,13 @@ import org.junit.Test;
 import spinfo.tm.data.ClassifyUnit;
 import spinfo.tm.extraction.IETrainingDataGenerator;
 import spinfo.tm.extraction.data.Class;
-import spinfo.tm.extraction.data.JobAd;
 import spinfo.tm.extraction.data.SlotFiller;
-import spinfo.tm.extraction.data.Template;
 import spinfo.tm.extraction.pattern.PatternMatcher;
 import spinfo.tm.preprocessing.TrainingDataGenerator;
-import spinfo.tm.util.UniversalMapper;
 
 public class PatternMatchingTest {
 	private List<ClassifyUnit> paragraphs = new ArrayList<ClassifyUnit>();
 	private Map<UUID, ClassifyUnit> classifyUnits = new HashMap<UUID, ClassifyUnit>();
-	private Map<ClassifyUnit, JobAd> map;
 
 	private void setUp() throws IOException {
 		File trainingDataFile = new File(
@@ -38,8 +34,6 @@ public class PatternMatchingTest {
 		for (ClassifyUnit cu : paragraphs) {
 			classifyUnits.put(cu.getID(), cu);
 		}
-
-		map = UniversalMapper.map(paragraphs);
 	}
 
 	@Test
@@ -86,7 +80,7 @@ public class PatternMatchingTest {
 		String content = "Unsere Anforderungen:\n" + "- Zuverlässigkeit\n"
 				+ "- Kompetenz\n" + "- Sie sind einfach ganz toll";
 		ClassifyUnit cu = new ClassifyUnit(content, 0);
-		Template result = pm.getContentOfInterest(cu, null);
+		List<SlotFiller> result = pm.getContentOfInterest(cu, null);
 		List<SlotFiller> vorlage = new ArrayList<SlotFiller>();
 		vorlage.add(new SlotFiller("Zuverlässigkeit", 5));
 		vorlage.add(new SlotFiller("Kompetenz", 7));
@@ -184,11 +178,11 @@ public class PatternMatchingTest {
 
 	}
 
-	private void printResults(List<SlotFiller> vorlage, Template result) {
+	private void printResults(List<SlotFiller> vorlage, List<SlotFiller> result) {
 		for (SlotFiller slotFiller : vorlage) {
 			System.out.println(String.format("Vorlage: '%s' - contained: %s",
-					slotFiller, result.getContent().contains(slotFiller)));
-			if (!result.getContent().contains(slotFiller))
+					slotFiller, result.contains(slotFiller)));
+			if (!result.contains(slotFiller))
 				System.out.println("\tResult: " + result);
 			// Assert.assertTrue(String.format(
 			// "Result should contain '%s',  but didn't. (result: %s)",
@@ -204,18 +198,16 @@ public class PatternMatchingTest {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
 				"data/trainingIE_140623.csv"), Class.COMPETENCE, classifyUnits);
 
-		Map<ClassifyUnit, Map<String, Integer>> trainingData = gen
+		Map<ClassifyUnit, List<SlotFiller>> trainingData = gen
 				.getTrainingData();
 		PatternMatcher pm = new PatternMatcher();
 
 		int count = 0;
 		for (ClassifyUnit cu : trainingData.keySet()) {
-			// System.out.println(cu);
-
-			JobAd parent = map.get(cu);
-			Template result = pm.getContentOfInterest(cu, parent.getTemplate());
+			List<SlotFiller> result = pm.getContentOfInterest(cu,
+					trainingData.get(cu));
 			count += result.size();
-			for (SlotFiller slotFiller : result.getContent()) {
+			for (SlotFiller slotFiller : result) {
 				System.out.println(slotFiller);
 			}
 
