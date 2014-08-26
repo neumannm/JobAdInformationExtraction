@@ -1,5 +1,6 @@
 package spinfo.tm.data;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,7 +13,12 @@ import java.util.UUID;
  * @author neumannm
  * 
  */
-public class ClassifyUnit implements Comparable<ClassifyUnit> {
+public class ClassifyUnit implements Comparable<ClassifyUnit>, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -753179063671511501L;
 
 	// private static int count;
 	private String content;
@@ -23,10 +29,10 @@ public class ClassifyUnit implements Comparable<ClassifyUnit> {
 	private double[] FeatureVector;
 	private boolean[] classIDs;
 
-//	private Map<String, SentenceData09> sentences; // TODO: remove? (replace
-													// with Set<Sentence>)
+	// private Map<String, SentenceData09> sentences; // TODO: remove? (replace
+	// with Set<Sentence>)
 
-	 private Map<Integer, Sentence> sentences;
+	private Map<Integer, Sentence> sentences;
 	// private Set<Sentence> sentences;
 
 	private static int NUMBEROFCLASSES;

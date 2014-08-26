@@ -1,5 +1,6 @@
 package spinfo.tm.util;
 
+import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -20,12 +21,14 @@ public class UniversalMapper {
 			is = new ObjectInputStream(
 					new FileInputStream(ALLCLASSIFYUNITSFILE));
 			Object readObject;
-			while ((readObject = is.readObject()) != null) {
+			while (true) {
+				readObject = is.readObject();
 				if (readObject instanceof ClassifyUnit) {
 					ClassifyUnit cu = (ClassifyUnit) readObject;
 					cuIDMap.put(cu.getID(), cu);
 				}
 			}
+		} catch (EOFException e) {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {

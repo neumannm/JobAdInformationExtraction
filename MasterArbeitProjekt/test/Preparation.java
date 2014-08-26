@@ -1,3 +1,4 @@
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,7 +31,7 @@ public class Preparation {
 
 	private static final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
 	private static final String ALLCLASSIFYUNITSFILE = "data/allClassifyUnits.bin";
-	private static final String OUTPUTFILE = "parsedSentences.bin";
+	private static final String OUTPUTFILE = "data/parsedSentences.bin";
 
 	/*
 	 * Nur ausführen, wenn Datei nicht vorhanden! (parsen dauert)
@@ -66,7 +67,7 @@ public class Preparation {
 		System.out.println("Anzahl ClassifyUnits insgesamt: "
 				+ paragraphs.size());
 		saveToFile(paragraphs, ALLCLASSIFYUNITSFILE);
-		
+
 		Class[] classesToAnnotate = { Class.COMPETENCE,
 				Class.COMPANY_COMPETENCE, Class.JOB_COMPETENCE };
 
@@ -107,8 +108,8 @@ public class Preparation {
 	}
 
 	@Test
-	public void testReadFromFile() {
-		List<Sentence> readSentences = readFromFile(OUTPUTFILE);
+	public void testReadParsedSentencesFromFile() {
+		List<Sentence> readSentences = readSentencesFromFile(OUTPUTFILE);
 
 		Assert.assertEquals(210, readSentences.size());
 
@@ -120,17 +121,59 @@ public class Preparation {
 		}
 	}
 
-	private static List<Sentence> readFromFile(String file) {
+	@Test
+	public void testReadClassifyUnitsFromFile() {
+		List<ClassifyUnit> cUsFromFile = readCUsFromFile(ALLCLASSIFYUNITSFILE);
+
+		Assert.assertEquals(376, cUsFromFile.size());
+
+		for (ClassifyUnit classifyUnit : cUsFromFile) {
+			System.out.println(classifyUnit);
+		}
+	}
+
+	private static List<ClassifyUnit> readCUsFromFile(String file) {
+		List<ClassifyUnit> toReturn = new ArrayList<>();
+		ObjectInputStream is = null;
+		try {
+			is = new ObjectInputStream(new FileInputStream(file));
+			Object readObject;
+			while (true) {
+				readObject = is.readObject();
+				if (readObject instanceof ClassifyUnit) {
+					toReturn.add((ClassifyUnit) readObject);
+				}
+			}
+		} catch (EOFException e) {
+			return toReturn;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return toReturn;
+	}
+
+	private static List<Sentence> readSentencesFromFile(String file) {
 		List<Sentence> toReturn = new ArrayList<>();
 		ObjectInputStream is = null;
 		try {
 			is = new ObjectInputStream(new FileInputStream(file));
 			Object readObject;
-			while ((readObject = is.readObject()) != null) {
+			while (true) {
+				readObject = is.readObject();
 				if (readObject instanceof Sentence) {
 					toReturn.add((Sentence) readObject);
 				}
 			}
+		} catch (EOFException e) {
+			return toReturn;
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
