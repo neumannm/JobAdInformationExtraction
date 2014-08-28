@@ -17,7 +17,6 @@ import java.util.UUID;
 import spinfo.tm.data.Section;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
-import spinfo.tm.extraction.data.Template;
 import spinfo.tm.preprocessing.OpenNLPTokenizer;
 
 /**
@@ -73,7 +72,6 @@ public class IETrainingDataGenerator {
 		String answer;
 
 		OpenNLPTokenizer tokenizer = new OpenNLPTokenizer();
-		Template template;
 		paragraphLoop: for (int i = start; i < paragraphsOfInterest.size(); i++) {
 			Section item = paragraphsOfInterest.get(i);
 

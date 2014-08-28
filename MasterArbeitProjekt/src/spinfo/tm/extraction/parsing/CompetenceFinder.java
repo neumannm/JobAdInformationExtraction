@@ -1,7 +1,5 @@
 package spinfo.tm.extraction.parsing;
 
-import is2.data.SentenceData09;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +16,6 @@ import spinfo.tm.extraction.data.SlotFiller;
  * 
  * @author neumannm
  * 
- */
-/*
- * TODO: add positions to SlotFillers
  */
 public class CompetenceFinder {
 

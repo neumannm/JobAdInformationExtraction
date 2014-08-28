@@ -1,11 +1,11 @@
 package spinfo.tm.extraction.learning;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import spinfo.tm.extraction.data.Class;
-import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.extraction.data.SlotFillingAnchor;
 
 public class NaiveBayes implements ClassifierStrategy {
@@ -20,6 +20,65 @@ public class NaiveBayes implements ClassifierStrategy {
 	private int tokenCount = 0;
 
 	@Override
+	public ClassifierStrategy train(final SlotFillingAnchor anchor,
+			final Class c) {
+		// c = class assigned to this token in manual labeling phase
+
+		/*
+		 * use as features?
+		 */
+		List<Map<String, String>> precedingContext = anchor
+				.getPrecedingContext();
+		List<Map<String, String>> followingContext = anchor
+				.getFollowingContext();
+		int tokenPos = anchor.getTokenPos();
+		/*
+		 * 
+		 * ***********************
+		 */
+
+		/*
+		 * Wir zählen mit, wie viele SlotFiller wir insgesamt haben, für die
+		 * Berechnung der A-Priori-Wahrscheinlichkeit ('prior probability')
+		 */
+		tokenCount++;
+
+		Integer classCount = classFrequencies.get(c);
+		if (classCount == null) {
+			/* Erstes Vorkommen der Klasse: */
+			classCount = 0;
+		}
+		classFrequencies.put(c, classCount + 1);
+
+		/*
+		 * Für die Evidenz: Häufigkeit eines Terms in den Dokumenten einer
+		 * Klasse.
+		 */
+		Map<String, Integer> termCount = termFrequenciesForClasses.get(c);
+		if (termCount == null) {
+			/* Erstes Vorkommen der Klasse: */
+			termCount = new HashMap<String, Integer>();
+		}
+
+		/* Jetzt für jeden Term hochzählen: */
+		String term = anchor.getToken();
+		Integer count = termCount.get(term);
+		if (count == null) {
+			/* Erstes Vorkommen des Terms: */
+			count = 0;
+		}
+		/*
+		 * Wir addieren hier die Häufigkeit des Terms im Dokument.
+		 * 
+		 * TODO: macht keinen Sinn...
+		 */
+		termCount.put(term, count + /* anchor.getTermFrequencyOf(term) */1);
+
+		termFrequenciesForClasses.put(c, termCount);
+		return this;
+	}
+
+	@Override
 	public Class classify(final SlotFillingAnchor doc) {
 		/* Das Maximum... */
 		float max = Float.NEGATIVE_INFINITY;
@@ -31,8 +90,8 @@ public class NaiveBayes implements ClassifierStrategy {
 			 * Das Produkt oder die Summe der Termwahrscheinlichkeiten ist
 			 * unsere Evidenz...
 			 */
-			float evidence = 1f; //TODO: correct?
-			
+			float evidence = 0f; // TODO: correct?
+
 			String term = doc.getToken();
 			float e = evidence(term, c);
 			evidence = (float) (evidence * Math.log(e)); // 0 * x = 0 ??
@@ -82,52 +141,6 @@ public class NaiveBayes implements ClassifierStrategy {
 			sum += i;
 		}
 		return sum;
-	}
-
-	@Override
-	public ClassifierStrategy train(final SlotFillingAnchor anchor,
-			final Class c) {
-		// c = class assigned to this token in manual labeling phase
-
-		/*
-		 * Wir zählen mit, wie viele SlotFiller wir insgesamt haben, für die
-		 * Berechnung der A-Priori-Wahrscheinlichkeit ('prior probability')
-		 */
-		tokenCount++;
-
-		Integer classCount = classFrequencies.get(c);
-		if (classCount == null) {
-			/* Erstes Vorkommen der Klasse: */
-			classCount = 0;
-		}
-		classFrequencies.put(c, classCount + 1);
-
-		/*
-		 * Für die Evidenz: Häufigkeit eines Terms in den Dokumenten einer
-		 * Klasse.
-		 */
-		Map<String, Integer> termCount = termFrequenciesForClasses.get(c);
-		if (termCount == null) {
-			/* Erstes Vorkommen der Klasse: */
-			termCount = new HashMap<String, Integer>();
-		}
-
-		/* Jetzt für jeden Term hochzählen: */
-		String term = anchor.getToken();
-		Integer count = termCount.get(term);
-		if (count == null) {
-			/* Erstes Vorkommen des Terms: */
-			count = 0;
-		}
-		/*
-		 * Wir addieren hier die Häufigkeit des Terms im Dokument.
-		 * 
-		 * TODO: macht keinen Sinn...
-		 */
-		termCount.put(term, count + /*anchor.getTermFrequencyOf(term)*/ 1);
-
-		termFrequenciesForClasses.put(c, termCount);
-		return this;
 	}
 
 	/**

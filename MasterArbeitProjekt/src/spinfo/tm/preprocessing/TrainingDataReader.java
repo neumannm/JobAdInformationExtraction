@@ -91,7 +91,7 @@ public class TrainingDataReader {
 
 			}
 			if (/**classes.length**/ classID != 0) {
-				Section utc = new Section(content.toString(),
+				Section utc = new Section(content.toString().trim(),
 						parentID, paragraphID);
 //				System.out.println(parentID);
 //				System.out.println(paragraphID);

@@ -21,7 +21,7 @@ public class ParagraphParser {
 	private is2.mtag.Tagger morphTagger;
 	private Tagger posTagger;
 	private Tool depParser;
-	private Paragraph2SentenceDataConverter conv = new Paragraph2SentenceDataConverter();
+	private Section2SentenceDataConverter conv = new Section2SentenceDataConverter();
 
 	private final static Logger log = LogManager
 			.getLogger(ParagraphParser.class);

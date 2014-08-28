@@ -15,8 +15,6 @@ import spinfo.tm.data.Section;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.preprocessing.TrainingDataReader;
-import spinfo.tm.util.ClassFilter;
-import spinfo.tm.util.IETrainingDataGenerator;
 
 /**
  * Test Class for Information Extraction Training.
@@ -96,8 +94,9 @@ public class IE_TDTester {
 		List<Section> filtered = ClassFilter.filter(paragraphs,
 				Class.COMPETENCE, Class.COMPANY_COMPETENCE,
 				Class.JOB_COMPETENCE);
-		for (Section classifyUnit : filtered) {
-			System.out.println(classifyUnit);
+		for (Section section : filtered) {
+			System.out.println(section.getID());
+			System.out.println(section.getContent());
 			System.out.println("********************");
 		}
 	}
@@ -110,9 +109,9 @@ public class IE_TDTester {
 		Map<Section, List<SlotFiller>> templates;
 		try {
 			templates = gen.getTrainingData();
-			for (Section cu : templates.keySet()) {
-				System.out.println(cu);
-				System.out.println(templates.get(cu));
+			for (Section section : templates.keySet()) {
+				System.out.println(section);
+				System.out.println(templates.get(section));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
