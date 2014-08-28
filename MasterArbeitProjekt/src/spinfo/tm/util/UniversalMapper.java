@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import spinfo.tm.data.ClassifyUnit;
+import spinfo.tm.data.Section;
 
 public class UniversalMapper {
 
-	private static Map<UUID, ClassifyUnit> cuIDMap = new HashMap<>();
+	private static Map<UUID, Section> cuIDMap = new HashMap<>();
 	private static final String ALLCLASSIFYUNITSFILE = "data/allClassifyUnits.bin";
 
 	static {
@@ -23,8 +23,8 @@ public class UniversalMapper {
 			Object readObject;
 			while (true) {
 				readObject = is.readObject();
-				if (readObject instanceof ClassifyUnit) {
-					ClassifyUnit cu = (ClassifyUnit) readObject;
+				if (readObject instanceof Section) {
+					Section cu = (Section) readObject;
 					cuIDMap.put(cu.getID(), cu);
 				}
 			}
@@ -42,7 +42,7 @@ public class UniversalMapper {
 		}
 	}
 
-	public static ClassifyUnit getCUforID(UUID id) {
+	public static Section getCUforID(UUID id) {
 		return cuIDMap.get(id);
 	}
 }

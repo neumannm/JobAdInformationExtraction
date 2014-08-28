@@ -12,7 +12,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import spinfo.tm.data.ClassifyUnit;
+import spinfo.tm.data.Section;
 import spinfo.tm.extraction.parsing.util.SentenceDataConverter;
 
 public class ParagraphParser {
@@ -50,14 +50,14 @@ public class ParagraphParser {
 
 	}
 
-	public List<ClassifyUnit> parse(List<ClassifyUnit> cus) {
-		for (ClassifyUnit classifyUnit : cus) {
+	public List<Section> parse(List<Section> cus) {
+		for (Section classifyUnit : cus) {
 			parse(classifyUnit);
 		}
 		return cus;
 	}
 
-	public void parse(ClassifyUnit cu) {
+	public void parse(Section cu) {
 		String paragraph = cu.getContent();
 		Map<Integer, SentenceData09> processed = conv.convert(paragraph);
 		SentenceData09 sentenceData;

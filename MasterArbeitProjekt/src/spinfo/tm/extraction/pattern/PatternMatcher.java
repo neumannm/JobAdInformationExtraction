@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import spinfo.tm.data.ClassifyUnit;
+import spinfo.tm.data.Section;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 
@@ -31,7 +31,7 @@ public class PatternMatcher {
 		setupRegexes();
 	}
 
-	public List<SlotFiller> getContentOfInterest(ClassifyUnit unitToClassify,
+	public List<SlotFiller> getContentOfInterest(Section unitToClassify,
 			List<SlotFiller> list) {
 
 		String content = unitToClassify.getContent();
