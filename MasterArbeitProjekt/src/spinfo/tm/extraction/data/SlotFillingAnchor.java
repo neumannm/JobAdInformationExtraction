@@ -1,16 +1,15 @@
 package spinfo.tm.extraction.data;
 
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class SlotFillingAnchor {
 
 	private String token;
-	private List<Map<String, String>> precedingContext; // String1: token,
-														// String2:POSTag
-	private List<Map<String, String>> followingContext; // String1: token,
-														// String2:POSTag
+	private String POS;
+	private String precedingToken;
+	private String precedingPOS;
+	private String followingToken;
+	private String followingPOS;
 	private Class c;
 	private UUID parentUUID;
 	private int tokenPos;
@@ -43,6 +42,10 @@ public class SlotFillingAnchor {
 		return token;
 	}
 
+	public String getPOS() {
+		return POS;
+	}
+
 	public UUID getParentUUID() {
 		return parentUUID;
 	}
@@ -51,12 +54,20 @@ public class SlotFillingAnchor {
 		return tokenPos;
 	}
 
-	public List<Map<String, String>> getFollowingContext() {
-		return followingContext;
+	public String getFollowingPOS() {
+		return followingPOS;
 	}
 
-	public List<Map<String, String>> getPrecedingContext() {
-		return precedingContext;
+	public String getFollowingToken() {
+		return followingToken;
+	}
+
+	public String getPrecedingPOS() {
+		return precedingPOS;
+	}
+
+	public String getPrecedingToken() {
+		return precedingToken;
 	}
 
 	public Class getC() {

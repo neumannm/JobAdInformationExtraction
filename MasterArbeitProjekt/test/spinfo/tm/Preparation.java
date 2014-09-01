@@ -9,8 +9,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.UUID;
 
 import junit.framework.Assert;
 
@@ -31,7 +34,7 @@ public class Preparation {
 	private static List<Sentence> savedSentences = new ArrayList<>();
 
 	private static final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
-	private static final String ALLCLASSIFYUNITSFILE = "data/allClassifyUnits.bin";
+	private static final String ALLSECTIONSFILE = "data/allClassifyUnits.bin";
 	private static final String OUTPUTFILE = "data/parsedSentences.bin";
 
 	/*
@@ -46,10 +49,10 @@ public class Preparation {
 			for (Section paragraph : filteredParagraphs) {
 				Map<Integer, Sentence> sentenceData = paragraph
 						.getSentenceData();
-				// for (Integer sentence : sentenceData.keySet()) {
-				// Sentence parsed = sentenceData.get(sentence);
-				// System.out.println(parsed);
-				// }
+				for (Integer sentence : sentenceData.keySet()) {
+					Sentence parsed = sentenceData.get(sentence);
+					System.out.println(parsed);
+				}
 				savedSentences.addAll(paragraph.getSentenceData().values());
 			}
 			saveToFile(savedSentences, OUTPUTFILE);
@@ -65,16 +68,16 @@ public class Preparation {
 		TrainingDataReader tdg = new TrainingDataReader(trainingDataFile);
 
 		List<Section> paragraphs = tdg.getTrainingData();
-		System.out.println("Anzahl ClassifyUnits insgesamt: "
+		System.out.println("Anzahl Sections insgesamt: "
 				+ paragraphs.size());
-		saveToFile(paragraphs, ALLCLASSIFYUNITSFILE);
+		saveToFile(paragraphs, ALLSECTIONSFILE);
 
 		Class[] classesToAnnotate = { Class.COMPETENCE,
 				Class.COMPANY_COMPETENCE, Class.JOB_COMPETENCE };
 
 		filteredParagraphs = ClassFilter.filter(paragraphs, classesToAnnotate);
 
-		System.out.println("Anzahl ClassifyUnits gefiltert: "
+		System.out.println("Anzahl Sections gefiltert: "
 				+ filteredParagraphs.size());
 	}
 
@@ -114,22 +117,35 @@ public class Preparation {
 
 		Assert.assertEquals(210, readSentences.size());
 
+		Map<UUID, Map<Integer, Sentence>> sentenceDatas = new HashMap<UUID, Map<Integer, Sentence>>();
+		
 		Section cu;
 		for (Sentence sentence : readSentences) {
-			// System.out.println(sentence);
-			cu = UniversalMapper.getCUforID(sentence.getClassifyUnitID());
+			UUID unitID = sentence.getClassifyUnitID();
+			if(sentenceDatas.get(unitID) == null){
+				sentenceDatas.put(unitID, new TreeMap<Integer, Sentence>());
+			}
+			sentenceDatas.get(unitID).put(sentence.getPositionInParagraph(), sentence);
+			
+		}
+		
+		for (UUID unitID : sentenceDatas.keySet()) {
+			cu = UniversalMapper.getCUforID(unitID);
+			cu.setSentenceData(sentenceDatas.get(unitID));
 			System.out.println(cu);
+			System.out.println(cu.getSentenceData());
 		}
 	}
 
 	@Test
 	public void testReadClassifyUnitsFromFile() {
-		List<Section> cUsFromFile = readCUsFromFile(ALLCLASSIFYUNITSFILE);
+		List<Section> cUsFromFile = readCUsFromFile(ALLSECTIONSFILE);
 
 		Assert.assertEquals(376, cUsFromFile.size());
 
 		for (Section classifyUnit : cUsFromFile) {
 			System.out.println(classifyUnit);
+			System.out.println(classifyUnit.getSentenceData());
 		}
 	}
 

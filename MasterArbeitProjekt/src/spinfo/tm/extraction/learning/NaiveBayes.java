@@ -27,10 +27,10 @@ public class NaiveBayes implements ClassifierStrategy {
 		/*
 		 * use as features?
 		 */
-		List<Map<String, String>> precedingContext = anchor
-				.getPrecedingContext();
-		List<Map<String, String>> followingContext = anchor
-				.getFollowingContext();
+		String precedingToken = anchor.getPrecedingToken();
+		String precedingPOS = anchor.getPrecedingPOS();
+		String followingPOS = anchor.getFollowingPOS();
+		String followingToken = anchor.getFollowingToken();
 		int tokenPos = anchor.getTokenPos();
 		/*
 		 * 

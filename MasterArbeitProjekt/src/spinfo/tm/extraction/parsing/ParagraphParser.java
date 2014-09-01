@@ -50,15 +50,15 @@ public class ParagraphParser {
 
 	}
 
-	public List<Section> parse(List<Section> cus) {
-		for (Section classifyUnit : cus) {
-			parse(classifyUnit);
+	public List<Section> parse(List<Section> sections) {
+		for (Section section : sections) {
+			section = parse(section);
 		}
-		return cus;
+		return sections;
 	}
 
-	public void parse(Section cu) {
-		String paragraph = cu.getContent();
+	public Section parse(Section section) {
+		String paragraph = section.getContent();
 		Map<Integer, SentenceData09> processed = conv.convert(paragraph);
 		SentenceData09 sentenceData;
 		for (Integer sentence : processed.keySet()) {
@@ -66,7 +66,9 @@ public class ParagraphParser {
 			processed.put(sentence, sentenceData);
 		}
 
-		cu.setSentenceData(SentenceDataConverter.convert(processed, cu.getID()));
+		section.setSentenceData(SentenceDataConverter.convert(processed,
+				section.getID()));
+		return section;
 	}
 
 	public SentenceData09 applyTools(SentenceData09 sentenceData) {
