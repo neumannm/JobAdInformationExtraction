@@ -1,11 +1,7 @@
 package spinfo.tm;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,8 +20,8 @@ import spinfo.tm.data.Section;
 import spinfo.tm.data.Sentence;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.parsing.ParagraphParser;
-import spinfo.tm.preprocessing.TrainingDataReader;
 import spinfo.tm.util.ClassFilter;
+import spinfo.tm.util.Reader;
 import spinfo.tm.util.UniversalMapper;
 
 public class Preparation {
@@ -34,8 +30,9 @@ public class Preparation {
 	private static List<Sentence> savedSentences = new ArrayList<>();
 
 	private static final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
-	private static final String ALLSECTIONSFILE = "data/allClassifyUnits.bin";
+	private static final String ALLSECTIONSFILE = "data/allSections.bin";
 	private static final String OUTPUTFILE = "data/parsedSentences.bin";
+	private static final String PARSEDSECTIONSFILE = "data/parsedSections.bin";
 
 	/*
 	 * Nur ausführen, wenn Datei nicht vorhanden! (parsen dauert)
@@ -55,7 +52,7 @@ public class Preparation {
 				}
 				savedSentences.addAll(paragraph.getSentenceData().values());
 			}
-			saveToFile(savedSentences, OUTPUTFILE);
+			saveToBinaryFile(savedSentences, OUTPUTFILE);
 
 			System.out.println("Number of sentences: " + savedSentences.size());
 		} catch (IOException e) {
@@ -64,13 +61,11 @@ public class Preparation {
 	}
 
 	private static void readAndFilterParagraphs() throws IOException {
-		File trainingDataFile = new File(TRAININGDATAFILE);
-		TrainingDataReader tdg = new TrainingDataReader(trainingDataFile);
-
-		List<Section> paragraphs = tdg.getTrainingData();
+		List<Section> paragraphs = Reader.readSectionsFromCSV(TRAININGDATAFILE);
 		System.out.println("Anzahl Sections insgesamt: "
 				+ paragraphs.size());
-		saveToFile(paragraphs, ALLSECTIONSFILE);
+		
+		saveToBinaryFile(paragraphs, ALLSECTIONSFILE);
 
 		Class[] classesToAnnotate = { Class.COMPETENCE,
 				Class.COMPANY_COMPETENCE, Class.JOB_COMPETENCE };
@@ -84,9 +79,11 @@ public class Preparation {
 	private static void parseFilteredParagraphs() {
 		ParagraphParser parser = new ParagraphParser();
 		filteredParagraphs = parser.parse(filteredParagraphs);
+		
+		saveToBinaryFile(filteredParagraphs, PARSEDSECTIONSFILE);
 	}
 
-	private static void saveToFile(Collection<?> data, String fileName) {
+	private static void saveToBinaryFile(Collection<?> data, String fileName) {
 		ObjectOutputStream os = null;
 		try {
 			os = new ObjectOutputStream(new FileOutputStream(fileName));
@@ -113,7 +110,7 @@ public class Preparation {
 
 	@Test
 	public void testReadParsedSentencesFromFile() {
-		List<Sentence> readSentences = readSentencesFromFile(OUTPUTFILE);
+		List<Sentence> readSentences = Reader.readSentencesFromBinary(OUTPUTFILE);
 
 		Assert.assertEquals(210, readSentences.size());
 
@@ -130,7 +127,7 @@ public class Preparation {
 		}
 		
 		for (UUID unitID : sentenceDatas.keySet()) {
-			cu = UniversalMapper.getCUforID(unitID);
+			cu = UniversalMapper.getSectionforID(unitID);
 			cu.setSentenceData(sentenceDatas.get(unitID));
 			System.out.println(cu);
 			System.out.println(cu.getSentenceData());
@@ -139,7 +136,7 @@ public class Preparation {
 
 	@Test
 	public void testReadClassifyUnitsFromFile() {
-		List<Section> cUsFromFile = readCUsFromFile(ALLSECTIONSFILE);
+		List<Section> cUsFromFile = Reader.readSectionsFromBinary(ALLSECTIONSFILE);
 
 		Assert.assertEquals(376, cUsFromFile.size());
 
@@ -147,61 +144,5 @@ public class Preparation {
 			System.out.println(classifyUnit);
 			System.out.println(classifyUnit.getSentenceData());
 		}
-	}
-
-	private static List<Section> readCUsFromFile(String file) {
-		List<Section> toReturn = new ArrayList<>();
-		ObjectInputStream is = null;
-		try {
-			is = new ObjectInputStream(new FileInputStream(file));
-			Object readObject;
-			while (true) {
-				readObject = is.readObject();
-				if (readObject instanceof Section) {
-					toReturn.add((Section) readObject);
-				}
-			}
-		} catch (EOFException e) {
-			return toReturn;
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return toReturn;
-	}
-
-	private static List<Sentence> readSentencesFromFile(String file) {
-		List<Sentence> toReturn = new ArrayList<>();
-		ObjectInputStream is = null;
-		try {
-			is = new ObjectInputStream(new FileInputStream(file));
-			Object readObject;
-			while (true) {
-				readObject = is.readObject();
-				if (readObject instanceof Sentence) {
-					toReturn.add((Sentence) readObject);
-				}
-			}
-		} catch (EOFException e) {
-			return toReturn;
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return toReturn;
 	}
 }

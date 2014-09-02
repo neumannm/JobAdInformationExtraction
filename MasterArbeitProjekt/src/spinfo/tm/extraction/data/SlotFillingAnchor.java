@@ -13,13 +13,15 @@ public class SlotFillingAnchor {
 	private Class c;
 	private UUID parentUUID;
 	private int tokenPos;
+	private boolean isCompetence;
 
-	public SlotFillingAnchor(String token, int position, Class c,
-			UUID classifyUnitID) {
+	public SlotFillingAnchor(String token, int position, boolean isCompetence,
+			UUID sectionID) {
 		setC(c);
 		setToken(token);
-		setParentUUID(classifyUnitID);
+		setParentUUID(sectionID);
 		setTokenPos(position);
+		setCompetence(isCompetence);
 	}
 
 	private void setParentUUID(UUID classifyUnitID) {
@@ -36,6 +38,34 @@ public class SlotFillingAnchor {
 
 	private void setToken(String token) {
 		this.token = token;
+	}
+
+	public void setCompetence(boolean isCompetence) {
+		this.isCompetence = isCompetence;
+	}
+
+	public void setFollowingPOS(String followingPOS) {
+		this.followingPOS = followingPOS;
+	}
+
+	public void setFollowingToken(String followingToken) {
+		this.followingToken = followingToken;
+	}
+
+	public void setPrecedingPOS(String precedingPOS) {
+		this.precedingPOS = precedingPOS;
+	}
+
+	public void setPrecedingToken(String precedingToken) {
+		this.precedingToken = precedingToken;
+	}
+
+	public void setPOS(String pOS) {
+		POS = pOS;
+	}
+
+	public boolean isCompetence() {
+		return isCompetence;
 	}
 
 	public String getToken() {
@@ -78,5 +108,19 @@ public class SlotFillingAnchor {
 	public String toString() {
 		return String.format("Anchor '%s' (at %s) from CU %s", this.token,
 				this.tokenPos, this.parentUUID);
+	}
+	
+	
+	/* bisschen gehackt
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof SlotFillingAnchor){
+			SlotFillingAnchor other = (SlotFillingAnchor) obj;
+			return this.token.equals(other.token) && this.parentUUID.toString().equals(other.parentUUID.toString());
+		}
+		return false;
 	}
 }

@@ -12,20 +12,20 @@ import spinfo.tm.data.Section;
 
 public class UniversalMapper {
 
-	private static Map<UUID, Section> cuIDMap = new HashMap<>();
-	private static final String ALLCLASSIFYUNITSFILE = "data/allClassifyUnits.bin";
+	private static Map<UUID, Section> sectionIDMap = new HashMap<>();
+	private static final String ALLSECTIONSFILE = "data/allSections.bin";
 
 	static {
 		ObjectInputStream is = null;
 		try {
 			is = new ObjectInputStream(
-					new FileInputStream(ALLCLASSIFYUNITSFILE));
+					new FileInputStream(ALLSECTIONSFILE));
 			Object readObject;
 			while (true) {
 				readObject = is.readObject();
 				if (readObject instanceof Section) {
-					Section cu = (Section) readObject;
-					cuIDMap.put(cu.getID(), cu);
+					Section s = (Section) readObject;
+					sectionIDMap.put(s.getID(), s);
 				}
 			}
 		} catch (EOFException e) {
@@ -42,7 +42,7 @@ public class UniversalMapper {
 		}
 	}
 
-	public static Section getCUforID(UUID id) {
-		return cuIDMap.get(id);
+	public static Section getSectionforID(UUID id) {
+		return sectionIDMap.get(id);
 	}
 }

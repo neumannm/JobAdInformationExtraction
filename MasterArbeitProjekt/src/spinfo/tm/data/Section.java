@@ -153,4 +153,12 @@ public class Section implements Comparable<Section>, Serializable {
 	public void setSentenceData(Map<Integer, Sentence> data) {
 		this.sentences = data;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Section){
+			return this.id.equals(((Section)obj).id);
+		}
+		return super.equals(obj);
+	}
 }

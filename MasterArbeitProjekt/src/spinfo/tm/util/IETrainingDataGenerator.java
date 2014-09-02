@@ -252,7 +252,7 @@ public class IETrainingDataGenerator {
 
 				} else if (splits.length == 0 && line.trim().isEmpty()) {
 					if (classID.equals(classToAnnotate)) {
-						trainedData.put(UniversalMapper.getCUforID(cuID),
+						trainedData.put(UniversalMapper.getSectionforID(cuID),
 								content);
 					}
 				} else {

@@ -65,7 +65,7 @@ public class NaiveBayesClassificationTest {
 				String token = splits[3];
 				int position = Integer.parseInt(splits[4]);
 
-				trainedData.add(new SlotFillingAnchor(token, position, classID, classifyUnitID));
+				trainedData.add(new SlotFillingAnchor(token, position, true, classifyUnitID));
 				
 			} else if (splits.length == 0 && line.trim().isEmpty()) {
 				//new line in file
