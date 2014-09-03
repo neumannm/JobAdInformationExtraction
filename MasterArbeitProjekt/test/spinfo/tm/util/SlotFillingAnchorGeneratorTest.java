@@ -1,6 +1,7 @@
 package spinfo.tm.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
@@ -12,7 +13,7 @@ import org.junit.Test;
 
 import spinfo.tm.data.Section;
 import spinfo.tm.extraction.data.Class;
-import spinfo.tm.extraction.data.SlotFillingAnchor;
+import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 
 public class SlotFillingAnchorGeneratorTest {
 
@@ -22,31 +23,31 @@ public class SlotFillingAnchorGeneratorTest {
 	@Test
 	public void test() throws IOException {
 
-		Set<SlotFillingAnchor> trainingSet;
+		Set<PotentialSlotFillingAnchor> trainingSet;
 		trainingSet = readFromFile("data/trainingsSet_ML.csv");
 		
-		for (SlotFillingAnchor trainingAnchor : trainingSet) {
+		for (PotentialSlotFillingAnchor trainingAnchor : trainingSet) {
 			System.out.println(trainingAnchor.getToken());
 			System.out.println(trainingAnchor.getParentUUID());
 			System.out.println(trainingAnchor.getTokenPos());
 			System.out.println("######");
 		}
 
-		List<Section> sections = Reader
-				.readSectionsFromBinary("data/parsedSections.bin");
-		Set<SlotFillingAnchor> allAnchors = SlotFillingAnchorGenerator
+		List<Section> sections = ReaderWriter
+				.readSectionsFromBinary(new File("data/parsedSections.bin"));
+		Set<PotentialSlotFillingAnchor> allAnchors = SlotFillingAnchorGenerator
 				.generateAsSet(sections);
 
 		System.out.println("Größe Trainingsset: " + trainingSet.size());
 		System.out.println("Größe Set aller Tokens: " + allAnchors.size());
 
-		Set<SlotFillingAnchor> negativeAnchors = new HashSet<>(allAnchors);
+		Set<PotentialSlotFillingAnchor> negativeAnchors = new HashSet<>(allAnchors);
 		System.out.println(negativeAnchors.removeAll(trainingSet));
 
 		System.out.println("Größe alle Tokens ohne Trainingsset: "
 				+ negativeAnchors.size());
 
-		for (SlotFillingAnchor anchor : allAnchors) {
+		for (PotentialSlotFillingAnchor anchor : allAnchors) {
 			if (trainingSet.contains(anchor)) {
 				anchor.setCompetence(true);
 				System.out.println(anchor);
@@ -56,7 +57,7 @@ public class SlotFillingAnchorGeneratorTest {
 		}
 	}
 
-	private Set<SlotFillingAnchor> readFromFile(String fileName)
+	private Set<PotentialSlotFillingAnchor> readFromFile(String fileName)
 			throws IOException {
 
 		BufferedReader in = new BufferedReader(new FileReader(fileName));
@@ -66,7 +67,7 @@ public class SlotFillingAnchorGeneratorTest {
 		int parentID = 0;
 		UUID classifyUnitID = null;
 
-		Set<SlotFillingAnchor> trainedData = new HashSet<>();
+		Set<PotentialSlotFillingAnchor> trainedData = new HashSet<>();
 		while ((line = in.readLine()) != null) {
 
 			String[] splits = line.split("\t");
@@ -81,7 +82,7 @@ public class SlotFillingAnchorGeneratorTest {
 
 				String token = splits[3];
 				int position = Integer.parseInt(splits[4]);
-				trainedData.add(new SlotFillingAnchor(token, position, true,
+				trainedData.add(new PotentialSlotFillingAnchor(token, position, true,
 						classifyUnitID));
 
 			} else if (splits.length == 0 && line.trim().isEmpty()) {
@@ -120,8 +121,8 @@ public class SlotFillingAnchorGeneratorTest {
 	public void testEquals(){
 		Section s = new Section("hallo abc", 123);
 		
-		SlotFillingAnchor a = new SlotFillingAnchor("abc", 0, false, s.getID());
-		SlotFillingAnchor b = new SlotFillingAnchor("abc", 3, false, s.getID());
+		PotentialSlotFillingAnchor a = new PotentialSlotFillingAnchor("abc", 0, false, s.getID());
+		PotentialSlotFillingAnchor b = new PotentialSlotFillingAnchor("abc", 3, false, s.getID());
 		
 		System.out.println(a.equals(b));
 	}

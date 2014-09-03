@@ -1,12 +1,13 @@
 package spinfo.tm.extraction.data;
 
+
 /**
  * Classes we are interested in.
  * 
  * @author neumannm
  * 
  */
-public enum Class {
+public enum Class{
 	COMPETENCE(3, "Kompetenz"), COMPANY_DESC(1, "Unternehmensbeschreibung"), JOB_DESC(
 			2, "Stellenbeschreibung"), OTHER(4, "Sonstiges"), COMPANY_JOB(5,
 			"Unternehmens- und Stellenbeschreibung"), COMPANY_COMPETENCE(6,

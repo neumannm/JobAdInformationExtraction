@@ -1,12 +1,10 @@
 package spinfo.tm.extraction.learning;
 
-import spinfo.tm.extraction.data.Class;
-import spinfo.tm.extraction.data.SlotFiller;
-import spinfo.tm.extraction.data.SlotFillingAnchor;
+import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 
 public interface ClassifierStrategy {
 
-	Class classify(SlotFillingAnchor token);
+	Boolean classify(PotentialSlotFillingAnchor token);
 
-	ClassifierStrategy train(SlotFillingAnchor anchor, Class c);
+	ClassifierStrategy train(PotentialSlotFillingAnchor anchor);
 }

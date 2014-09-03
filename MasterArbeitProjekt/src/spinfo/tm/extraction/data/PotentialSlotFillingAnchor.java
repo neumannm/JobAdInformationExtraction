@@ -1,8 +1,14 @@
 package spinfo.tm.extraction.data;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public class SlotFillingAnchor {
+public class PotentialSlotFillingAnchor implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6620206581561070846L;
 
 	private String token;
 	private String POS;
@@ -10,14 +16,12 @@ public class SlotFillingAnchor {
 	private String precedingPOS;
 	private String followingToken;
 	private String followingPOS;
-	private Class c;
 	private UUID parentUUID;
 	private int tokenPos;
 	private boolean isCompetence;
 
-	public SlotFillingAnchor(String token, int position, boolean isCompetence,
-			UUID sectionID) {
-		setC(c);
+	public PotentialSlotFillingAnchor(String token, int position,
+			boolean isCompetence, UUID sectionID) {
 		setToken(token);
 		setParentUUID(sectionID);
 		setTokenPos(position);
@@ -30,10 +34,6 @@ public class SlotFillingAnchor {
 
 	private void setTokenPos(int tokenPos) {
 		this.tokenPos = tokenPos;
-	}
-
-	private void setC(Class c) {
-		this.c = c;
 	}
 
 	private void setToken(String token) {
@@ -100,26 +100,25 @@ public class SlotFillingAnchor {
 		return precedingToken;
 	}
 
-	public Class getC() {
-		return this.c;
-	}
-
 	@Override
 	public String toString() {
 		return String.format("Anchor '%s' (at %s) from CU %s", this.token,
 				this.tokenPos, this.parentUUID);
 	}
-	
-	
-	/* bisschen gehackt
-	 * (non-Javadoc)
+
+	/*
+	 * bisschen gehackt (Vergleich läuft nur über gleiches Token und gleiche
+	 * Section ID, in der sich das Token befindet (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof SlotFillingAnchor){
-			SlotFillingAnchor other = (SlotFillingAnchor) obj;
-			return this.token.equals(other.token) && this.parentUUID.toString().equals(other.parentUUID.toString());
+		if (obj instanceof PotentialSlotFillingAnchor) {
+			PotentialSlotFillingAnchor other = (PotentialSlotFillingAnchor) obj;
+			return this.token.equals(other.token)
+					&& this.parentUUID.toString().equals(
+							other.parentUUID.toString());
 		}
 		return false;
 	}

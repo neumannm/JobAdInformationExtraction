@@ -1,11 +1,11 @@
 package spinfo.tm.extraction.learning;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import spinfo.tm.extraction.data.Class;
-import spinfo.tm.extraction.data.SlotFillingAnchor;
+import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 
 public class TokenClassifier {
 
@@ -18,16 +18,16 @@ public class TokenClassifier {
 	 *            The training set for this classifier
 	 */
 	public TokenClassifier(final ClassifierStrategy classifier,
-			final Set<SlotFillingAnchor> trainingSet) {
+			final Collection<PotentialSlotFillingAnchor> trainingSet) {
 		this.classifier = classifier;
 		train(trainingSet);
 	}
 
-	private void train(Set<SlotFillingAnchor> trainingTokens) {
+	private void train(Collection<PotentialSlotFillingAnchor> trainingTokens) {
 		/* Wir trainieren mit jedem Token: */
-		for (SlotFillingAnchor filler : trainingTokens) {
+		for (PotentialSlotFillingAnchor filler : trainingTokens) {
 			/* Delegieren das eigentliche Training an unsere Strategie: */
-			this.classifier = classifier.train(filler, filler.getC());
+			this.classifier = classifier.train(filler);
 		}
 	}
 
@@ -36,12 +36,12 @@ public class TokenClassifier {
 	 *            The documents to classify
 	 * @return A mapping of documents to their class labels
 	 */
-	public Map<SlotFillingAnchor, Class> classify(
-			final Set<SlotFillingAnchor> documents) {
-		Map<SlotFillingAnchor, Class> resultClasses = new HashMap<>();
-		for (SlotFillingAnchor document : documents) {
+	public Map<PotentialSlotFillingAnchor, Boolean> classify(
+			final Set<PotentialSlotFillingAnchor> documents) {
+		Map<PotentialSlotFillingAnchor, Boolean> resultClasses = new HashMap<>();
+		for (PotentialSlotFillingAnchor document : documents) {
 			/* Wie beim Training delegieren wir an die Strategie: */
-			Class classLabel = classifier.classify(document);
+			Boolean classLabel = classifier.classify(document);
 			/*
 			 * Und speichern die Ergebnisse in einer Map, um die
 			 * fehleranfälligen korrespondierenden Listen zu vermeiden:

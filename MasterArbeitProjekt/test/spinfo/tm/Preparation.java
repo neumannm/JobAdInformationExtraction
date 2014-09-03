@@ -1,4 +1,5 @@
 package spinfo.tm;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,7 +22,7 @@ import spinfo.tm.data.Sentence;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.parsing.ParagraphParser;
 import spinfo.tm.util.ClassFilter;
-import spinfo.tm.util.Reader;
+import spinfo.tm.util.ReaderWriter;
 import spinfo.tm.util.UniversalMapper;
 
 public class Preparation {
@@ -61,7 +62,7 @@ public class Preparation {
 	}
 
 	private static void readAndFilterParagraphs() throws IOException {
-		List<Section> paragraphs = Reader.readSectionsFromCSV(TRAININGDATAFILE);
+		List<Section> paragraphs = ReaderWriter.readSectionsFromCSV(TRAININGDATAFILE);
 		System.out.println("Anzahl Sections insgesamt: "
 				+ paragraphs.size());
 		
@@ -110,7 +111,7 @@ public class Preparation {
 
 	@Test
 	public void testReadParsedSentencesFromFile() {
-		List<Sentence> readSentences = Reader.readSentencesFromBinary(OUTPUTFILE);
+		List<Sentence> readSentences = ReaderWriter.readSentencesFromBinary(OUTPUTFILE);
 
 		Assert.assertEquals(210, readSentences.size());
 
@@ -136,7 +137,7 @@ public class Preparation {
 
 	@Test
 	public void testReadClassifyUnitsFromFile() {
-		List<Section> cUsFromFile = Reader.readSectionsFromBinary(ALLSECTIONSFILE);
+		List<Section> cUsFromFile = ReaderWriter.readSectionsFromBinary(new File(ALLSECTIONSFILE));
 
 		Assert.assertEquals(376, cUsFromFile.size());
 
@@ -145,4 +146,6 @@ public class Preparation {
 			System.out.println(classifyUnit.getSentenceData());
 		}
 	}
+	
+	
 }

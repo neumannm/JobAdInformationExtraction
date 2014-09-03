@@ -1,32 +1,28 @@
 package spinfo.tm.extraction.learning;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import spinfo.tm.extraction.data.Class;
-import spinfo.tm.extraction.data.SlotFillingAnchor;
+import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 
 public class NaiveBayes implements ClassifierStrategy {
 
 	/** Number of documents for each class */
-	private Map<Class, Integer> classFrequencies = new HashMap<Class, Integer>();
+	private Map<Boolean, Integer> classFrequencies = new HashMap<Boolean, Integer>();
 	/**
 	 * For each class, we map a mapping of all the terms of that class to their
 	 * term frequencies:
 	 */
-	private Map<Class, Map<String, Integer>> termFrequenciesForClasses = new HashMap<Class, Map<String, Integer>>();
+	private Map<Boolean, Map<String, Integer>> termFrequenciesForClasses = new HashMap<Boolean, Map<String, Integer>>();
 	private int tokenCount = 0;
 
 	@Override
-	public ClassifierStrategy train(final SlotFillingAnchor anchor,
-			final Class c) {
-		// c = class assigned to this token in manual labeling phase
-
+	public ClassifierStrategy train(final PotentialSlotFillingAnchor anchor) {
 		/*
 		 * use as features?
 		 */
+		boolean competence = anchor.isCompetence(); //<-- am wichtigsten
 		String precedingToken = anchor.getPrecedingToken();
 		String precedingPOS = anchor.getPrecedingPOS();
 		String followingPOS = anchor.getFollowingPOS();
@@ -43,18 +39,18 @@ public class NaiveBayes implements ClassifierStrategy {
 		 */
 		tokenCount++;
 
-		Integer classCount = classFrequencies.get(c);
+		Integer classCount = classFrequencies.get(competence);
 		if (classCount == null) {
 			/* Erstes Vorkommen der Klasse: */
 			classCount = 0;
 		}
-		classFrequencies.put(c, classCount + 1);
+		classFrequencies.put(competence, classCount + 1);
 
 		/*
 		 * Für die Evidenz: Häufigkeit eines Terms in den Dokumenten einer
 		 * Klasse.
 		 */
-		Map<String, Integer> termCount = termFrequenciesForClasses.get(c);
+		Map<String, Integer> termCount = termFrequenciesForClasses.get(competence);
 		if (termCount == null) {
 			/* Erstes Vorkommen der Klasse: */
 			termCount = new HashMap<String, Integer>();
@@ -74,18 +70,18 @@ public class NaiveBayes implements ClassifierStrategy {
 		 */
 		termCount.put(term, count + /* anchor.getTermFrequencyOf(term) */1);
 
-		termFrequenciesForClasses.put(c, termCount);
+		termFrequenciesForClasses.put(competence, termCount);
 		return this;
 	}
 
 	@Override
-	public Class classify(final SlotFillingAnchor doc) {
+	public Boolean classify(final PotentialSlotFillingAnchor doc) {
 		/* Das Maximum... */
 		float max = Float.NEGATIVE_INFINITY;
-		Set<Class> classes = termFrequenciesForClasses.keySet();
-		Class best = classes.iterator().next();
+		Set<Boolean> classes = termFrequenciesForClasses.keySet();
+		Boolean best = classes.iterator().next();
 		/* ...der möglichen Klassen... */
-		for (Class c : classes) {
+		for (Boolean c : classes) {
 			/*
 			 * Das Produkt oder die Summe der Termwahrscheinlichkeiten ist
 			 * unsere Evidenz...
@@ -108,14 +104,14 @@ public class NaiveBayes implements ClassifierStrategy {
 		return best;
 	}
 
-	private float prior(final Class c) {
+	private float prior(final Boolean c) {
 		/* The relative frequency of the class: */
 		Integer classCount = classFrequencies.get(c);
 		float prior = (float) Math.log(classCount / (float) tokenCount);
 		return prior;
 	}
 
-	private float evidence(final String term, final Class c) {
+	private float evidence(final String term, final Boolean c) {
 		Map<String, Integer> termFreqsForClass = termFrequenciesForClasses
 				.get(c);
 		Integer termFrequency = termFreqsForClass.get(term);

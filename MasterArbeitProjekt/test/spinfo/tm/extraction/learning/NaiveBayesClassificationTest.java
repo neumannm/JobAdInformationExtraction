@@ -10,9 +10,7 @@ import java.util.UUID;
 import org.junit.Test;
 
 import spinfo.tm.extraction.data.Class;
-import spinfo.tm.extraction.data.SlotFillingAnchor;
-import spinfo.tm.extraction.learning.NaiveBayes;
-import spinfo.tm.extraction.learning.TokenClassifier;
+import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 
 public class NaiveBayesClassificationTest {
 
@@ -21,15 +19,15 @@ public class NaiveBayesClassificationTest {
 	@Test
 	public void test() {
 
-		Set<SlotFillingAnchor> trainingSet;
+		Set<PotentialSlotFillingAnchor> trainingSet;
 		try {
 			trainingSet = readFromFile("data/trainingsSet_ML.csv",
 					Class.COMPETENCE);
 			tokenClassifier = new TokenClassifier(new NaiveBayes(), trainingSet);
 
-			Map<SlotFillingAnchor, Class> classified = tokenClassifier
+			Map<PotentialSlotFillingAnchor, Boolean> classified = tokenClassifier
 					.classify(trainingSet);
-			for (SlotFillingAnchor c : classified.keySet()) {
+			for (PotentialSlotFillingAnchor c : classified.keySet()) {
 				System.out.println(classified.get(c) + ":\t" + c);
 			}
 		} catch (IOException e) {
@@ -38,7 +36,7 @@ public class NaiveBayesClassificationTest {
 
 	}
 
-	private Set<SlotFillingAnchor> readFromFile(String fileName,
+	private Set<PotentialSlotFillingAnchor> readFromFile(String fileName,
 			Class classToAnnotate) throws IOException {
 
 		BufferedReader in = new BufferedReader(new FileReader(fileName));
@@ -48,7 +46,7 @@ public class NaiveBayesClassificationTest {
 		int parentID = 0;
 		UUID classifyUnitID = null;
 
-		Set<SlotFillingAnchor> trainedData = new HashSet<>();
+		Set<PotentialSlotFillingAnchor> trainedData = new HashSet<>();
 
 		while ((line = in.readLine()) != null) {
 
@@ -65,7 +63,7 @@ public class NaiveBayesClassificationTest {
 				String token = splits[3];
 				int position = Integer.parseInt(splits[4]);
 
-				trainedData.add(new SlotFillingAnchor(token, position, true, classifyUnitID));
+				trainedData.add(new PotentialSlotFillingAnchor(token, position, true, classifyUnitID));
 				
 			} else if (splits.length == 0 && line.trim().isEmpty()) {
 				//new line in file
