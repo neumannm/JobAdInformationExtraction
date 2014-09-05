@@ -14,7 +14,8 @@ public class NaiveBayes implements ClassifierStrategy {
 	 * For each class, we map a mapping of all the terms of that class to their
 	 * term frequencies:
 	 */
-	private Map<Boolean, Map<String, Integer>> termFrequenciesForClasses = new HashMap<Boolean, Map<String, Integer>>();
+	private Map<Boolean, Map<String, Integer>> precedingTokenFrequenciesPerClass = new HashMap<Boolean, Map<String, Integer>>();
+
 	private int tokenCount = 0;
 
 	@Override
@@ -22,7 +23,7 @@ public class NaiveBayes implements ClassifierStrategy {
 		/*
 		 * use as features?
 		 */
-		boolean competence = anchor.isCompetence(); //<-- am wichtigsten
+		boolean competence = anchor.isCompetence(); // <-- am wichtigsten
 		String precedingToken = anchor.getPrecedingToken();
 		String precedingPOS = anchor.getPrecedingPOS();
 		String followingPOS = anchor.getFollowingPOS();
@@ -39,6 +40,9 @@ public class NaiveBayes implements ClassifierStrategy {
 		 */
 		tokenCount++;
 
+		/*
+		 * pro Klasse wird gespeichert, wie viele SlotFiller auftreten
+		 */
 		Integer classCount = classFrequencies.get(competence);
 		if (classCount == null) {
 			/* Erstes Vorkommen der Klasse: */
@@ -50,27 +54,25 @@ public class NaiveBayes implements ClassifierStrategy {
 		 * Für die Evidenz: Häufigkeit eines Terms in den Dokumenten einer
 		 * Klasse.
 		 */
-		Map<String, Integer> termCount = termFrequenciesForClasses.get(competence);
+		Map<String, Integer> termCount = precedingTokenFrequenciesPerClass
+				.get(competence);
 		if (termCount == null) {
 			/* Erstes Vorkommen der Klasse: */
 			termCount = new HashMap<String, Integer>();
 		}
 
 		/* Jetzt für jeden Term hochzählen: */
-		String term = anchor.getToken();
-		Integer count = termCount.get(term);
+		Integer count = termCount.get(precedingToken);
 		if (count == null) {
-			/* Erstes Vorkommen des Terms: */
+			/* Erstes Vorkommen des Tokens: */
 			count = 0;
 		}
 		/*
-		 * Wir addieren hier die Häufigkeit des Terms im Dokument.
-		 * 
-		 * TODO: macht keinen Sinn...
+		 * Wir addieren hier die Häufigkeit des Tokens
 		 */
-		termCount.put(term, count + /* anchor.getTermFrequencyOf(term) */1);
+		termCount.put(precedingToken, count + 1);
 
-		termFrequenciesForClasses.put(competence, termCount);
+		precedingTokenFrequenciesPerClass.put(competence, termCount);
 		return this;
 	}
 
@@ -78,7 +80,7 @@ public class NaiveBayes implements ClassifierStrategy {
 	public Boolean classify(final PotentialSlotFillingAnchor doc) {
 		/* Das Maximum... */
 		float max = Float.NEGATIVE_INFINITY;
-		Set<Boolean> classes = termFrequenciesForClasses.keySet();
+		Set<Boolean> classes = precedingTokenFrequenciesPerClass.keySet();
 		Boolean best = classes.iterator().next();
 		/* ...der möglichen Klassen... */
 		for (Boolean c : classes) {
@@ -112,7 +114,7 @@ public class NaiveBayes implements ClassifierStrategy {
 	}
 
 	private float evidence(final String term, final Boolean c) {
-		Map<String, Integer> termFreqsForClass = termFrequenciesForClasses
+		Map<String, Integer> termFreqsForClass = precedingTokenFrequenciesPerClass
 				.get(c);
 		Integer termFrequency = termFreqsForClass.get(term);
 		float evidence;
