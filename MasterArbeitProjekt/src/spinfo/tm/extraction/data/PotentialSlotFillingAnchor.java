@@ -20,9 +20,15 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	private int tokenPos;
 	private boolean isCompetence;
 
+	private boolean punctuationFollowing;
+	private boolean hasSuffixOfInterest;
+	private boolean startsWithUpperCase;
+
 	public PotentialSlotFillingAnchor(String token, int position,
 			boolean isCompetence, UUID sectionID) {
 		setToken(token);
+		setHasSuffixOfInterest();
+		setStartsWithUpperCase();
 		setParentUUID(sectionID);
 		setTokenPos(position);
 		setCompetence(isCompetence);
@@ -46,6 +52,7 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	public void setFollowingPOS(String followingPOS) {
 		this.followingPOS = followingPOS;
+		setPunctuationFollowing();
 	}
 
 	public void setFollowingToken(String followingToken) {
@@ -98,6 +105,36 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	public String getPrecedingToken() {
 		return precedingToken;
+	}
+	
+	public boolean isPunctuationFollowing() {
+		return this.punctuationFollowing;
+	}
+	
+	private void setPunctuationFollowing(){
+		String followingPOS = this.getFollowingPOS();
+		if ("$,".equals(followingPOS) || "$.".equals(followingPOS))
+			this.punctuationFollowing = true;
+	}
+
+	public boolean hasSuffixOfInterest() {
+		return this.hasSuffixOfInterest;
+	}
+	
+	private void setHasSuffixOfInterest(){
+		if(token.endsWith("heit") || token.endsWith("keit") || token.endsWith("ung")){
+			this.hasSuffixOfInterest = true;
+		}
+	}
+
+	public boolean startsWithUpperCase() {
+		return this.startsWithUpperCase;
+	}
+	
+	private void setStartsWithUpperCase(){
+		if (token.matches("\\b[A-ZÄÖÜ].*")){
+			this.startsWithUpperCase = true;
+		}
 	}
 
 	@Override
