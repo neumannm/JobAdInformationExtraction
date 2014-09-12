@@ -12,10 +12,10 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	private String token;
 	private String POS;
-	private String precedingToken;
-	private String precedingPOS;
-	private String followingToken;
-	private String followingPOS;
+	private String precedingToken = "--";
+	private String precedingPOS = "--";
+	private String followingToken = "--";
+	private String followingPOS = "--";
 	private UUID parentUUID;
 	private int tokenPos;
 	private boolean isCompetence;
@@ -106,12 +106,12 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	public String getPrecedingToken() {
 		return precedingToken;
 	}
-	
+
 	public boolean isPunctuationFollowing() {
 		return this.punctuationFollowing;
 	}
-	
-	private void setPunctuationFollowing(){
+
+	private void setPunctuationFollowing() {
 		String followingPOS = this.getFollowingPOS();
 		if ("$,".equals(followingPOS) || "$.".equals(followingPOS))
 			this.punctuationFollowing = true;
@@ -120,9 +120,10 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	public boolean hasSuffixOfInterest() {
 		return this.hasSuffixOfInterest;
 	}
-	
-	private void setHasSuffixOfInterest(){
-		if(token.endsWith("heit") || token.endsWith("keit") || token.endsWith("ung")){
+
+	private void setHasSuffixOfInterest() {
+		if (token.endsWith("heit") || token.endsWith("keit")
+				|| token.endsWith("ung") || token.endsWith("schaft")) {
 			this.hasSuffixOfInterest = true;
 		}
 	}
@@ -130,9 +131,9 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	public boolean startsWithUpperCase() {
 		return this.startsWithUpperCase;
 	}
-	
-	private void setStartsWithUpperCase(){
-		if (token.matches("\\b[A-ZÄÖÜ].*")){
+
+	private void setStartsWithUpperCase() {
+		if (token.matches("\\b[A-ZÄÖÜ].*")) {
 			this.startsWithUpperCase = true;
 		}
 	}
@@ -145,7 +146,9 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	/*
 	 * bisschen gehackt (Vergleich läuft nur über gleiches Token und gleiche
-	 * Section ID, in der sich das Token befindet (non-Javadoc)
+	 * Section ID, in der sich das Token befindet - es kann aber evtl. auch
+	 * zweimal das gleiche Token in der gleichen Section auftrete n...)
+	 * (non-Javadoc)
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

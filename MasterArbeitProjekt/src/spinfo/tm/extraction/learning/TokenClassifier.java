@@ -2,8 +2,8 @@ package spinfo.tm.extraction.learning;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 
@@ -32,14 +32,14 @@ public class TokenClassifier {
 	}
 
 	/**
-	 * @param documents
-	 *            The documents to classify
+	 * @param toClassify
+	 *            The objects to classify
 	 * @return A mapping of documents to their class labels
 	 */
 	public Map<PotentialSlotFillingAnchor, Boolean> classify(
-			final Set<PotentialSlotFillingAnchor> documents) {
+			final Collection<PotentialSlotFillingAnchor> toClassify) {
 		Map<PotentialSlotFillingAnchor, Boolean> resultClasses = new HashMap<>();
-		for (PotentialSlotFillingAnchor document : documents) {
+		for (PotentialSlotFillingAnchor document : toClassify) {
 			/* Wie beim Training delegieren wir an die Strategie: */
 			Boolean classLabel = classifier.classify(document);
 			/*
@@ -51,28 +51,26 @@ public class TokenClassifier {
 		return resultClasses;
 	}
 
-	// /**
-	// * @param resultClasses The classification result
-	// * @param gold The gold standard
-	// * @return The ration of correct labels in classified, according to the
-	// gold
-	// */
-	// public Float evaluate(final Map<Document, String> resultClasses,
-	// final ArrayList<Document> gold) {
-	// /* Wir zählen die Anzahl der Übereinstimmungen: */
-	// int same = 0;
-	// for (Document document : gold) {
-	// String classLabel = resultClasses.get(document);
-	// if (classLabel.equalsIgnoreCase(document.getTopic())) {
-	// same++;
-	// }
-	// }
-	// /* Und berechnen daraus den Anteil korrekter Werte: */
-	// return same / (float) gold.size();
-	// /*
-	// * Eigentlich mit Annotationen evaluieren (als generisches
-	// * Austauschformat), aber für die Übersichtlichkeit hier so.
-	// */
-	// }
-
+	/**
+	 * @param resultClasses
+	 *            The classification result
+	 * @param gold
+	 *            The gold standard
+	 * @return The ration of correct labels in classified, according to the gold
+	 */
+	//TODO: Precision oder Recall? oder Accuracy? (wahrscheinlich letzteres)
+	public Float evaluate(
+			final Map<PotentialSlotFillingAnchor, Boolean> resultClasses,
+			final List<PotentialSlotFillingAnchor> gold) {
+		/* Wir zählen die Anzahl der Übereinstimmungen: */
+		int same = 0;
+		for (PotentialSlotFillingAnchor anchor : gold) {
+			Boolean isCompetence = resultClasses.get(anchor);
+			if (isCompetence.equals(anchor.isCompetence())) {
+				same++;
+			}
+		}
+		/* Und berechnen daraus den Anteil korrekter Werte: */
+		return same / (float) gold.size();
+	}
 }

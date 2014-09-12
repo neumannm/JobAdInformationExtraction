@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -51,6 +52,24 @@ public class Workflow {
 
 		List<PotentialSlotFillingAnchor> trainingSetForNB = createTrainingSet(potentialFillers);
 		TokenClassifier tokenClassifier = new TokenClassifier(new NaiveBayes(), trainingSetForNB);
+		
+		Map<PotentialSlotFillingAnchor, Boolean> classified = tokenClassifier.classify(trainingSetForNB);
+		int correctCount = 0, wrongCount = 0;
+		for (PotentialSlotFillingAnchor potAnchor : classified.keySet()) {
+			if(classified.get(potAnchor)){
+				correctCount++;
+				System.out.println("Is potential anchor: " + potAnchor.getToken());
+			}
+			else{
+				wrongCount++;
+			}
+		}
+		System.out.println("\nNumber of potential SlotFillers classified as TRUE: " + correctCount);
+		System.out.println("Number of potential SlotFillers classified as FALSE: " + wrongCount);
+		System.out.println("Number of all classified potential SlotFillers: " + classified.size());
+		
+		Float evaluate = tokenClassifier.evaluate(classified, trainingSetForNB);
+		System.out.println("\nEvaluation result: " + evaluate);
 		
 	}
 

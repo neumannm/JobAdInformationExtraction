@@ -6,6 +6,10 @@ import java.util.Set;
 
 import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 
+/**
+ * @author neumannm
+ * 
+ */
 public class NaiveBayes implements ClassifierStrategy {
 
 	/* Number of documents for each class */
@@ -14,19 +18,26 @@ public class NaiveBayes implements ClassifierStrategy {
 	 * For each class (Boolean inClass / notInClass), we map a mapping of the
 	 * features of that class to their frequencies:
 	 */
-	private Map<Boolean, Map<String, Integer>> precedingTokenFrequenciesPerClass = new HashMap<Boolean, Map<String, Integer>>();
-	private Map<Boolean, Map<String, Integer>> precedingPOSFrequenciesPerClass = new HashMap<Boolean, Map<String, Integer>>();
-	private Map<Boolean, Map<String, Integer>> followingTokenFrequenciesPerClass = new HashMap<Boolean, Map<String, Integer>>();
-	private Map<Boolean, Map<String, Integer>> followingPOSFrequenciesPerClass = new HashMap<Boolean, Map<String, Integer>>();
-	private Map<Boolean, Map<String, Integer>> POSFrequenciesPerClass = new HashMap<Boolean, Map<String, Integer>>();
-	private Map<Boolean, Map<String, Integer>> tokenFrequenciesPerClass = new HashMap<Boolean, Map<String, Integer>>();
+	private Map<Boolean, Map<String, Integer>> precedingTokenFrequenciesPerClass = new HashMap<>();
+	private Map<Boolean, Map<String, Integer>> precedingPOSFrequenciesPerClass = new HashMap<>();
+	private Map<Boolean, Map<String, Integer>> followingTokenFrequenciesPerClass = new HashMap<>();
+	private Map<Boolean, Map<String, Integer>> followingPOSFrequenciesPerClass = new HashMap<>();
+	private Map<Boolean, Map<String, Integer>> POSFrequenciesPerClass = new HashMap<>();
+	private Map<Boolean, Map<String, Integer>> tokenFrequenciesPerClass = new HashMap<>();
 
-	private Map<Boolean, Integer> upperCaseStartFrequenciesPerClass = new HashMap<Boolean, Integer>();
-	private Map<Boolean, Integer> suffixFrequenciesPerClass = new HashMap<Boolean, Integer>();
-	private Map<Boolean, Integer> punctFollowingFrequenciesPerClass = new HashMap<Boolean, Integer>();
+	private Map<Boolean, Map<Boolean, Integer>> upperCaseStartFrequenciesPerClass = new HashMap<>();
+	private Map<Boolean, Map<Boolean, Integer>> suffixFrequenciesPerClass = new HashMap<>();
+	private Map<Boolean, Map<Boolean, Integer>> punctFollowingFrequenciesPerClass = new HashMap<>();
 
 	private int tokenCount = 0;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * spinfo.tm.extraction.learning.ClassifierStrategy#train(spinfo.tm.extraction
+	 * .data.PotentialSlotFillingAnchor)
+	 */
 	@Override
 	public ClassifierStrategy train(final PotentialSlotFillingAnchor anchor) {
 		boolean inClass = anchor.isCompetence();
@@ -61,34 +72,43 @@ public class NaiveBayes implements ClassifierStrategy {
 		/*
 		 * Für die Evidenz: Häufigkeit, mit der Token mit Großbuchstaben beginnt
 		 */
-		if (upperCaseStart) {
-			count = upperCaseStartFrequenciesPerClass.get(inClass);
-			if (count == null)
-				count = 0;
-			upperCaseStartFrequenciesPerClass.put(inClass, count + 1);
-		}
+		Map<Boolean, Integer> upperCaseCount = upperCaseStartFrequenciesPerClass
+				.get(inClass);
+		if (upperCaseCount == null)
+			upperCaseCount = new HashMap<Boolean, Integer>();
+		count = 0;
+		if (upperCaseCount.containsKey(upperCaseStart))
+			count = upperCaseCount.get(upperCaseStart);
+		upperCaseCount.put(upperCaseStart, count + 1);
+		upperCaseStartFrequenciesPerClass.put(inClass, upperCaseCount);
 
 		/*
 		 * Für die Evidenz: Häufigkeit, mit der Token auf ein bestimmtes Suffix
 		 * endet
 		 */
-		if (hasSuffixOfInterest) {
-			count = suffixFrequenciesPerClass.get(inClass);
-			if (count == null)
-				count = 0;
-			suffixFrequenciesPerClass.put(inClass, count + 1);
-		}
+		Map<Boolean, Integer> suffixCount = suffixFrequenciesPerClass
+				.get(inClass);
+		if (suffixCount == null)
+			suffixCount = new HashMap<Boolean, Integer>();
+		count = 0;
+		if (suffixCount.containsKey(hasSuffixOfInterest))
+			count = suffixCount.get(hasSuffixOfInterest);
+		suffixCount.put(hasSuffixOfInterest, count + 1);
+		suffixFrequenciesPerClass.put(inClass, suffixCount);
 
 		/*
 		 * Für die Evidenz: Häufigkeit, mit der nach dem Token ein
 		 * Interpunktionszeichen kommt
 		 */
-		if (punctuationFollowing) {
-			count = punctFollowingFrequenciesPerClass.get(inClass);
-			if (count == null)
-				count = 0;
-			punctFollowingFrequenciesPerClass.put(inClass, count + 1);
-		}
+		Map<Boolean, Integer> punctFollowingCount = punctFollowingFrequenciesPerClass
+				.get(inClass);
+		if (punctFollowingCount == null)
+			punctFollowingCount = new HashMap<Boolean, Integer>();
+		count = 0;
+		if (punctFollowingCount.containsKey(punctuationFollowing))
+			count = punctFollowingCount.get(punctuationFollowing);
+		punctFollowingCount.put(punctuationFollowing, count + 1);
+		punctFollowingFrequenciesPerClass.put(inClass, punctFollowingCount);
 
 		/*
 		 * Für die Evidenz: Häufigkeit vorangehender Tokens
@@ -115,7 +135,7 @@ public class NaiveBayes implements ClassifierStrategy {
 		if (pPOSCount.containsKey(precedingPOS))
 			count = pPOSCount.get(precedingPOS);
 		pPOSCount.put(precedingPOS, count + 1);
-		precedingTokenFrequenciesPerClass.put(inClass, pPOSCount);
+		precedingPOSFrequenciesPerClass.put(inClass, pPOSCount);
 
 		/*
 		 * Für die Evidenz: Häufigkeit folgender Tokens
@@ -128,6 +148,7 @@ public class NaiveBayes implements ClassifierStrategy {
 		if (fTokenCount.containsKey(followingToken))
 			count = fTokenCount.get(followingToken);
 		fTokenCount.put(followingToken, count + 1);
+		followingTokenFrequenciesPerClass.put(inClass, fTokenCount);
 
 		/*
 		 * Für die Evidenz: Häufigkeit folgender POS Tags
@@ -154,6 +175,9 @@ public class NaiveBayes implements ClassifierStrategy {
 		tokenCount.put(token, count + 1);
 		tokenFrequenciesPerClass.put(inClass, tokenCount);
 
+		/*
+		 * Für die Evidenz: Häufigkeit des POS Tags
+		 */
 		Map<String, Integer> POSCount = POSFrequenciesPerClass.get(inClass);
 		if (POSCount == null)
 			POSCount = new HashMap<String, Integer>();
@@ -166,11 +190,17 @@ public class NaiveBayes implements ClassifierStrategy {
 		return this;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see spinfo.tm.extraction.learning.ClassifierStrategy#classify(spinfo.tm.
+	 * extraction.data.PotentialSlotFillingAnchor)
+	 */
 	@Override
 	public Boolean classify(final PotentialSlotFillingAnchor anchor) {
 		/* Das Maximum... */
 		float max = Float.NEGATIVE_INFINITY;
-		Set<Boolean> classes = precedingTokenFrequenciesPerClass.keySet();
+		Set<Boolean> classes = classFrequencies.keySet();
 		Boolean best = classes.iterator().next();
 		/* ...der möglichen Klassen... */
 		for (Boolean c : classes) {
@@ -178,11 +208,10 @@ public class NaiveBayes implements ClassifierStrategy {
 			 * Das Produkt oder die Summe der Termwahrscheinlichkeiten ist
 			 * unsere Evidenz...
 			 */
-			float evidence = evidence(anchor, c); // TODO change - evidence is
-													// sum of probabilities for
-													// each feature
+			float evidence = evidence(anchor, c);
 
-			float prior = prior(c); // prior probability of class
+			float prior = prior(c); // prior probability of class TODO save in
+									// model
 
 			/* Die eigentliche Naive-Bayes Berechnung: */
 			float probability = (float) (prior + evidence);
@@ -195,10 +224,11 @@ public class NaiveBayes implements ClassifierStrategy {
 		return best;
 	}
 
+	// TODO: check this
 	private float prior(final Boolean c) {
 		/* The relative frequency of the class: */
 		Integer classCount = classFrequencies.get(c);
-		float prior = (float) Math.log(classCount / (float) tokenCount);
+		float prior = (float) Math.log10((classCount) / (float) (tokenCount));
 		return prior;
 	}
 
@@ -243,41 +273,44 @@ public class NaiveBayes implements ClassifierStrategy {
 
 		evidence += partialEvidence(POSFreqForClass, POSFreq);
 
-		Integer sufFreq = suffixFrequenciesPerClass.get(c);
+		Map<Boolean, Integer> sufFreqForClass = suffixFrequenciesPerClass
+				.get(c);
+		Integer sufFreq = sufFreqForClass.get(anchor.hasSuffixOfInterest());
 
-		evidence += sufFreq;
+		// evidence += partialEvidence(sufFreqForClass, sufFreq);
 
-		Integer punctFreq = punctFollowingFrequenciesPerClass.get(c);
+		Map<Boolean, Integer> punctFreqForClass = punctFollowingFrequenciesPerClass
+				.get(c);
+		Integer punctFreq = punctFreqForClass.get(anchor
+				.isPunctuationFollowing());
 
-		evidence += punctFreq;
+		// evidence += partialEvidence(punctFreqForClass, punctFreq);
 
-		Integer upperCaseFreq = upperCaseStartFrequenciesPerClass.get(c);
-
-		evidence += upperCaseFreq;
+		Map<Boolean, Integer> upperFreqForClass = upperCaseStartFrequenciesPerClass
+				.get(c);
+		Integer upperCaseFreq = upperFreqForClass.get(anchor
+				.startsWithUpperCase());
+		// evidence += partialEvidence(upperFreqForClass, upperCaseFreq);
 
 		return evidence;
 	}
 
-	private float partialEvidence(Map<String, Integer> fPOSFreqsForClass,
+	private float partialEvidence(Map<?, Integer> freqsForClass,
 			Integer frequency) {
 		float evidence = 0f;
-		/*
-		 * Wenn ein Term in den Trainingsdokumenten für die Klasse nicht
-		 * vorkommt, ist die Evidenz unendlich klein (weil wir damit vergleichen
-		 * bei der Suche nach dem Maximum):
-		 */
-		if (frequency != null) {
-			evidence += frequency / (float) sum(fPOSFreqsForClass);
-		} else {
-			evidence += Float.NEGATIVE_INFINITY;
-		}
-		return evidence;
+
+		if (frequency == null) // kommt in Trainingsdaten gar nicht vor
+			frequency = 0;
+		// Laplace Smoothing:
+		evidence += (frequency + 1)
+				/ ((float) sum(freqsForClass) + freqsForClass.size());
+		return (float) Math.log10(evidence);
 	}
 
-	/* Die Summe der Häufigkeiten der Termfrequenzen für die Klasse: */
-	private float sum(final Map<String, Integer> termFreqsForClass) {
+	/* Die Summe der Häufigkeiten der Frequenzen für die Klasse: */
+	private float sum(final Map<?, Integer> freqsForClass) {
 		int sum = 0;
-		for (Integer i : termFreqsForClass.values()) {
+		for (Integer i : freqsForClass.values()) {
 			sum += i;
 		}
 		return sum;
@@ -292,5 +325,4 @@ public class NaiveBayes implements ClassifierStrategy {
 	public String toString() {
 		return getClass().getSimpleName();
 	}
-
 }
