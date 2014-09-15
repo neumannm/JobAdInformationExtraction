@@ -12,7 +12,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import spinfo.tm.data.Section;
+import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.parsing.util.SentenceDataConverter;
 
 public class ParagraphParser {
@@ -21,7 +21,7 @@ public class ParagraphParser {
 	private is2.mtag.Tagger morphTagger;
 	private Tagger posTagger;
 	private Tool depParser;
-	private Section2SentenceDataConverter conv = new Section2SentenceDataConverter();
+	private Paragraph2SentenceDataConverter conv = new Paragraph2SentenceDataConverter();
 
 	private final static Logger log = LogManager
 			.getLogger(ParagraphParser.class);
@@ -50,25 +50,25 @@ public class ParagraphParser {
 
 	}
 
-	public List<Section> parse(List<Section> sections) {
-		for (Section section : sections) {
-			section = parse(section);
+	public List<Paragraph> parse(List<Paragraph> paragraphs) {
+		for (Paragraph paragraph : paragraphs) {
+			paragraph = parse(paragraph);
 		}
-		return sections;
+		return paragraphs;
 	}
 
-	public Section parse(Section section) {
-		String paragraph = section.getContent();
-		Map<Integer, SentenceData09> processed = conv.convert(paragraph);
+	public Paragraph parse(Paragraph paragraph) {
+		String paragraphText = paragraph.getContent();
+		Map<Integer, SentenceData09> processed = conv.convert(paragraphText);
 		SentenceData09 sentenceData;
 		for (Integer sentence : processed.keySet()) {
 			sentenceData = applyTools(processed.get(sentence));
 			processed.put(sentence, sentenceData);
 		}
 
-		section.setSentenceData(SentenceDataConverter.convert(processed,
-				section.getID()));
-		return section;
+		paragraph.setSentenceData(SentenceDataConverter.convert(processed,
+				paragraph.getID()));
+		return paragraph;
 	}
 
 	public SentenceData09 applyTools(SentenceData09 sentenceData) {

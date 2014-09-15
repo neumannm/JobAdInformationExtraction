@@ -16,17 +16,17 @@ import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 
-import spinfo.tm.data.Section;
+import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
-import spinfo.tm.extraction.parsing.Section2SentenceDataConverter;
+import spinfo.tm.extraction.parsing.Paragraph2SentenceDataConverter;
 import spinfo.tm.extraction.parsing.ParagraphParser;
 import spinfo.tm.preprocessing.TrainingDataReader;
 import spinfo.tm.util.ClassFilter;
 
 public class ParserTest {
 
-	private List<Section> paragraphs;
-	private Map<UUID, Section> filteredClassifyUnits;
+	private List<Paragraph> paragraphs;
+	private Map<UUID, Paragraph> filteredClassifyUnits;
 
 	private static final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
 	private static final String TRAININGDATAPARSEDFILE = "data/SingleClassTrainingDataParsed.txt";
@@ -43,7 +43,7 @@ public class ParserTest {
 		Class[] classesToAnnotate = { Class.COMPETENCE,
 				Class.COMPANY_COMPETENCE, Class.JOB_COMPETENCE };
 
-		List<Section> filteredParagraphs = ClassFilter.filter(paragraphs,
+		List<Paragraph> filteredParagraphs = ClassFilter.filter(paragraphs,
 				classesToAnnotate);
 
 		System.out.println("Anzahl ClassifyUnits gefiltert: "
@@ -51,7 +51,7 @@ public class ParserTest {
 
 		filteredClassifyUnits = new HashMap<>();
 
-		for (Section cu : filteredParagraphs) {
+		for (Paragraph cu : filteredParagraphs) {
 			filteredClassifyUnits.put(cu.getID(), cu);
 		}
 	}
@@ -64,7 +64,7 @@ public class ParserTest {
 
 		Map<String, SentenceData09> parsed;
 		for (UUID cuID : filteredClassifyUnits.keySet()) {
-			Section classifyUnit = filteredClassifyUnits.get(cuID);
+			Paragraph classifyUnit = filteredClassifyUnits.get(cuID);
 			parser.parse(classifyUnit);
 
 //			for (Integer sentence : classifyUnit.getSentenceData().keySet()) {
@@ -79,7 +79,7 @@ public class ParserTest {
 	public void testWritingAndReadingParsedData() {
 		ParagraphParser parser = new ParagraphParser();
 
-		Section2SentenceDataConverter conv = new Section2SentenceDataConverter();
+		Paragraph2SentenceDataConverter conv = new Paragraph2SentenceDataConverter();
 
 		String paragraph = "Ideal ist, wenn Sie viel positive Energie haben, gerne Verantwortung übernehmen "
 				+ "und gerne Mitarbeiter führen. Gebraucht werden auch gute Englischkenntnisse und Führerschein"

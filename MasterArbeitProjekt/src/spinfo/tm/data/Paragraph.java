@@ -6,12 +6,12 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Represents a section in a Job Ad (typically a paragraph)
+ * Represents a paragraph in a Job Ad (typically a paragraph)
  * 
  * @author neumannm
  * 
  */
-public class Section implements Comparable<Section>, Serializable {
+public class Paragraph implements Comparable<Paragraph>, Serializable {
 
 	/**
 	 * 
@@ -30,16 +30,16 @@ public class Section implements Comparable<Section>, Serializable {
 	// private Set<Sentence> sentences;
 
 	/**
-	 * Create a new section with specified ID.
+	 * Create a new paragraph with specified ID.
 	 * 
 	 * @param content
-	 *            - The section's textual content.
+	 *            - The paragraph's textual content.
 	 * @param parentID
-	 *            - ID of the section's parent (i.e. job ad)
+	 *            - ID of the paragraph's parent (i.e. job ad)
 	 * @param id
-	 *            - unique ID of this section
+	 *            - unique ID of this paragraph
 	 */
-	public Section(String content, int parentID, UUID id) {
+	public Paragraph(String content, int parentID, UUID id) {
 		super();
 		this.content = content;
 		this.parentID = parentID;
@@ -47,14 +47,14 @@ public class Section implements Comparable<Section>, Serializable {
 	}
 
 	/**
-	 * Create a section with random ID.
+	 * Create a paragraph with random ID.
 	 * 
 	 * @param content
-	 *            - The section's textual content.
+	 *            - The paragraph's textual content.
 	 * @param parentID
-	 *            - ID of the section's parent (i.e. job ad)
+	 *            - ID of the paragraph's parent (i.e. job ad)
 	 */
-	public Section(String content, int parentID) {
+	public Paragraph(String content, int parentID) {
 		this(content, parentID, UUID.randomUUID());
 	}
 
@@ -136,7 +136,7 @@ public class Section implements Comparable<Section>, Serializable {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(Section other) {
+	public int compareTo(Paragraph other) {
 		return this.id.compareTo(other.id);
 	}
 
@@ -156,8 +156,8 @@ public class Section implements Comparable<Section>, Serializable {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof Section){
-			return this.id.equals(((Section)obj).id);
+		if(obj instanceof Paragraph){
+			return this.id.equals(((Paragraph)obj).id);
 		}
 		return super.equals(obj);
 	}

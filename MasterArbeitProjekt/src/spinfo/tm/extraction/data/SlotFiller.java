@@ -18,8 +18,8 @@ public class SlotFiller {
 	 * 
 	 * @param token
 	 *            Token for Slot Filler
-	 * @param cuID
-	 *            ClassifyUnit the filler belongs to
+	 * @param tokenPos
+	 *            position of the filler in the paragraph
 	 */
 	public SlotFiller(String token, int tokenPos) {
 		this.content = token;

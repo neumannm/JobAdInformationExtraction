@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import spinfo.tm.data.Section;
+import spinfo.tm.data.Paragraph;
 
 public class UniversalMapper {
 
-	private static Map<UUID, Section> sectionIDMap = new HashMap<>();
+	private static Map<UUID, Paragraph> paragraphIDMap = new HashMap<>();
 	private static final String ALLSECTIONSFILE = "data/allSections.bin";
 
 	static {
@@ -23,9 +23,9 @@ public class UniversalMapper {
 			Object readObject;
 			while (true) {
 				readObject = is.readObject();
-				if (readObject instanceof Section) {
-					Section s = (Section) readObject;
-					sectionIDMap.put(s.getID(), s);
+				if (readObject instanceof Paragraph) {
+					Paragraph s = (Paragraph) readObject;
+					paragraphIDMap.put(s.getID(), s);
 				}
 			}
 		} catch (EOFException e) {
@@ -42,7 +42,7 @@ public class UniversalMapper {
 		}
 	}
 
-	public static Section getSectionforID(UUID id) {
-		return sectionIDMap.get(id);
+	public static Paragraph getParagraphforID(UUID id) {
+		return paragraphIDMap.get(id);
 	}
 }

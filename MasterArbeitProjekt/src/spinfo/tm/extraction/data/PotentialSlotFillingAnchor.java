@@ -25,17 +25,17 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	private boolean startsWithUpperCase;
 
 	public PotentialSlotFillingAnchor(String token, int position,
-			boolean isCompetence, UUID sectionID) {
+			boolean isCompetence, UUID paragraphID) {
 		setToken(token);
 		setHasSuffixOfInterest();
 		setStartsWithUpperCase();
-		setParentUUID(sectionID);
+		setParentUUID(paragraphID);
 		setTokenPos(position);
 		setCompetence(isCompetence);
 	}
 
-	private void setParentUUID(UUID classifyUnitID) {
-		this.parentUUID = classifyUnitID;
+	private void setParentUUID(UUID paragraphID) {
+		this.parentUUID = paragraphID;
 	}
 
 	private void setTokenPos(int tokenPos) {

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ClassifyUnitSplitter {
+public class ParagraphSplitter {
 
 	public static List<String> splitAtNewLine(String toSplit) {
 		List<String> toReturn = new ArrayList<String>();

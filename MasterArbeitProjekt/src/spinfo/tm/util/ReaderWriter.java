@@ -12,32 +12,32 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import spinfo.tm.data.Section;
+import spinfo.tm.data.Paragraph;
 import spinfo.tm.data.Sentence;
 import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 import spinfo.tm.preprocessing.TrainingDataReader;
 
 public class ReaderWriter {
 
-	public static List<Section> readSectionsFromCSV(String fileName)
+	public static List<Paragraph> readSectionsFromCSV(String fileName)
 			throws IOException {
 		File trainingDataFile = new File(fileName);
 		TrainingDataReader tdg = new TrainingDataReader(trainingDataFile);
 
-		List<Section> paragraphs = tdg.getTrainingData();
+		List<Paragraph> paragraphs = tdg.getTrainingData();
 		return paragraphs;
 	}
 
-	public static List<Section> readSectionsFromBinary(File parsedSectionsFile) {
-		List<Section> toReturn = new ArrayList<>();
+	public static List<Paragraph> readSectionsFromBinary(File parsedSectionsFile) {
+		List<Paragraph> toReturn = new ArrayList<>();
 		ObjectInputStream is = null;
 		try {
 			is = new ObjectInputStream(new FileInputStream(parsedSectionsFile));
 			Object readObject;
 			while (true) {
 				readObject = is.readObject();
-				if (readObject instanceof Section) {
-					toReturn.add((Section) readObject);
+				if (readObject instanceof Paragraph) {
+					toReturn.add((Paragraph) readObject);
 				}
 			}
 		} catch (EOFException e) {

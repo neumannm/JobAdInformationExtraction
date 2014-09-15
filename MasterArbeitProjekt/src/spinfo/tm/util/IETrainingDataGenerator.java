@@ -14,13 +14,13 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import spinfo.tm.data.Section;
+import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.preprocessing.OpenNLPTokenizer;
 
 /**
- * Class to annotate tokens of ClassifyUnits manually, if they are Information
+ * Class to annotate tokens of paragraphs manually, if they are Information
  * Extraction Units or not.
  * 
  * @author neumannm
@@ -30,17 +30,17 @@ public class IETrainingDataGenerator {
 
 	private Class classToAnnotate;
 	private File tdFile;
-	private Map<Section, List<SlotFiller>> trainedData;
+	private Map<Paragraph, List<SlotFiller>> trainedData;
 
 	public IETrainingDataGenerator(File trainingDataFile,
-			Class classToAnnotate, Map<UUID, Section> classifyUnits) {
+			Class classToAnnotate, Map<UUID, Paragraph> paragraphs) {
 		setClassToAnnotate(classToAnnotate);
 		try {
 			setTdFile(trainingDataFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		trainedData = new TreeMap<Section, List<SlotFiller>>();
+		trainedData = new TreeMap<Paragraph, List<SlotFiller>>();
 	}
 
 	private void setTdFile(File trainingDataFile) throws IOException {
@@ -49,7 +49,7 @@ public class IETrainingDataGenerator {
 			tdFile.createNewFile();
 	}
 
-	public void annotate(List<Section> paragraphsOfInterest)
+	public void annotate(List<Paragraph> paragraphsOfInterest)
 			throws IOException {
 		int start = 0;
 		/*
@@ -73,7 +73,7 @@ public class IETrainingDataGenerator {
 
 		OpenNLPTokenizer tokenizer = new OpenNLPTokenizer();
 		paragraphLoop: for (int i = start; i < paragraphsOfInterest.size(); i++) {
-			Section item = paragraphsOfInterest.get(i);
+			Paragraph item = paragraphsOfInterest.get(i);
 
 			String itemText = item.getContent().trim();
 			System.out.println("ITEM " + (i + 1) + " von "
@@ -121,7 +121,7 @@ public class IETrainingDataGenerator {
 	}
 
 	private Object[] processAnswer(String ans, List<String> tokens,
-			Section item) throws IllegalArgumentException {
+			Paragraph item) throws IllegalArgumentException {
 
 		Object[] toReturn = new Object[2]; // contains token and its position
 											// (workaround for multiple return
@@ -187,12 +187,12 @@ public class IETrainingDataGenerator {
 				.trim();
 	}
 
-	private void writeToFile(Map<Section, List<SlotFiller>> trainedData2)
+	private void writeToFile(Map<Paragraph, List<SlotFiller>> trainedData2)
 			throws IOException {
 		PrintWriter out = new PrintWriter(new FileWriter(tdFile));
 
 		out.println("JobAd ID\tUnit ID\tClass\tToken\tPosition");
-		for (Section cu : trainedData2.keySet()) {
+		for (Paragraph cu : trainedData2.keySet()) {
 			out.print(cu.getParentID() + "\t"); // id of job ad
 			out.print(cu.getID() + "\t"); // CU ID
 			out.print(classToAnnotate + "\t"); // which class
@@ -217,11 +217,11 @@ public class IETrainingDataGenerator {
 	 * @return List of manually annotated IETemplates
 	 * @throws IOException
 	 */
-	public Map<Section, List<SlotFiller>> getTrainingData()
+	public Map<Paragraph, List<SlotFiller>> getTrainingData()
 			throws IOException {
 
 		if (trainedData.isEmpty()) {
-			trainedData = new TreeMap<Section, List<SlotFiller>>();
+			trainedData = new TreeMap<Paragraph, List<SlotFiller>>();
 
 			BufferedReader in = new BufferedReader(new FileReader(tdFile));
 			String line = in.readLine();// 1st line contains headings
@@ -252,7 +252,7 @@ public class IETrainingDataGenerator {
 
 				} else if (splits.length == 0 && line.trim().isEmpty()) {
 					if (classID.equals(classToAnnotate)) {
-						trainedData.put(UniversalMapper.getSectionforID(cuID),
+						trainedData.put(UniversalMapper.getParagraphforID(cuID),
 								content);
 					}
 				} else {

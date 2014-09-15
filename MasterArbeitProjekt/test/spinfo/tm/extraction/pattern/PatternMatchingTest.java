@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 
-import spinfo.tm.data.Section;
+import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.extraction.pattern.PatternMatcher;
@@ -19,8 +19,8 @@ import spinfo.tm.preprocessing.TrainingDataReader;
 import spinfo.tm.util.IETrainingDataGenerator;
 
 public class PatternMatchingTest {
-	private List<Section> paragraphs = new ArrayList<Section>();
-	private Map<UUID, Section> classifyUnits = new HashMap<UUID, Section>();
+	private List<Paragraph> paragraphs = new ArrayList<Paragraph>();
+	private Map<UUID, Paragraph> classifyUnits = new HashMap<UUID, Paragraph>();
 
 	private void setUp() throws IOException {
 		File trainingDataFile = new File(
@@ -32,7 +32,7 @@ public class PatternMatchingTest {
 		System.out.println("Anzahl ClassifyUnits insgesamt: "
 				+ paragraphs.size());
 
-		for (Section cu : paragraphs) {
+		for (Paragraph cu : paragraphs) {
 			classifyUnits.put(cu.getID(), cu);
 		}
 	}
@@ -80,7 +80,7 @@ public class PatternMatchingTest {
 		/* aufgelistete Anforderungen */
 		String content = "Unsere Anforderungen:\n" + "- Zuverlässigkeit\n"
 				+ "- Kompetenz\n" + "- Sie sind einfach ganz toll";
-		Section cu = new Section(content, 0);
+		Paragraph cu = new Paragraph(content, 0);
 		List<SlotFiller> result = pm.getContentOfInterest(cu, null);
 		List<SlotFiller> vorlage = new ArrayList<SlotFiller>();
 		vorlage.add(new SlotFiller("Zuverlässigkeit", 5));
@@ -93,7 +93,7 @@ public class PatternMatchingTest {
 		content = "Der Bewerber sollte fit sein. "
 				+ "Die Bewerberin sollte viel Make-up haben. "
 				+ "Und der/die Bewerber/in sollte seine/ihre eigenen Klamotten mitbringen";
-		cu = new Section(content, 0);
+		cu = new Paragraph(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
 		vorlage.add(new SlotFiller("fit", 4));
@@ -104,7 +104,7 @@ public class PatternMatchingTest {
 
 		/* Jobbezeichnung */
 		content = "Wir suchen eine/n Bankkauffrau/-mann. Wir suchen weiterhin eine/n Frisör/in.";
-		cu = new Section(content, 0);
+		cu = new Paragraph(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
 		vorlage.add(new SlotFiller("Bankkauffrau/-mann", 4));
@@ -119,7 +119,7 @@ public class PatternMatchingTest {
 		content = "Zuverlässigkeit ist unbedingt erforderlich. "
 				+ "Weiterhin wird Wissen vorausgesetzt. Es wird außerdem gewünscht, "
 				+ "dass Sie nett sind. Gute Manieren wären wünschenswert."; // TODO
-		cu = new Section(content, 0);
+		cu = new Paragraph(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
 		vorlage.add(new SlotFiller("Zuverlässigkeit", 1));
@@ -130,7 +130,7 @@ public class PatternMatchingTest {
 
 		/* vorausgesetzt wird X / Voraussetzung ist X */
 		content = "Vorausgesetzt wird gutes Benehmen. Voraussetzung ist unbedingt höfliches Auftreten. Und noch mehr.";
-		cu = new Section(content, 0);
+		cu = new Paragraph(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
 		vorlage.add(new SlotFiller("gutes Benehmen", 3));
@@ -145,7 +145,7 @@ public class PatternMatchingTest {
 		content = "Dass Sie schicke Anzüge besitzen wird vorausgesetzt. "
 				+ "Dass Sie gut riechen wird erwartet. Bereitschaft zu harter Arbeit wird erwartet. "
 				+ "Auch Stil und gutes Aussehen werden erwartet."; // TODO
-		cu = new Section(content, 0);
+		cu = new Paragraph(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
 		vorlage.add(new SlotFiller("Dass Sie schicke Anzüge besitzen", 0));
@@ -158,7 +158,7 @@ public class PatternMatchingTest {
 		/* wir setzen X voraus / setzen wir X voraus */
 		content = "Darum setzen wir schicke Anzüge voraus. "
 				+ "Wir setzen dass Sie schön sind voraus. Außerdem müssen Sie klug sein."; // TODO
-		cu = new Section(content, 0);
+		cu = new Paragraph(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
 		vorlage.add(new SlotFiller("schicke Anzüge", 4));
@@ -168,7 +168,7 @@ public class PatternMatchingTest {
 
 		/* -heit/-keit */
 		content = "Wir wünschen uns Ehrlichkeit, Pünktlichkeit und Zuverlässigkeit. Aber nicht zu viel davon.";
-		cu = new Section(content, 0);
+		cu = new Paragraph(content, 0);
 		result = pm.getContentOfInterest(cu, null);
 		vorlage = new ArrayList<SlotFiller>();
 		vorlage.add(new SlotFiller("Ehrlichkeit", 4));
@@ -199,12 +199,12 @@ public class PatternMatchingTest {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
 				"data/trainingIE_140623.csv"), Class.COMPETENCE, classifyUnits);
 
-		Map<Section, List<SlotFiller>> trainingData = gen
+		Map<Paragraph, List<SlotFiller>> trainingData = gen
 				.getTrainingData();
 		PatternMatcher pm = new PatternMatcher();
 
 		int count = 0;
-		for (Section cu : trainingData.keySet()) {
+		for (Paragraph cu : trainingData.keySet()) {
 			List<SlotFiller> result = pm.getContentOfInterest(cu,
 					trainingData.get(cu));
 			count += result.size();

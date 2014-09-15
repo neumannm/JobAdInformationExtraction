@@ -3,11 +3,11 @@ package spinfo.tm.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import spinfo.tm.data.Section;
+import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
 
 /**
- * (Positive) Filter for ClassifyUnits according to Class(es) they belong to.
+ * (Positive) Filter for paragraphs according to Class(es) they belong to.
  * 
  * @author neumannm
  * 
@@ -15,20 +15,20 @@ import spinfo.tm.extraction.data.Class;
 public class ClassFilter {
 
 	/**
-	 * Keep classifyUnits that belong to a specific set of classes
+	 * Keep paragraphs that belong to a specific set of classes
 	 * 
 	 * @param unitsToClassify
 	 *            list of all Classify Units
 	 * @param classes
 	 *            classes we are interested in
-	 * @return List of classifyUnits that belong to the given classes
+	 * @return List of paragraphs that belong to the given classes
 	 */
-	public static List<Section> filter(List<Section> unitsToClassify,
+	public static List<Paragraph> filter(List<Paragraph> unitsToClassify,
 			Class... classes) {
-		List<Section> toReturn = new ArrayList<Section>();
+		List<Paragraph> toReturn = new ArrayList<Paragraph>();
 
-		for (Section classifyUnit : unitsToClassify) {
-			int classID = classifyUnit.getActualClassID();
+		for (Paragraph paragraph : unitsToClassify) {
+			int classID = paragraph.getActualClassID();
 
 			boolean keep = false;
 
@@ -41,7 +41,7 @@ public class ClassFilter {
 				}
 			}
 			if (keep)
-				toReturn.add(classifyUnit);
+				toReturn.add(paragraph);
 		}
 		return toReturn;
 	}

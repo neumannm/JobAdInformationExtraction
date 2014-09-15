@@ -7,25 +7,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import spinfo.tm.data.Section;
+import spinfo.tm.data.Paragraph;
 import spinfo.tm.data.Sentence;
 import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 
 public class SlotFillingAnchorGenerator {
 
-	public static Map<Section, List<PotentialSlotFillingAnchor>> generate(List<Section> sections) {
-		Map<Section, List<PotentialSlotFillingAnchor>> toReturn = new HashMap<Section, List<PotentialSlotFillingAnchor>>();
+	public static Map<Paragraph, List<PotentialSlotFillingAnchor>> generate(List<Paragraph> paragraphs) {
+		Map<Paragraph, List<PotentialSlotFillingAnchor>> toReturn = new HashMap<Paragraph, List<PotentialSlotFillingAnchor>>();
 		List<PotentialSlotFillingAnchor> anchors;
-		for (Section section : sections) {
+		for (Paragraph paragraph : paragraphs) {
 			anchors = new ArrayList<PotentialSlotFillingAnchor>();
-			Map<Integer, Sentence> sentenceData = section.getSentenceData();
+			Map<Integer, Sentence> sentenceData = paragraph.getSentenceData();
 			Sentence sentence;
 			for (Integer sentenceNo : sentenceData.keySet()) {
 				sentence = sentenceData.get(sentenceNo);
 				String[] tokens = sentence.getTokens();
 				PotentialSlotFillingAnchor anchor;
 				for (int i = 0; i < tokens.length; i++) {
-					anchor = new PotentialSlotFillingAnchor(tokens[i], i, false, section.getID());
+					anchor = new PotentialSlotFillingAnchor(tokens[i], i, false, paragraph.getID());
 					anchor.setPOS(sentence.getPOSTags()[i]);
 					if(i>0){
 						anchor.setPrecedingPOS(sentence.getPOSTags()[i-1]);
@@ -38,22 +38,22 @@ public class SlotFillingAnchorGenerator {
 					anchors.add(anchor);
 				}
 			}
-			toReturn.put(section, anchors);
+			toReturn.put(paragraph, anchors);
 		}
 		return toReturn;		
 	}
 
-	public static Set<PotentialSlotFillingAnchor> generateAsSet(List<Section> sections) {
+	public static Set<PotentialSlotFillingAnchor> generateAsSet(List<Paragraph> paragraphs) {
 		Set<PotentialSlotFillingAnchor> toReturn = new HashSet<PotentialSlotFillingAnchor>();
-		for (Section section : sections) {
-			Map<Integer, Sentence> sentenceData = section.getSentenceData();
+		for (Paragraph paragraph : paragraphs) {
+			Map<Integer, Sentence> sentenceData = paragraph.getSentenceData();
 			Sentence sentence;
 			for (Integer sentenceNo : sentenceData.keySet()) {
 				sentence = sentenceData.get(sentenceNo);
 				String[] tokens = sentence.getTokens();
 				PotentialSlotFillingAnchor anchor;
 				for (int i = 0; i < tokens.length; i++) {
-					anchor = new PotentialSlotFillingAnchor(tokens[i], i, false, section.getID());
+					anchor = new PotentialSlotFillingAnchor(tokens[i], i, false, paragraph.getID());
 					anchor.setPOS(sentence.getPOSTags()[i]);
 					if(i>0){
 						anchor.setPrecedingPOS(sentence.getPOSTags()[i-1]);

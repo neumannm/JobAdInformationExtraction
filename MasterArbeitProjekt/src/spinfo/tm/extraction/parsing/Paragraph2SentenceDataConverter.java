@@ -16,22 +16,22 @@ import spinfo.tm.preprocessing.OpenNLPTokenizer;
  * @author neumannm
  * 
  */
-public class Section2SentenceDataConverter {
+public class Paragraph2SentenceDataConverter {
 
 	/**
 	 * Converts the given paragraph into list of SentenceData. Paragraph is
 	 * first split into sentences, which are then each tokenized and converted
 	 * to SentenceData Objects.
 	 * 
-	 * @param section
+	 * @param paragraph
 	 *            Paragraph to be converted
 	 * @return List of {@link SentenceData09} Objects
 	 */
-	public Map<Integer, SentenceData09> convert(String section) {
+	public Map<Integer, SentenceData09> convert(String paragraph) {
 		Map<Integer, SentenceData09> toReturn = new HashMap<>();
 
 		OpenNLPTokenizer splitter = new OpenNLPTokenizer();
-		String[] sentences = splitter.splitIntoSentences(section);
+		String[] sentences = splitter.splitIntoSentences(paragraph);
 
 		SentenceData09 sentenceData;
 

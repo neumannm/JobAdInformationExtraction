@@ -2,10 +2,13 @@ package spinfo.tm.extraction.learning;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import junit.framework.Assert;
 
 import org.junit.Test;
 
@@ -44,7 +47,7 @@ public class NaiveBayesClassificationTest {
 
 		Class classID = null;
 		int parentID = 0;
-		UUID classifyUnitID = null;
+		UUID paragraphID = null;
 
 		Set<PotentialSlotFillingAnchor> trainedData = new HashSet<>();
 
@@ -54,16 +57,16 @@ public class NaiveBayesClassificationTest {
 			if (splits.length == 5) {
 				if (splits[0].length() > 0 && splits[1].length() > 0
 						&& splits[2].length() > 0) {
-					// new classifyUnit
+					// new paragraph
 					parentID = Integer.parseInt(splits[0]);
-					classifyUnitID = UUID.fromString(splits[1]);
+					paragraphID = UUID.fromString(splits[1]);
 					classID = Class.valueOf(splits[2]);
 				}
 
 				String token = splits[3];
 				int position = Integer.parseInt(splits[4]);
 
-				trainedData.add(new PotentialSlotFillingAnchor(token, position, true, classifyUnitID));
+				trainedData.add(new PotentialSlotFillingAnchor(token, position, true, paragraphID));
 				
 			} else if (splits.length == 0 && line.trim().isEmpty()) {
 				//new line in file

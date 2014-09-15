@@ -11,7 +11,7 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import spinfo.tm.data.Section;
+import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.extraction.parsing.CompetenceFinder;
@@ -22,7 +22,7 @@ import spinfo.tm.util.ClassFilter;
 
 public class CompetenceFinderTest {
 
-	private Map<UUID, Section> filteredClassifyUnits;
+	private Map<UUID, Paragraph> filteredClassifyUnits;
 	private List<String> verbsOfInterest;
 
 	private static final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
@@ -31,14 +31,14 @@ public class CompetenceFinderTest {
 		File trainingDataFile = new File(TRAININGDATAFILE);
 		TrainingDataReader tdg = new TrainingDataReader(trainingDataFile);
 
-		List<Section> paragraphs = tdg.getTrainingData();
+		List<Paragraph> paragraphs = tdg.getTrainingData();
 		System.out.println("Anzahl ClassifyUnits insgesamt: "
 				+ paragraphs.size());
 
 		Class[] classesToAnnotate = { Class.COMPETENCE,
 				Class.COMPANY_COMPETENCE, Class.JOB_COMPETENCE };
 
-		List<Section> filteredParagraphs = ClassFilter.filter(paragraphs,
+		List<Paragraph> filteredParagraphs = ClassFilter.filter(paragraphs,
 				classesToAnnotate);
 
 		System.out.println("Anzahl ClassifyUnits gefiltert: "
@@ -48,7 +48,7 @@ public class CompetenceFinderTest {
 
 		ParagraphParser parser = new ParagraphParser();
 
-		for (Section cu : filteredParagraphs) {
+		for (Paragraph cu : filteredParagraphs) {
 			parser.parse(cu);
 			filteredClassifyUnits.put(cu.getID(), cu);
 		}
@@ -106,7 +106,7 @@ public class CompetenceFinderTest {
 				+ " Klasse B (3). Außerdem sollten Sie idealerweise ausgelernt haben und mindestens schon einmal "
 				+ "in einer Klinik gearbeitet haben und die Abläufe kennen.";
 
-		Section cu = new Section(paragraph, 0);
+		Paragraph cu = new Paragraph(paragraph, 0);
 		ParagraphParser parser = new ParagraphParser();
 		parser.parse(cu);
 

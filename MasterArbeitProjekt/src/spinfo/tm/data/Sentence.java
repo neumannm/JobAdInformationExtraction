@@ -11,7 +11,7 @@ public class Sentence implements Serializable, Comparable<Sentence> {
 	 */
 	private static final long serialVersionUID = 4118090561033143024L;
 
-	private final UUID classifyUnitID;
+	private final UUID paragraphID;
 
 	private final String[] tokens;
 	private final String[] POSTags;
@@ -37,8 +37,7 @@ public class Sentence implements Serializable, Comparable<Sentence> {
 	 * @param heads
 	 *            - the tokens' heads (dependency parsed)
 	 * @param parentID
-	 *            - ID of the unit this sentence belongs to (i.e. paragraph /
-	 *            ClassifyUnit)
+	 *            - ID of the unit this sentence belongs to (i.e. paragraph)
 	 * @param positionInParagraph
 	 *            - the sentence's position in the higher unit (first, second
 	 *            etc.)
@@ -57,14 +56,14 @@ public class Sentence implements Serializable, Comparable<Sentence> {
 		this.lemmas = lemmas;
 		this.POSTags = POSTags;
 		this.morphTags = morphTags;
-		this.classifyUnitID = parentID;
+		this.paragraphID = parentID;
 		this.positionInParagraph = positionInParagraph;
 		this.heads = heads;
 		this.depLabels = labels;
 	}
 
-	public UUID getClassifyUnitID() {
-		return classifyUnitID;
+	public UUID getParagraphID() {
+		return paragraphID;
 	}
 
 	public String[] getLemmas() {
@@ -101,9 +100,9 @@ public class Sentence implements Serializable, Comparable<Sentence> {
 
 	@Override
 	public int compareTo(Sentence other) {
-		if (this.classifyUnitID.equals(other.classifyUnitID))
+		if (this.paragraphID.equals(other.paragraphID))
 			return this.positionInParagraph - other.positionInParagraph;
-		return this.classifyUnitID.compareTo(other.classifyUnitID);
+		return this.paragraphID.compareTo(other.paragraphID);
 	}
 
 	@Override
@@ -111,7 +110,7 @@ public class Sentence implements Serializable, Comparable<Sentence> {
 		StringBuffer out = new StringBuffer();
 		out.append(String.format(
 				"Sentence from Paragraph %s (Sentence Nr.: %s)\n",
-				classifyUnitID, positionInParagraph));
+				paragraphID, positionInParagraph));
 		for (int i = 0; i < tokens.length; i++) {
 			out.append(String
 					.format("%s\t%s\t%s\t%s\t%s\t%s\t%s\n", i+1, tokens[i], lemmas[i],

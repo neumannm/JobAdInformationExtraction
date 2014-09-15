@@ -11,7 +11,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import spinfo.tm.data.Section;
+import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.preprocessing.TrainingDataReader;
@@ -23,14 +23,14 @@ import spinfo.tm.preprocessing.TrainingDataReader;
  * 
  */
 /*
- * TODO: map UUIDs to ClassifyUnits; map jobAdIDs to jobAds
+ * TODO: map UUIDs to paragraphs; map jobAdIDs to jobAds
  * 
  * pattern matching over whole text of job ad! (classification is carried out
  * before IE)
  */
 public class IE_TDTester {
-	private List<Section> paragraphs = new ArrayList<Section>();
-	private Map<UUID, Section> classifyUnits = new HashMap<UUID, Section>();
+	private List<Paragraph> paragraphs = new ArrayList<Paragraph>();
+	private Map<UUID, Paragraph> classifyUnits = new HashMap<UUID, Paragraph>();
 
 	@Before
 	public void setUp() throws IOException {
@@ -43,7 +43,7 @@ public class IE_TDTester {
 		System.out.println("Anzahl ClassifyUnits insgesamt: "
 				+ paragraphs.size());
 
-		for (Section cu : paragraphs) {
+		for (Paragraph cu : paragraphs) {
 			classifyUnits.put(cu.getID(), cu);
 		}
 
@@ -54,7 +54,7 @@ public class IE_TDTester {
 		Class[] classesToAnnotate = { Class.COMPETENCE,
 				Class.COMPANY_COMPETENCE, Class.JOB_COMPETENCE };
 
-		List<Section> filteredParagraphs = ClassFilter.filter(paragraphs,
+		List<Paragraph> filteredParagraphs = ClassFilter.filter(paragraphs,
 				classesToAnnotate);
 
 		System.out.println("Anzahl ClassifyUnits gefiltert: "
@@ -65,12 +65,12 @@ public class IE_TDTester {
 
 		gen.annotate(filteredParagraphs);
 
-		Map<Section, List<SlotFiller>> templates = gen.getTrainingData();
+		Map<Paragraph, List<SlotFiller>> templates = gen.getTrainingData();
 
 		Assert.assertNotNull(templates);
 		Assert.assertFalse(templates.isEmpty());
 
-		for (Section cu : templates.keySet()) {
+		for (Paragraph cu : templates.keySet()) {
 			System.out.println(cu);
 			for (SlotFiller content : templates.get(cu)) {
 				System.out.println(content);
@@ -82,7 +82,7 @@ public class IE_TDTester {
 	public void testFilter() throws IOException {
 		System.out.println("********************\nPARAGRAPHS:\n");
 
-		for (Section classifyUnit : paragraphs) {
+		for (Paragraph classifyUnit : paragraphs) {
 			System.out.println(classifyUnit);
 			System.out.println("********************");
 		}
@@ -91,12 +91,12 @@ public class IE_TDTester {
 		System.out.println("********************");
 		System.out.println("********************\nFILTERED:\n");
 
-		List<Section> filtered = ClassFilter.filter(paragraphs,
+		List<Paragraph> filtered = ClassFilter.filter(paragraphs,
 				Class.COMPETENCE, Class.COMPANY_COMPETENCE,
 				Class.JOB_COMPETENCE);
-		for (Section section : filtered) {
-			System.out.println(section.getID());
-			System.out.println(section.getContent());
+		for (Paragraph paragraph : filtered) {
+			System.out.println(paragraph.getID());
+			System.out.println(paragraph.getContent());
 			System.out.println("********************");
 		}
 	}
@@ -106,12 +106,12 @@ public class IE_TDTester {
 	public void testGetTrainingData() throws IOException {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
 				"data/trainingIE_140816.csv"), Class.COMPETENCE, classifyUnits);
-		Map<Section, List<SlotFiller>> templates;
+		Map<Paragraph, List<SlotFiller>> templates;
 		try {
 			templates = gen.getTrainingData();
-			for (Section section : templates.keySet()) {
-				System.out.println(section);
-				System.out.println(templates.get(section));
+			for (Paragraph paragraph : templates.keySet()) {
+				System.out.println(paragraph);
+				System.out.println(templates.get(paragraph));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

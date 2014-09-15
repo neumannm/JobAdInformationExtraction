@@ -6,13 +6,13 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import spinfo.tm.extraction.parsing.Section2SentenceDataConverter;
+import spinfo.tm.extraction.parsing.Paragraph2SentenceDataConverter;
 
 public class ParagraphConverterTest {
 
 	@Test
 	public void test() {
-		Section2SentenceDataConverter conv = new Section2SentenceDataConverter();
+		Paragraph2SentenceDataConverter conv = new Paragraph2SentenceDataConverter();
 
 		String paragraph = "Ideal ist, wenn Sie viel positive Energie haben, gerne Verantwortung übernehmen "
 				+ "und gerne Mitarbeiter führen. Gebraucht werden auch gute Englischkenntnisse und Führerschein"

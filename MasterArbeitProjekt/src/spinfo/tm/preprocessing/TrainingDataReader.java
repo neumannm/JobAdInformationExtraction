@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import spinfo.tm.data.Section;
+import spinfo.tm.data.Paragraph;
 
 /**
  * Class to annotate ClassifyUnits manually with (one or more) classIDs
@@ -19,7 +19,7 @@ import spinfo.tm.data.Section;
 public class TrainingDataReader {
 
 	private File tdFile;
-	private List<Section> classifiedData;
+	private List<Paragraph> classifiedData;
 	boolean singleClassAnnotation = true;
 
 	/**
@@ -31,13 +31,13 @@ public class TrainingDataReader {
 	 */
 	public TrainingDataReader(File trainingDataFile) {
 		this.tdFile = trainingDataFile;
-		classifiedData = new ArrayList<Section>();
+		classifiedData = new ArrayList<Paragraph>();
 	}
 
 	public TrainingDataReader(File trainingDataFile,
 			boolean singleClassAnnotation) {
 		this.tdFile = trainingDataFile;
-		classifiedData = new ArrayList<Section>();
+		classifiedData = new ArrayList<Paragraph>();
 		this.singleClassAnnotation = singleClassAnnotation;
 	}
 
@@ -47,9 +47,9 @@ public class TrainingDataReader {
 	 * @return List of manually annotated ClassifyUnits
 	 * @throws IOException
 	 */
-	public List<Section> getTrainingData() throws IOException {
+	public List<Paragraph> getTrainingData() throws IOException {
 		if (classifiedData.isEmpty()) {
-			classifiedData = new ArrayList<Section>();
+			classifiedData = new ArrayList<Paragraph>();
 			BufferedReader in = new BufferedReader(new FileReader(tdFile));
 			String line = in.readLine();
 			StringBuffer content = new StringBuffer();
@@ -64,7 +64,7 @@ public class TrainingDataReader {
 
 					if (/**classes.length**/classID != 0) {
 
-						Section utc = new Section(content.toString(),
+						Paragraph utc = new Paragraph(content.toString(),
 								parentID, paragraphID);
 //						System.out.println(parentID);
 //						System.out.println(paragraphID);
@@ -91,7 +91,7 @@ public class TrainingDataReader {
 
 			}
 			if (/**classes.length**/ classID != 0) {
-				Section utc = new Section(content.toString().trim(),
+				Paragraph utc = new Paragraph(content.toString().trim(),
 						parentID, paragraphID);
 //				System.out.println(parentID);
 //				System.out.println(paragraphID);

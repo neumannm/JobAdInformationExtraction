@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import spinfo.tm.data.Section;
+import spinfo.tm.data.Paragraph;
 import spinfo.tm.data.Sentence;
 import spinfo.tm.extraction.data.SlotFiller;
 
@@ -32,7 +32,7 @@ public class CompetenceFinder {
 		this.verbsOfInterest = verbsOfInterest;
 	}
 
-	public List<SlotFiller> findCompetences(Section cu) {
+	public List<SlotFiller> findCompetences(Paragraph cu) {
 		List<SlotFiller> results = new ArrayList<SlotFiller>();
 
 		Map<Integer, Sentence> parsedCU = cu.getSentenceData();
@@ -62,7 +62,7 @@ public class CompetenceFinder {
 	}
 
 	private List<SlotFiller> lookForCompetences(String lemma, int verbID,
-			Sentence sd, Section cu) {
+			Sentence sd, Paragraph cu) {
 		List<SlotFiller> filler = new ArrayList<>();
 
 		int[] heads = sd.getHeads();
@@ -135,7 +135,7 @@ public class CompetenceFinder {
 	}
 
 	private List<SlotFiller> getObjects(String lemma, int verbID, Sentence sd,
-			Section cu) {
+			Paragraph cu) {
 		List<SlotFiller> filler = new ArrayList<>();
 
 		int[] heads = sd.getHeads();

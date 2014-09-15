@@ -17,7 +17,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import spinfo.tm.data.Section;
+import spinfo.tm.data.Paragraph;
 import spinfo.tm.data.Sentence;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.parsing.ParagraphParser;
@@ -27,13 +27,13 @@ import spinfo.tm.util.UniversalMapper;
 
 public class Preparation {
 
-	private static List<Section> filteredParagraphs;
+	private static List<Paragraph> filteredParagraphs;
 	private static List<Sentence> savedSentences = new ArrayList<>();
 
 	private static final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
-	private static final String ALLSECTIONSFILE = "data/allSections.bin";
+	private static final String ALLPARAGRAPHSFILE = "data/allParagraphs.bin";
 	private static final String OUTPUTFILE = "data/parsedSentences.bin";
-	private static final String PARSEDSECTIONSFILE = "data/parsedSections.bin";
+	private static final String PARSEDPARAGRAPHSFILE = "data/parsedParagraphs.bin";
 
 	/*
 	 * Nur ausführen, wenn Datei nicht vorhanden! (parsen dauert)
@@ -44,7 +44,7 @@ public class Preparation {
 			readAndFilterParagraphs();
 			parseFilteredParagraphs();
 
-			for (Section paragraph : filteredParagraphs) {
+			for (Paragraph paragraph : filteredParagraphs) {
 				Map<Integer, Sentence> sentenceData = paragraph
 						.getSentenceData();
 				for (Integer sentence : sentenceData.keySet()) {
@@ -62,18 +62,18 @@ public class Preparation {
 	}
 
 	private static void readAndFilterParagraphs() throws IOException {
-		List<Section> paragraphs = ReaderWriter.readSectionsFromCSV(TRAININGDATAFILE);
-		System.out.println("Anzahl Sections insgesamt: "
+		List<Paragraph> paragraphs = ReaderWriter.readSectionsFromCSV(TRAININGDATAFILE);
+		System.out.println("Anzahl Paragraphs insgesamt: "
 				+ paragraphs.size());
 		
-		saveToBinaryFile(paragraphs, ALLSECTIONSFILE);
+		saveToBinaryFile(paragraphs, ALLPARAGRAPHSFILE);
 
 		Class[] classesToAnnotate = { Class.COMPETENCE,
 				Class.COMPANY_COMPETENCE, Class.JOB_COMPETENCE };
 
 		filteredParagraphs = ClassFilter.filter(paragraphs, classesToAnnotate);
 
-		System.out.println("Anzahl Sections gefiltert: "
+		System.out.println("Anzahl Paragraphs gefiltert: "
 				+ filteredParagraphs.size());
 	}
 
@@ -81,7 +81,7 @@ public class Preparation {
 		ParagraphParser parser = new ParagraphParser();
 		filteredParagraphs = parser.parse(filteredParagraphs);
 		
-		saveToBinaryFile(filteredParagraphs, PARSEDSECTIONSFILE);
+		saveToBinaryFile(filteredParagraphs, PARSEDPARAGRAPHSFILE);
 	}
 
 	private static void saveToBinaryFile(Collection<?> data, String fileName) {
@@ -117,9 +117,9 @@ public class Preparation {
 
 		Map<UUID, Map<Integer, Sentence>> sentenceDatas = new HashMap<UUID, Map<Integer, Sentence>>();
 		
-		Section cu;
+		Paragraph p;
 		for (Sentence sentence : readSentences) {
-			UUID unitID = sentence.getClassifyUnitID();
+			UUID unitID = sentence.getParagraphID();
 			if(sentenceDatas.get(unitID) == null){
 				sentenceDatas.put(unitID, new TreeMap<Integer, Sentence>());
 			}
@@ -128,22 +128,22 @@ public class Preparation {
 		}
 		
 		for (UUID unitID : sentenceDatas.keySet()) {
-			cu = UniversalMapper.getSectionforID(unitID);
-			cu.setSentenceData(sentenceDatas.get(unitID));
-			System.out.println(cu);
-			System.out.println(cu.getSentenceData());
+			p = UniversalMapper.getParagraphforID(unitID);
+			p.setSentenceData(sentenceDatas.get(unitID));
+			System.out.println(p);
+			System.out.println(p.getSentenceData());
 		}
 	}
 
 	@Test
-	public void testReadClassifyUnitsFromFile() {
-		List<Section> cUsFromFile = ReaderWriter.readSectionsFromBinary(new File(ALLSECTIONSFILE));
+	public void testReadParagraphsFromFile() {
+		List<Paragraph> paragraphsFromFile = ReaderWriter.readSectionsFromBinary(new File(ALLPARAGRAPHSFILE));
 
-		Assert.assertEquals(376, cUsFromFile.size());
+		Assert.assertEquals(376, paragraphsFromFile.size());
 
-		for (Section classifyUnit : cUsFromFile) {
-			System.out.println(classifyUnit);
-			System.out.println(classifyUnit.getSentenceData());
+		for (Paragraph paragraph : paragraphsFromFile) {
+			System.out.println(paragraph);
+			System.out.println(paragraph.getSentenceData());
 		}
 	}
 	
