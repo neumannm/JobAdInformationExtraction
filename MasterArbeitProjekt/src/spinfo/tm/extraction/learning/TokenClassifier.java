@@ -52,25 +52,101 @@ public class TokenClassifier {
 	}
 
 	/**
-	 * @param resultClasses
+	 * Calculates the accuracy of the classification result.
+	 * 
+	 * @param classified
 	 *            The classification result
 	 * @param gold
 	 *            The gold standard
 	 * @return The ration of correct labels in classified, according to the gold
 	 */
-	//TODO: Precision oder Recall? oder Accuracy? (wahrscheinlich letzteres)
-	public Float evaluate(
-			final Map<PotentialSlotFillingAnchor, Boolean> resultClasses,
+	public Float accuracy(
+			final Map<PotentialSlotFillingAnchor, Boolean> classified,
 			final List<PotentialSlotFillingAnchor> gold) {
 		/* Wir zählen die Anzahl der Übereinstimmungen: */
 		int same = 0;
 		for (PotentialSlotFillingAnchor anchor : gold) {
-			Boolean isCompetence = resultClasses.get(anchor);
-			if (isCompetence.equals(anchor.isCompetence())) {
-				same++;
+			if (classified.containsKey(anchor)) {
+				Boolean isCompetence = classified.get(anchor);
+				if (isCompetence.equals(anchor.isCompetence())) {
+					same++;
+				}
 			}
 		}
 		/* Und berechnen daraus den Anteil korrekter Werte: */
-		return same / (float) gold.size();
+		return same / (float) classified.size();
+	}
+
+	/**
+	 * Calculates the precision of the classification result.
+	 * 
+	 * @param classified
+	 *            The classification result
+	 * @param gold
+	 *            The gold standard
+	 * @return the precision, i.e. (#True Positives) / (#True Positives + #False
+	 *         Positives)
+	 */
+	public Float precision(
+			final Map<PotentialSlotFillingAnchor, Boolean> classified,
+			final List<PotentialSlotFillingAnchor> gold) {
+		int tp = 0, fp = 0;
+		for (PotentialSlotFillingAnchor anchor : gold) {
+			if (classified.containsKey(anchor)) {
+				Boolean isCompetence = classified.get(anchor);
+				if (isCompetence && anchor.isCompetence()) {
+					tp++;
+				} else if (isCompetence && !anchor.isCompetence()) {
+					fp++;
+				}
+			}
+		}
+		/* Und berechnen daraus die Precision: P = (TP / (TP + FP)) */
+		return tp / ((float) tp + fp);
+	}
+
+	/**
+	 * Calculates the recall of the classification result.
+	 * 
+	 * @param classified
+	 *            The classification result
+	 * @param gold
+	 *            The gold standard
+	 * @return the recall, i.e. (#True Positives) / (#True Positives + #False
+	 *         Negatives)
+	 */
+	public Float recall(
+			final Map<PotentialSlotFillingAnchor, Boolean> classified,
+			final List<PotentialSlotFillingAnchor> gold) {
+		int tp = 0, fn = 0;
+		for (PotentialSlotFillingAnchor anchor : gold) {
+			if (classified.containsKey(anchor)) {
+				Boolean isCompetence = classified.get(anchor);
+				if (isCompetence && anchor.isCompetence()) {
+					tp++;
+				} else if (!isCompetence && anchor.isCompetence()) {
+					fn++;
+				}
+			}
+		}
+		/* Und berechnen daraus den Recall: R = (TP / (TP + FN)) */
+		return tp / ((float) tp + fn);
+	}
+
+	/**
+	 * Calculates the f-measure of the classification result.
+	 * 
+	 * @param classified
+	 *            The classification result
+	 * @param gold
+	 *            The gold standard
+	 * @return the f-measure, i.e. combined precision/recall-measure
+	 */
+	public Float fMeasure(
+			final Map<PotentialSlotFillingAnchor, Boolean> classified,
+			final List<PotentialSlotFillingAnchor> gold) {
+		float p = precision(classified, gold);
+		float r = recall(classified, gold);
+		return (2 * p * r) / (float) (p + r);
 	}
 }

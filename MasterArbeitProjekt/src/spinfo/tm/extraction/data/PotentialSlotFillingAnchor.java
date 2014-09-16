@@ -122,8 +122,13 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	}
 
 	private void setHasSuffixOfInterest() {
-		if (token.endsWith("heit") || token.endsWith("keit")
-				|| token.endsWith("ung") || token.endsWith("schaft")) {
+		if (token.matches("[A-ZÄÖÜ].*heit") 
+				|| token.matches("[A-ZÄÖÜ].*keit")
+				|| token.matches("[A-ZÄÖÜ].*ung")
+				|| token.matches("[A-ZÄÖÜ].*schaft")
+				|| token.matches("[A-ZÄÖÜ].*nis(sen?)?")
+				|| token.matches("[a-zäöü].*ig")
+				|| token.matches("[a-zäöü].*lich")) {
 			this.hasSuffixOfInterest = true;
 		}
 	}
