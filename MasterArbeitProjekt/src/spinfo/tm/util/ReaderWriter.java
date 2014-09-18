@@ -19,7 +19,7 @@ import spinfo.tm.preprocessing.TrainingDataReader;
 
 public class ReaderWriter {
 
-	public static List<Paragraph> readSectionsFromCSV(String fileName)
+	public static List<Paragraph> readParagraphsFromCSV(String fileName)
 			throws IOException {
 		File trainingDataFile = new File(fileName);
 		TrainingDataReader tdg = new TrainingDataReader(trainingDataFile);
@@ -28,7 +28,7 @@ public class ReaderWriter {
 		return paragraphs;
 	}
 
-	public static List<Paragraph> readSectionsFromBinary(File parsedSectionsFile) {
+	public static List<Paragraph> readParagraphsFromBinary(File parsedSectionsFile) {
 		List<Paragraph> toReturn = new ArrayList<>();
 		ObjectInputStream is = null;
 		try {

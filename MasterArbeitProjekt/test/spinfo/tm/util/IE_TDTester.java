@@ -1,11 +1,10 @@
 package spinfo.tm.util;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,7 +29,6 @@ import spinfo.tm.preprocessing.TrainingDataReader;
  */
 public class IE_TDTester {
 	private List<Paragraph> paragraphs = new ArrayList<Paragraph>();
-	private Map<UUID, Paragraph> classifyUnits = new HashMap<UUID, Paragraph>();
 
 	@Before
 	public void setUp() throws IOException {
@@ -42,11 +40,6 @@ public class IE_TDTester {
 		paragraphs = tdg.getTrainingData();
 		System.out.println("Anzahl ClassifyUnits insgesamt: "
 				+ paragraphs.size());
-
-		for (Paragraph cu : paragraphs) {
-			classifyUnits.put(cu.getID(), cu);
-		}
-
 	}
 
 	@Test
@@ -61,7 +54,7 @@ public class IE_TDTester {
 				+ filteredParagraphs.size());
 
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
-				"trainingIE_140816.csv"), Class.COMPETENCE, classifyUnits);
+				"trainingIE_140816.csv"), Class.COMPETENCE);
 
 		gen.annotate(filteredParagraphs);
 
@@ -105,14 +98,21 @@ public class IE_TDTester {
 	@Test
 	public void testGetTrainingData() throws IOException {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
-				"data/trainingIE_140816.csv"), Class.COMPETENCE, classifyUnits);
+				"data/trainingIE_140816.csv"), Class.COMPETENCE);
 		Map<Paragraph, List<SlotFiller>> templates;
 		try {
 			templates = gen.getTrainingData();
+			int pcount = 0;
+			int fcount = 0;
 			for (Paragraph paragraph : templates.keySet()) {
+				pcount++;
 				System.out.println(paragraph);
 				System.out.println(templates.get(paragraph));
+				fcount += templates.get(paragraph).size();
 			}
+			
+			System.out.println(pcount);
+			System.out.println(fcount);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

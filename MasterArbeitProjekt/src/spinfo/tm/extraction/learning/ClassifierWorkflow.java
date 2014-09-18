@@ -31,21 +31,21 @@ public class ClassifierWorkflow {
 	private static Logger logger;
 
 	public static void main(String[] args) {
-		logger = Logger.getLogger("Workflow");
+		logger = Logger.getLogger("ClassifierWorkflow");
 
 		File parsedParagraphsFile = new File(PARSEDPARAGRAPHSSFILE);
 		if (!parsedParagraphsFile.exists()) {
 			logger.info("Datei mit bereits geparsten Paragraphs nicht vorhanden. Erstelle...");
-			createParsedSectionsFile(parsedParagraphsFile);
+			createParsedParagraphsFile(parsedParagraphsFile);
 		}
 
-		List<Paragraph> parsedSections = ReaderWriter
-				.readSectionsFromBinary(parsedParagraphsFile);
+		List<Paragraph> parsedParagraphs = ReaderWriter
+				.readParagraphsFromBinary(parsedParagraphsFile);
 
 		File potentialFillersFile = new File(POTENTIALFILLERSFILE);
 		if (!potentialFillersFile.exists()) {
 			logger.info("Datei mit potentiellen Filler-Ankern nicht vorhanden. Erstelle...");
-			createPotentialFillersFile(parsedSections, potentialFillersFile);
+			createPotentialFillersFile(parsedParagraphs, potentialFillersFile);
 		}
 
 		List<PotentialSlotFillingAnchor> potentialFillers = ReaderWriter
@@ -199,10 +199,10 @@ public class ClassifierWorkflow {
 		ReaderWriter.saveToBinaryFile(potentialFillers, potentialFillersFile);
 	}
 
-	private static void createParsedSectionsFile(File parsedSectionsFile) {
+	private static void createParsedParagraphsFile(File parsedParagraphsFile) {
 		List<Paragraph> paragraphs;
 		try {
-			paragraphs = ReaderWriter.readSectionsFromCSV(TRAININGDATAFILE);
+			paragraphs = ReaderWriter.readParagraphsFromCSV(TRAININGDATAFILE);
 			logger.info("Anzahl Paragraphs insgesamt: " + paragraphs.size());
 
 			Class[] classesToAnnotate = { Class.COMPETENCE,
@@ -218,7 +218,7 @@ public class ClassifierWorkflow {
 			filteredParagraphs = parser.parse(filteredParagraphs);
 
 			ReaderWriter.saveToBinaryFile(filteredParagraphs,
-					parsedSectionsFile);
+					parsedParagraphsFile);
 
 		} catch (IOException e) {
 			if (e instanceof FileNotFoundException) {

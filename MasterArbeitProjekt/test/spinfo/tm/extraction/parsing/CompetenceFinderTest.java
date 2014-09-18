@@ -14,7 +14,7 @@ import org.junit.Test;
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
-import spinfo.tm.extraction.parsing.CompetenceFinder;
+import spinfo.tm.extraction.parsing.DepCompetenceFinder;
 import spinfo.tm.extraction.parsing.ParagraphParser;
 import spinfo.tm.extraction.parsing.util.SentenceDataReader;
 import spinfo.tm.preprocessing.TrainingDataReader;
@@ -74,7 +74,7 @@ public class CompetenceFinderTest {
 	public void testCompetenceFinder() throws IOException {
 		setUp();
 
-		CompetenceFinder finder = new CompetenceFinder(verbsOfInterest);
+		DepCompetenceFinder finder = new DepCompetenceFinder(verbsOfInterest);
 
 		for (UUID id : filteredClassifyUnits.keySet()) {
 			List<SlotFiller> competences = finder
@@ -110,7 +110,7 @@ public class CompetenceFinderTest {
 		ParagraphParser parser = new ParagraphParser();
 		parser.parse(cu);
 
-		CompetenceFinder finder = new CompetenceFinder(verbsOfInterest);
+		DepCompetenceFinder finder = new DepCompetenceFinder(verbsOfInterest);
 
 		List<SlotFiller> competences = finder.findCompetences(cu);
 		System.out.println(competences);
@@ -130,7 +130,7 @@ public class CompetenceFinderTest {
 		List<SentenceData09> data = SentenceDataReader
 				.readFromFile("data/parsedGoodSentences.csv");
 
-		CompetenceFinder finder = new CompetenceFinder(verbsOfInterest);
+		DepCompetenceFinder finder = new DepCompetenceFinder(verbsOfInterest);
 
 		// List<SlotFiller> competences = finder.findCompetences(cu);
 		// System.out.println(competences);

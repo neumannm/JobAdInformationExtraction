@@ -1,11 +1,10 @@
 package spinfo.tm.extraction.pattern;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,13 +13,11 @@ import org.junit.Test;
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
-import spinfo.tm.extraction.pattern.PatternMatcher;
 import spinfo.tm.preprocessing.TrainingDataReader;
 import spinfo.tm.util.IETrainingDataGenerator;
 
 public class PatternMatchingTest {
 	private List<Paragraph> paragraphs = new ArrayList<Paragraph>();
-	private Map<UUID, Paragraph> classifyUnits = new HashMap<UUID, Paragraph>();
 
 	private void setUp() throws IOException {
 		File trainingDataFile = new File(
@@ -32,9 +29,6 @@ public class PatternMatchingTest {
 		System.out.println("Anzahl ClassifyUnits insgesamt: "
 				+ paragraphs.size());
 
-		for (Paragraph cu : paragraphs) {
-			classifyUnits.put(cu.getID(), cu);
-		}
 	}
 
 	@Test
@@ -197,16 +191,15 @@ public class PatternMatchingTest {
 		setUp();
 
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
-				"data/trainingIE_140623.csv"), Class.COMPETENCE, classifyUnits);
+				"data/trainingIE_140623.csv"), Class.COMPETENCE);
 
-		Map<Paragraph, List<SlotFiller>> trainingData = gen
-				.getTrainingData();
+		Map<Paragraph, List<SlotFiller>> trainingData = gen.getTrainingData();
 		PatternMatcher pm = new PatternMatcher();
 
 		int count = 0;
-		for (Paragraph cu : trainingData.keySet()) {
-			List<SlotFiller> result = pm.getContentOfInterest(cu,
-					trainingData.get(cu));
+		for (Paragraph p : trainingData.keySet()) {
+			List<SlotFiller> result = pm.getContentOfInterest(p,
+					trainingData.get(p));
 			count += result.size();
 			for (SlotFiller slotFiller : result) {
 				System.out.println(slotFiller);
@@ -216,6 +209,7 @@ public class PatternMatchingTest {
 		}
 
 		System.out.println("Anzahl Ergebnisse: " + count);
+
 	}
 
 	@Test

@@ -32,8 +32,7 @@ public class IETrainingDataGenerator {
 	private File tdFile;
 	private Map<Paragraph, List<SlotFiller>> trainedData;
 
-	public IETrainingDataGenerator(File trainingDataFile,
-			Class classToAnnotate, Map<UUID, Paragraph> paragraphs) {
+	public IETrainingDataGenerator(File trainingDataFile, Class classToAnnotate) {
 		setClassToAnnotate(classToAnnotate);
 		try {
 			setTdFile(trainingDataFile);
@@ -230,29 +229,30 @@ public class IETrainingDataGenerator {
 			int jobAdID = 0;
 			UUID cuID = null;
 
+			List<SlotFiller> content = null;
 			while ((line = in.readLine()) != null) {
 
 				String[] splits = line.split("\t");
-				List<SlotFiller> content = null;
-				if (splits.length == 4) {
-					content = new ArrayList<SlotFiller>();
+				if (splits.length == 5) {
 
 					if (splits[0].length() > 0 && splits[1].length() > 0
 							&& splits[2].length() > 0) {
+						content = new ArrayList<SlotFiller>();
 						// new SlotFiller
 						jobAdID = Integer.parseInt(splits[0]);
 						cuID = UUID.fromString(splits[1]);
 						classID = Class.valueOf(splits[2]);
 					}
 
-					String token = splits[2];
-					int position = Integer.parseInt(splits[3]);
+					String token = splits[3];
+					int position = Integer.parseInt(splits[4]);
 
 					content.add(new SlotFiller(token, position));
 
 				} else if (splits.length == 0 && line.trim().isEmpty()) {
 					if (classID.equals(classToAnnotate)) {
-						trainedData.put(UniversalMapper.getParagraphforID(cuID),
+						trainedData.put(
+								UniversalMapper.getParagraphforID(cuID),
 								content);
 					}
 				} else {

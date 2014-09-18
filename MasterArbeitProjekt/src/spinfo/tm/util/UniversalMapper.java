@@ -13,13 +13,13 @@ import spinfo.tm.data.Paragraph;
 public class UniversalMapper {
 
 	private static Map<UUID, Paragraph> paragraphIDMap = new HashMap<>();
-	private static final String ALLSECTIONSFILE = "data/allSections.bin";
+	private static final String ALLPARAGRAPHSFILE = "data/allParagraphs.bin";
 
 	static {
 		ObjectInputStream is = null;
 		try {
 			is = new ObjectInputStream(
-					new FileInputStream(ALLSECTIONSFILE));
+					new FileInputStream(ALLPARAGRAPHSFILE));
 			Object readObject;
 			while (true) {
 				readObject = is.readObject();

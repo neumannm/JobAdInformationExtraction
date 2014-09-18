@@ -62,7 +62,7 @@ public class Preparation {
 	}
 
 	private static void readAndFilterParagraphs() throws IOException {
-		List<Paragraph> paragraphs = ReaderWriter.readSectionsFromCSV(TRAININGDATAFILE);
+		List<Paragraph> paragraphs = ReaderWriter.readParagraphsFromCSV(TRAININGDATAFILE);
 		System.out.println("Anzahl Paragraphs insgesamt: "
 				+ paragraphs.size());
 		
@@ -137,7 +137,7 @@ public class Preparation {
 
 	@Test
 	public void testReadParagraphsFromFile() {
-		List<Paragraph> paragraphsFromFile = ReaderWriter.readSectionsFromBinary(new File(ALLPARAGRAPHSFILE));
+		List<Paragraph> paragraphsFromFile = ReaderWriter.readParagraphsFromBinary(new File(ALLPARAGRAPHSFILE));
 
 		Assert.assertEquals(376, paragraphsFromFile.size());
 

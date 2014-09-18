@@ -58,9 +58,9 @@ public class PatternMatcher {
 				token = m.group();
 				position = m.start();
 				tokensAndPositions.add(new TokenPosPair(token, position));
-				System.out.println(String.format(
-						"Matched %s at position %s\n\twith Pattern %s", token,
-						position, pattern.pattern()));
+//				System.out.println(String.format(
+//						"Matched %s at position %s\n\twith Pattern %s", token,
+//						position, pattern.pattern()));
 			}
 		}
 		return tokensAndPositions;
@@ -75,7 +75,7 @@ public class PatternMatcher {
 		/*
 		 * lists element ((?>\P{M}\p{M}*)+) = any number of graphemes
 		 */
-		lookbehind = "^(-\\*|-|\\*|\\u2027|\\d(.?)?)\\p{Blank}?";
+		lookbehind = "^(-\\*|-|\\*|\\u2027|\\d\\.?+\\)?+)\\p{Blank}?";
 		p = Pattern.compile("(?<=" + lookbehind + ")(?=(\\P{M}\\p{M}*)+$).+",
 				Pattern.MULTILINE);
 		regExes.put(p, Class.COMPETENCE);
@@ -218,7 +218,7 @@ class TokenPosPair {
 	private String token;
 
 	public TokenPosPair(String token, int position) {
-		this.setToken(token);
+		this.setToken(token.trim());
 		this.setPosition(position);
 	}
 

@@ -17,17 +17,17 @@ import spinfo.tm.extraction.data.SlotFiller;
  * @author neumannm
  * 
  */
-public class CompetenceFinder {
+public class DepCompetenceFinder {
 
 	private List<String> verbsOfInterest;
 
-	public CompetenceFinder() {
+	public DepCompetenceFinder() {
 		if (verbsOfInterest == null) {
 			verbsOfInterest = new ArrayList<String>();
 		}
 	}
 
-	public CompetenceFinder(List<String> verbsOfInterest) {
+	public DepCompetenceFinder(List<String> verbsOfInterest) {
 		this();
 		this.verbsOfInterest = verbsOfInterest;
 	}
