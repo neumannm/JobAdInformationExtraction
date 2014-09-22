@@ -117,6 +117,9 @@ public class DepCompetenceFinder {
 					if ("ADJD".equals(sd.getPOSTags()[i])) {
 						// TODO predicate modifier for competence
 					}
+					if("VVPP".equals(sd.getPOSTags()[i])){
+						//TODO modifier for competence
+					}
 					if ("NN".equals(sd.getPOSTags()[i])) {
 						// TODO predicate is possibly also competence (like in
 						// 'erforderlich sind Sprachkenntnisse' etc.)

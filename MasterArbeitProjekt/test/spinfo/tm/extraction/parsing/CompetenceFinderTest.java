@@ -1,4 +1,5 @@
 package spinfo.tm.extraction.parsing;
+
 import is2.data.SentenceData09;
 
 import java.io.File;
@@ -65,6 +66,11 @@ public class CompetenceFinderTest {
 		verbsOfInterest.add("wünschen"); // 'wir wünschen uns'
 		verbsOfInterest.add("müssen"); // 'Sie müssen'
 		verbsOfInterest.add("erwarten"); // 'wir erwarten'
+		verbsOfInterest.add("können");
+		verbsOfInterest.add("hoffen"); // 'wir hoffen auf'
+		verbsOfInterest.add("mitbringen"); // 'wenn Sie x mitbringen'
+		verbsOfInterest.add("bringen"); // 'Sie bringen x mit'
+		verbsOfInterest.add("besitzen"); // 'Sie besitzen'
 
 		System.out
 				.println("####################DONE SETUP######################");

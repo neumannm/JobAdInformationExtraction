@@ -13,3 +13,6 @@ hoffen
 mitbringen
 bringen
 besitzen
+rund
+beherrschen
+benötigen
