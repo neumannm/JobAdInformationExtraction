@@ -1,6 +1,7 @@
 package spinfo.tm.extraction.parsing;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,15 +20,19 @@ import spinfo.tm.extraction.data.SlotFiller;
  */
 public class DepCompetenceFinder {
 
-	private List<String> verbsOfInterest;
+	private Map<String, String> verbsOfInterest; // key: verb; value:
+													// restrictions
+
+	// TODO: make use of restrictions!
+	// TODO: split conjunctions in conjuncts
 
 	public DepCompetenceFinder() {
 		if (verbsOfInterest == null) {
-			verbsOfInterest = new ArrayList<String>();
+			verbsOfInterest = new HashMap<String, String>();
 		}
 	}
 
-	public DepCompetenceFinder(List<String> verbsOfInterest) {
+	public DepCompetenceFinder(Map<String, String> verbsOfInterest) {
 		this();
 		this.verbsOfInterest = verbsOfInterest;
 	}
@@ -45,20 +50,79 @@ public class DepCompetenceFinder {
 			String[] lemmas = sd.getLemmas();
 
 			for (int i = 0; i < lemmas.length; i++) {
-				if (verbsOfInterest.contains(lemmas[i])) {
+				if (verbsOfInterest.containsKey(lemmas[i])) {
+					// lemma i is verb of interest - this sentence may contain
+					// slotfillers
 					List<SlotFiller> filler = new ArrayList<>();
 
-					filler.addAll(lookForCompetences(lemmas[i], i + 1, sd, cu));
+					String restriction = verbsOfInterest.get(lemmas[i]);
+					// are there any restrictions like required appositions or
+					// particles?
 
+					if ("PTKVZ".equals(restriction)) {
+						// particle needed in SVP position
+						if (particleExists(sd, i + 1)) {
+							// get dependants of particle
+						}
+					}
+					else if ("V".equals(restriction)) {
+						// second verb needed in OC position
+						if (secondVerbExists(sd, i + 1)) {
+							// second verb should be in verbsOfInterest
+							// subject of first verb must be checked
+						}
+					}
+					else if ("AP".equals(restriction)) {
+						// apposition needed
+						if (appositionExists(sd, i + 1)) {
+
+						}
+					}
+					else{
+						//there are no restrictions
+						//problem: when we have 2 verbs....
+						filler.addAll(lookForCompetences(lemmas[i], i + 1, sd, cu));
+					}
 					/*
 					 * add result to list of results
 					 */
 					if (!filler.isEmpty())
 						results.addAll(filler);
 				}
+				
 			}
 		}
 		return results;
+	}
+
+	private boolean appositionExists(Sentence sd, int id) {
+		int[] heads = sd.getHeads();
+		for (int i = 0; i < heads.length; i++) {
+			if (heads[i] == id && sd.getDepLabels()[i].equals("OP")) {
+				return sd.getPOSTags()[i].startsWith("AP");
+			}
+		}
+		return false;
+	}
+
+	private boolean secondVerbExists(Sentence sd, int id) {
+		int[] heads = sd.getHeads();
+		for (int i = 0; i < heads.length; i++) {
+			if (heads[i] == id && sd.getDepLabels()[i].equals("OC")) {
+				return sd.getPOSTags()[i].startsWith("V");
+			}
+		}
+		return false;
+	}
+
+	private boolean particleExists(Sentence sd, int id) {
+		int[] heads = sd.getHeads();
+		for (int i = 0; i < heads.length; i++) {
+			if (heads[i] == id && sd.getDepLabels()[i].equals("SVP")) {
+				return sd.getPOSTags()[i].equals("PTKVZ");
+			}
+		}
+		return false;
 	}
 
 	private List<SlotFiller> lookForCompetences(String lemma, int verbID,
@@ -97,11 +161,12 @@ public class DepCompetenceFinder {
 								new TreeSet<Integer>());
 
 						/*
-						 * Achtung: pro Satz wird neu nummeriert. Token pos
+						 * Achtung: pro Satz wird neu nummeriert. Token pos == i
 						 * stimmt nicht
 						 */
 						filler.add(new SlotFiller(argument, i));
 					}
+					break;
 				}
 
 				/*
@@ -117,8 +182,8 @@ public class DepCompetenceFinder {
 					if ("ADJD".equals(sd.getPOSTags()[i])) {
 						// TODO predicate modifier for competence
 					}
-					if("VVPP".equals(sd.getPOSTags()[i])){
-						//TODO modifier for competence
+					if ("VVPP".equals(sd.getPOSTags()[i])) {
+						// TODO modifier for competence
 					}
 					if ("NN".equals(sd.getPOSTags()[i])) {
 						// TODO predicate is possibly also competence (like in

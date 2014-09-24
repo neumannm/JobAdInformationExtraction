@@ -1,10 +1,10 @@
 package spinfo.tm.extraction.parsing;
 
-import is2.data.SentenceData09;
-
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,18 +15,16 @@ import org.junit.Test;
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
-import spinfo.tm.extraction.parsing.DepCompetenceFinder;
-import spinfo.tm.extraction.parsing.ParagraphParser;
-import spinfo.tm.extraction.parsing.util.SentenceDataReader;
 import spinfo.tm.preprocessing.TrainingDataReader;
 import spinfo.tm.util.ClassFilter;
 
 public class CompetenceFinderTest {
 
 	private Map<UUID, Paragraph> filteredClassifyUnits;
-	private List<String> verbsOfInterest;
+	private Map<String, String> verbsOfInterest;
 
 	private static final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
+	private static final String VERBSFILE = "models/verbsOfInterest.txt";
 
 	public void setUp() throws IOException {
 		File trainingDataFile = new File(TRAININGDATAFILE);
@@ -54,26 +52,49 @@ public class CompetenceFinderTest {
 			filteredClassifyUnits.put(cu.getID(), cu);
 		}
 
-		verbsOfInterest = new ArrayList<>();
-		verbsOfInterest.add("haben");
-		verbsOfInterest.add("sein");
-		verbsOfInterest.add("verfügen");
-		verbsOfInterest.add("suchen");
-		verbsOfInterest.add("sollen"); // meistens 'sollte', also VMFIN (finites
-										// Modalverb)
-		verbsOfInterest.add("setzen"); // 'setzen voraus'
-		verbsOfInterest.add("werden"); // 'wird vorausgesetzt'
-		verbsOfInterest.add("wünschen"); // 'wir wünschen uns'
-		verbsOfInterest.add("müssen"); // 'Sie müssen'
-		verbsOfInterest.add("erwarten"); // 'wir erwarten'
-		verbsOfInterest.add("können");
-		verbsOfInterest.add("hoffen"); // 'wir hoffen auf'
-		verbsOfInterest.add("mitbringen"); // 'wenn Sie x mitbringen'
-		verbsOfInterest.add("bringen"); // 'Sie bringen x mit'
-		verbsOfInterest.add("besitzen"); // 'Sie besitzen'
+		verbsOfInterest = readVerbsOfInterest(VERBSFILE);
 
 		System.out
 				.println("####################DONE SETUP######################");
+	}
+
+	private Map<String, String> readVerbsOfInterest(String file) {
+		File inputFile = new File(file);
+		if (!inputFile.getName().endsWith(".txt")) {
+			System.err.println("Wrong file format");
+			return null;
+		}
+
+		Map<String, String> toReturn = new HashMap<String, String>();
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(
+					new FileInputStream(inputFile)));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] split = line.split(":");
+				if (split.length == 1) {
+					toReturn.put(split[0], null);
+					continue;
+				}
+				if (split.length == 2)
+					toReturn.put(split[0], split[1]);
+				else {
+					System.err.println("Wrong format");
+					return null;
+				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return toReturn;
 	}
 
 	@Test
@@ -93,19 +114,7 @@ public class CompetenceFinderTest {
 
 	@Test
 	public void testWithDummyData() {
-		verbsOfInterest = new ArrayList<>();
-		verbsOfInterest.add("haben");
-		verbsOfInterest.add("sein");
-		verbsOfInterest.add("verfügen");
-		verbsOfInterest.add("suchen");
-		verbsOfInterest.add("sollen"); // meistens 'sollte', also VMFIN (finites
-										// Modalverb)
-		verbsOfInterest.add("setzen"); // 'setzen voraus'
-		verbsOfInterest.add("werden"); // 'wird vorausgesetzt'
-		verbsOfInterest.add("wünschen"); // 'wir wünschen uns'
-		verbsOfInterest.add("müssen"); // 'Sie müssen'
-		verbsOfInterest.add("erwarten"); // 'wir erwarten'
-		verbsOfInterest.add("benötigen"); // 'Sie benötigen'
+		verbsOfInterest = readVerbsOfInterest(VERBSFILE);
 
 		String paragraph = "Ideal ist, wenn Sie viel positive Energie haben, gerne Verantwortung übernehmen "
 				+ "und gerne Mitarbeiter führen. Gebraucht werden auch gute Englischkenntnisse und Führerschein"
@@ -121,25 +130,5 @@ public class CompetenceFinderTest {
 		List<SlotFiller> competences = finder.findCompetences(cu);
 		System.out.println(competences);
 		System.out.println("****************\n");
-	}
-
-	/*
-	 * Funktioniert nicht genauso wie wenn man die Sätze parst - kein <root>
-	 * Token! Dadurch verschieben sich die Indizes! Also erst parsen, in Datei
-	 * schreiben und von da wieder auslesen?? Oder das mit dem Einlesen einfach
-	 * sein lassen...
-	 */
-	@Test
-	public void testReadFromFile() throws IOException {
-		setUp();
-
-		List<SentenceData09> data = SentenceDataReader
-				.readFromFile("data/parsedGoodSentences.csv");
-
-		DepCompetenceFinder finder = new DepCompetenceFinder(verbsOfInterest);
-
-		// List<SlotFiller> competences = finder.findCompetences(cu);
-		// System.out.println(competences);
-		// System.out.println("****************\n");
 	}
 }

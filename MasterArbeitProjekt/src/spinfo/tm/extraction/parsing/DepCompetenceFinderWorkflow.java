@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +38,7 @@ public class DepCompetenceFinderWorkflow {
 		List<Paragraph> parsedParagraphs = ReaderWriter
 				.readParagraphsFromBinary(parsedParagraphsFile);
 
-		// TODO: work with verbsOfInterest-File
-		List<String> verbsOfInterest = readVerbsOfInterest(VERBSOFINTERESTFILE);
+		Map<String, String> verbsOfInterest = readVerbsOfInterest(VERBSOFINTERESTFILE);
 		DepCompetenceFinder finder = new DepCompetenceFinder(verbsOfInterest);
 		Map<Paragraph, List<SlotFiller>> allResults = new HashMap<Paragraph, List<SlotFiller>>();
 
@@ -60,33 +58,72 @@ public class DepCompetenceFinderWorkflow {
 		evaluate(allResults);
 	}
 
-	private static List<String> readVerbsOfInterest(String fileName) {
-		List<String> verbs = null;
-		
-		File file = new File(fileName);
-		BufferedReader r = null;
+	private static Map<String, String> readVerbsOfInterest(String file) {
+		File inputFile = new File(file);
+		if (!inputFile.getName().endsWith(".txt")) {
+			System.err.println("Wrong file format");
+			return null;
+		}
+
+		Map<String, String> toReturn = new HashMap<String, String>();
+		BufferedReader reader = null;
 		try {
-			verbs = new ArrayList<String>();
-			r = new BufferedReader(new InputStreamReader(new FileInputStream(
-					file)));
+			reader = new BufferedReader(new InputStreamReader(
+					new FileInputStream(inputFile)));
 			String line;
-			while ((line = r.readLine()) != null) {
-				if(line.split("\\s").length != 1) {
-					throw new IllegalArgumentException("File has wrong format");
+			while ((line = reader.readLine()) != null) {
+				String[] split = line.split(":");
+				if (split.length == 1) {
+					toReturn.put(split[0], null);
+					continue;
 				}
-				verbs.add(line.trim());
+				if (split.length == 2)
+					toReturn.put(split[0], split[1]);
+				else {
+					System.err.println("Wrong format");
+					return null;
+				}
 			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				r.close();
+				reader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		return verbs;
+		return toReturn;
 	}
+
+	// private static List<String> readVerbsOfInterest(String fileName) {
+	// List<String> verbs = null;
+	//
+	// File file = new File(fileName);
+	// BufferedReader r = null;
+	// try {
+	// verbs = new ArrayList<String>();
+	// r = new BufferedReader(new InputStreamReader(new FileInputStream(
+	// file)));
+	// String line;
+	// while ((line = r.readLine()) != null) {
+	// if(line.split("\\s").length != 1) {
+	// throw new IllegalArgumentException("File has wrong format");
+	// }
+	// verbs.add(line.trim());
+	// }
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// } finally {
+	// try {
+	// r.close();
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// return verbs;
+	// }
 
 	private static void evaluate(Map<Paragraph, List<SlotFiller>> allResults) {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
