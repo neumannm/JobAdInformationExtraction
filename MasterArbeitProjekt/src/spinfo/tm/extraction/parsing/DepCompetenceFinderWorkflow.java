@@ -12,16 +12,15 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import spinfo.tm.data.Paragraph;
+import spinfo.tm.evaluation.IE_Evaluator;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.util.ClassFilter;
-import spinfo.tm.util.IETrainingDataGenerator;
 import spinfo.tm.util.ReaderWriter;
 
 public class DepCompetenceFinderWorkflow {
 
 	private static final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
-	private static final String IE_TRAININGDATAFILE = "data/trainingIE_140816.csv";
 	private static final String PARSEDPARAGRAPHSFILE = "data/parsedParagraphs.bin";
 	private static final String VERBSOFINTERESTFILE = "models/verbsOfInterest.txt";
 	private static Logger logger;
@@ -55,7 +54,7 @@ public class DepCompetenceFinderWorkflow {
 
 		System.out.println("Anzahl Ergebnisse: " + count);
 
-		evaluate(allResults);
+		IE_Evaluator.evaluate(allResults);
 	}
 
 	private static Map<String, String> readVerbsOfInterest(String file) {
@@ -124,44 +123,6 @@ public class DepCompetenceFinderWorkflow {
 	// }
 	// return verbs;
 	// }
-
-	private static void evaluate(Map<Paragraph, List<SlotFiller>> allResults) {
-		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
-				IE_TRAININGDATAFILE), Class.COMPETENCE);
-
-		Map<Paragraph, List<SlotFiller>> manuallyLabeled;
-		try {
-			manuallyLabeled = gen.getTrainingData();
-			for (Paragraph par : allResults.keySet()) {
-				if (manuallyLabeled.containsKey(par)) {
-					List<SlotFiller> result = allResults.get(par);
-					List<SlotFiller> gold = manuallyLabeled.get(par);
-					compare(result, gold);
-					// ...
-				}
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static void compare(List<SlotFiller> result, List<SlotFiller> gold) {
-		for (SlotFiller goldFiller : gold) {
-			for (SlotFiller resFiller : result) {
-				if (resFiller.getContent().contains(goldFiller.getContent())) {
-					// logger.info("Gold contained in result");
-					System.out.println(resFiller.getContent() + "\t|\t"
-							+ goldFiller.getContent());
-				} else if (goldFiller.getContent().contains(
-						resFiller.getContent())) {
-					// logger.info("Result contained in gold");
-					System.out.println(resFiller.getContent() + "\t|\t"
-							+ goldFiller.getContent());
-				}
-			}
-		}
-	}
 
 	private static void createParsedParagraphsFile(File parsedParagraphsFile) {
 		List<Paragraph> paragraphs;
