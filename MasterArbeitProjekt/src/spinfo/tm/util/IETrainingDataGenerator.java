@@ -182,8 +182,7 @@ public class IETrainingDataGenerator {
 		/*
 		 * Entferne Leerzeichen vor Satzzeichen
 		 */
-		return sb.toString().replaceAll("\\s(?=[.,:?!\"'*\\-\\(\\)])", "")
-				.trim();
+		return PhraseCleaner.removeUnneccessaryWhitespace(sb.toString());
 	}
 
 	private void writeToFile(Map<Paragraph, List<SlotFiller>> trainedData2)
@@ -245,6 +244,8 @@ public class IETrainingDataGenerator {
 					}
 
 					String token = splits[3];
+					token = PhraseCleaner.removeUnneccessaryWhitespace(token);
+
 					int position = Integer.parseInt(splits[4]);
 
 					content.add(new SlotFiller(token, position));

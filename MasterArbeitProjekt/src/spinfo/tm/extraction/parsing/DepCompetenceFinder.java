@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Phaser;
 
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.data.Sentence;
 import spinfo.tm.extraction.data.SlotFiller;
+import spinfo.tm.util.PhraseCleaner;
 
 /**
  * Use parsed data to find Competences by inspecting dependency relations
@@ -262,6 +264,6 @@ public class DepCompetenceFinder {
 		/*
 		 * Entferne Leerzeichen vor Satzzeichen
 		 */
-		return sb.toString().replaceAll("\\s(?=[.,:?!\"'*\\-\\(\\)])", "");
+		return PhraseCleaner.removeUnneccessaryWhitespace(sb.toString());
 	}
 }

@@ -30,6 +30,10 @@ public class IE_Evaluator {
 					compare(result, gold); // vergleiche die Slotfiller
 											// von diesem Paragraphen
 				} else {
+					List<SlotFiller> list = allResults.get(par);
+					for (SlotFiller slotFiller : list) {
+						System.err.println("False positive: " + slotFiller.getContent());
+					}
 					fp += allResults.get(par).size(); // wenn der ganze
 														// Paragraph nicht
 														// manuell ausgezeichnet
@@ -49,6 +53,9 @@ public class IE_Evaluator {
 			System.out.println("Precision: " + precision);
 			System.out.println("Recall: " + recall);
 
+			float f1 = (2 * precision * recall) / ((float) precision + recall);
+			System.out.println("F1: " + f1);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -56,28 +63,58 @@ public class IE_Evaluator {
 
 	private static void compare(List<SlotFiller> result, List<SlotFiller> gold) {
 		boolean foundSth = false;
-		// todo false positives vs. false negatives?????
 		for (SlotFiller resFiller : result) {
 			foundSth = false;
 			goldloop: for (SlotFiller goldFiller : gold) {
+				if (goldFiller.getContent().contains(resFiller.getContent()) || resFiller.getContent().contains(goldFiller.getContent())) {
+					foundSth = true;
+					// logger.info("Gold contained in result");
+					System.out.println(resFiller.getContent() + "\t|\t"
+							+ goldFiller.getContent());
+
+					double matchingPortion = calculateMatchingPortion(
+							resFiller.getContent(), goldFiller.getContent());
+					System.out.println(matchingPortion);
+					tp++;
+					break goldloop;
+				} 
+			}
+			if (!foundSth) {
+				System.err.println("False positive: " + resFiller.getContent());
+				fp++;
+				// for each result that has no match in gold --> fp++
+			}
+		}
+
+		for (SlotFiller goldFiller : gold) {
+			foundSth = false;
+			resLoop: for (SlotFiller resFiller : result) {
 				if (resFiller.getContent().contains(goldFiller.getContent())
 						|| goldFiller.getContent().contains(
 								resFiller.getContent())) {
 					foundSth = true;
 					// logger.info("Gold contained in result or the other way round");
-					System.out.println(resFiller.getContent() + "\t|\t"
-							+ goldFiller.getContent());
+					// System.out.println(resFiller.getContent() + "\t|\t"
+					// + goldFiller.getContent());
+
 					tp++;
-					break goldloop;
+					break resLoop;
 				}
 			}
 			if (!foundSth) {
-				//one of the following is wrong!
-				fp++;
+				System.err.println("False negative: " + goldFiller.getContent());
 				fn++;
-				//for each result that has no match in gold --> fp++
-				//for each gold that has no match in result --> fn++
+				// for each gold that has no match in result --> fn++
 			}
 		}
 	}
+
+	private static double calculateMatchingPortion(String result, String gold) {
+		String[] resultTokens = result.split(" ");
+		String[] goldTokens = gold.split(" ");
+
+		double portion = resultTokens.length / (double) goldTokens.length;
+		return portion > 1.0 ? 1.0 : portion;
+	}
+
 }
