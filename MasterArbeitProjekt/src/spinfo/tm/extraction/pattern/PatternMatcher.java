@@ -16,12 +16,8 @@ import spinfo.tm.extraction.data.SlotFiller;
  * 
  * TODO: Ausfüllen der Templates
  * 
- * TODO: größere Matches gegenüber kleineren bevorzugen, wie lässt sich das hier umsetzen?
- * 
  * TODO: token position wird hier anders berechnet, nämlich als Zeichenposition!
  * 
- * Idee: man könnte prüfen welche Teile übereinstimmen und nur diese zurückgeben - 
- * Problem: übereinstimmender Teil könnte zu klein sein (aber besser als zu groß oder?)
  */
 public class PatternMatcher {
 
@@ -45,7 +41,6 @@ public class PatternMatcher {
 		return list;
 	}
 
-	// TODO: prefer longer matches to shorter ones?
 	private List<TokenPosPair> match(String input) {
 		List<TokenPosPair> tokensAndPositions = new ArrayList<>();
 
