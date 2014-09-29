@@ -3,7 +3,6 @@ package spinfo.tm.extraction.pattern;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import spinfo.tm.evaluation.IE_Evaluator;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.util.ClassFilter;
-import spinfo.tm.util.IETrainingDataGenerator;
 import spinfo.tm.util.ReaderWriter;
 
 public class PatternMatcherWorkflow {
@@ -40,8 +38,7 @@ public class PatternMatcherWorkflow {
 
 		int count = 0;
 		for (Paragraph p : filteredParagraphs) {
-			List<SlotFiller> result = pm.getContentOfInterest(p,
-					new ArrayList<SlotFiller>());
+			List<SlotFiller> result = pm.getContentOfInterest(p);
 			count += result.size();
 			for (SlotFiller slotFiller : result) {
 				System.out.println(slotFiller);

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
@@ -32,7 +33,8 @@ public class IE_Evaluator {
 				} else {
 					List<SlotFiller> list = allResults.get(par);
 					for (SlotFiller slotFiller : list) {
-						System.err.println("False positive: " + slotFiller.getContent());
+						System.err.println("False positive: "
+								+ slotFiller.getContent());
 					}
 					fp += allResults.get(par).size(); // wenn der ganze
 														// Paragraph nicht
@@ -66,9 +68,11 @@ public class IE_Evaluator {
 		for (SlotFiller resFiller : result) {
 			foundSth = false;
 			goldloop: for (SlotFiller goldFiller : gold) {
-				if (goldFiller.getContent().contains(resFiller.getContent()) || resFiller.getContent().contains(goldFiller.getContent())) {
+				// TODO: manual evaluation or automatically detect overlap
+				if (goldFiller.getContent().contains(resFiller.getContent())
+						|| resFiller.getContent().contains(
+								goldFiller.getContent())) {
 					foundSth = true;
-					// logger.info("Gold contained in result");
 					System.out.println(resFiller.getContent() + "\t|\t"
 							+ goldFiller.getContent());
 
@@ -78,11 +82,19 @@ public class IE_Evaluator {
 					tp++;
 					break goldloop;
 				} 
+//				else {
+//					// ask user?
+//					if (isPositiveMatch(resFiller.getContent(),
+//							goldFiller.getContent())) {
+//						foundSth = true;
+//						break goldloop;
+//					}
+//				}
 			}
 			if (!foundSth) {
 				System.err.println("False positive: " + resFiller.getContent());
-				fp++;
 				// for each result that has no match in gold --> fp++
+				fp++;
 			}
 		}
 
@@ -93,20 +105,27 @@ public class IE_Evaluator {
 						|| goldFiller.getContent().contains(
 								resFiller.getContent())) {
 					foundSth = true;
-					// logger.info("Gold contained in result or the other way round");
-					// System.out.println(resFiller.getContent() + "\t|\t"
-					// + goldFiller.getContent());
-
 					tp++;
 					break resLoop;
 				}
 			}
 			if (!foundSth) {
-				System.err.println("False negative: " + goldFiller.getContent());
-				fn++;
+				System.err
+						.println("False negative: " + goldFiller.getContent());
 				// for each gold that has no match in result --> fn++
+				fn++;
 			}
 		}
+	}
+
+	private static boolean isPositiveMatch(String resultContent,
+			String goldContent) {
+		System.out.println(String.format("Is <%s> a match for <%s>?",
+				resultContent, goldContent));
+		Scanner in = new Scanner(System.in);
+		int read = 0;
+		read = in.nextInt();
+		return read == 1;
 	}
 
 	private static double calculateMatchingPortion(String result, String gold) {
@@ -117,4 +136,6 @@ public class IE_Evaluator {
 		return portion > 1.0 ? 1.0 : portion;
 	}
 
+	private void editDistance(String s1, String s2) {
+	}
 }

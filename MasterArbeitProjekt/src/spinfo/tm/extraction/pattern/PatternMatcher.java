@@ -16,8 +16,6 @@ import spinfo.tm.extraction.data.SlotFiller;
  * 
  * TODO: Ausfüllen der Templates
  * 
- * TODO: token position wird hier anders berechnet, nämlich als Zeichenposition!
- * 
  */
 public class PatternMatcher {
 
@@ -27,38 +25,35 @@ public class PatternMatcher {
 		setupRegexes();
 	}
 
-	public List<SlotFiller> getContentOfInterest(Paragraph unitToClassify,
-			List<SlotFiller> list) {
-
-		String content = unitToClassify.getContent();
+	public List<SlotFiller> getContentOfInterest(Paragraph paragraph) {
+		List<SlotFiller> list = new ArrayList<SlotFiller>();
+		String content = paragraph.getContent();
 
 		// List of matches for 1 paragraph:
-		List<TokenPosPair> results = match(content);
-		for (TokenPosPair result : results) {
-			list.add(new SlotFiller(result.getToken(), result.getPosition()));
+		List<String> results = match(content);
+		for (String result : results) {
+			list.add(new SlotFiller(result, Class.forID(paragraph
+					.getActualClassID())));
 		}
-
 		return list;
 	}
 
-	private List<TokenPosPair> match(String input) {
-		List<TokenPosPair> tokensAndPositions = new ArrayList<>();
+	private List<String> match(String input) {
+		List<String> matchedContent = new ArrayList<>();
 
 		String token;
-		int position;
 		Matcher m;
 		for (Pattern pattern : regExes.keySet()) {
 			m = pattern.matcher(input);
 			while (m.find()) {
 				token = m.group();
-				position = m.start();
-				tokensAndPositions.add(new TokenPosPair(token, position));
-//				System.out.println(String.format(
-//						"Matched %s at position %s\n\twith Pattern %s", token,
-//						position, pattern.pattern()));
+				matchedContent.add(token.trim());
+				// System.out.println(String.format(
+				// "Matched %s \n\twith Pattern %s", token,
+				// pattern.pattern()));
 			}
 		}
-		return tokensAndPositions;
+		return matchedContent;
 	}
 
 	private void setupRegexes() {
@@ -79,9 +74,9 @@ public class PatternMatcher {
 		 * 'der Bewerber sollte X haben' 'die Bewerberin sollte X mitbringen'
 		 * 'der/die Bewerber/in sollte x sein'
 		 */
-		lookbehind = "\\b((der(/die)?)|die) Bewerber(/?in)? sollte";
+		lookbehind = "\\b((der(/die)?)|die) Bewerber(/?in)? sollten?";
 		lookahead = "sein|mitbringen|haben";
-		p = Pattern.compile("(?<=" + lookbehind + ") ([^.\\n]+?)(?="
+		p = Pattern.compile("(?<=" + lookbehind + ") ([^.\\n]+?)(?=\\b"
 				+ lookahead + ")", Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
 
@@ -97,7 +92,7 @@ public class PatternMatcher {
 		 * 'X ist erforderlich'
 		 */
 		lookahead = "(ist|sind|wird|wäre(n)?) (wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet)";
-		p = Pattern.compile("([^.\\n]+?)(?=" + lookahead + ")");
+		p = Pattern.compile("([^.\\n]+?)(?=\\b" + lookahead + ")");
 		regExes.put(p, Class.COMPETENCE);
 
 		/*
@@ -105,14 +100,14 @@ public class PatternMatcher {
 		 */
 		lookbehind = "ist|sind|wird|wäre(n)?+";
 		lookahead = "wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet";
-		p = Pattern.compile("(?<=" + lookbehind + ")([^.\\n]+?)(" + lookahead
+		p = Pattern.compile("(?<=\\b" + lookbehind + ")([^.\\n]+?)(" + lookahead
 				+ ")");
 		regExes.put(p, Class.COMPETENCE);
 
 		/*
 		 * 'erwartet wird X' etc.
 		 */
-		lookbehind = "(wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet) (ist|sind|wird|wäre(n)?+)";
+		lookbehind = "(wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet) (ist|sind|wird|wäre(n)?+)\\b";
 		p = Pattern.compile("(?<=" + lookbehind + ")([^.\\n]+)",
 				Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
@@ -120,7 +115,7 @@ public class PatternMatcher {
 		/*
 		 * 'vorausgesetzt wird X'
 		 */
-		lookbehind = "(vorausgesetzt wird |Voraussetzung ist |wir erwarten |wünschen (?:wir )?uns )";
+		lookbehind = "(vorausgesetzt wird |Voraussetzung ist |wir erwarten |wünschen (?:wir )?uns )\\b";
 		p = Pattern.compile("(?<=" + lookbehind + ")(.+?)(?=\\.)",
 				Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
@@ -128,7 +123,7 @@ public class PatternMatcher {
 		/*
 		 * 'wir setzen X voraus' | 'setzen wir X voraus'
 		 */
-		lookbehind = "(wir setzen | setzen wir )";
+		lookbehind = "(wir setzen|setzen wir)\\b";
 		lookahead = "voraus\\.";
 		p = Pattern.compile("(?<=" + lookbehind + ")([^.\\n]+?)(?=" + lookahead
 				+ ")", Pattern.CASE_INSENSITIVE);
@@ -161,7 +156,7 @@ public class PatternMatcher {
 		 * Führerschein
 		 */
 		lookahead = "\\.|\\n"; // bis zum Satzende oder Zeilenumbruch
-		p = Pattern.compile("(Führerschein|FS) (Klasse|Kl.)? .+?(?="
+		p = Pattern.compile("(Führerschein|FS) (Klasse |Kl.)?+.+?(?="
 				+ lookahead + ")");
 		regExes.put(p, Class.COMPETENCE);
 
@@ -204,32 +199,5 @@ public class PatternMatcher {
 
 	public Map<Pattern, Class> getRegExes() {
 		return regExes;
-	}
-}
-
-class TokenPosPair {
-
-	private int position;
-	private String token;
-
-	public TokenPosPair(String token, int position) {
-		this.setToken(token.trim());
-		this.setPosition(position);
-	}
-
-	public int getPosition() {
-		return position;
-	}
-
-	private void setPosition(int position) {
-		this.position = position;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	private void setToken(String token) {
-		this.token = token;
 	}
 }

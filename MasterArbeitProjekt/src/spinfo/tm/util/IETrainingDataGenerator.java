@@ -103,9 +103,10 @@ public class IETrainingDataGenerator {
 						Object[] result = processAnswer(ans, tokens, item);
 
 						String token = (String) result[0];
-						int position = (int) result[1];
+						// int position = (int) result[1];
 
-						SlotFiller filler = new SlotFiller(token, position);
+						SlotFiller filler = new SlotFiller(token,
+								Class.forID(item.getActualClassID()));
 						trainedData.get(item).add(filler);
 
 					} catch (IllegalArgumentException e) {
@@ -196,7 +197,6 @@ public class IETrainingDataGenerator {
 			out.print(classToAnnotate + "\t"); // which class
 			for (SlotFiller sf : trainedData2.get(cu)) {
 				out.print(sf.getContent() + "\t");
-				out.print(sf.getTokenPosition() + "\t");
 				out.print("\n\t\t");
 			}
 			out.println();
@@ -225,7 +225,7 @@ public class IETrainingDataGenerator {
 			String line = in.readLine();// 1st line contains headings
 
 			Class classID = null;
-			int jobAdID = 0;
+			// int jobAdID = 0;
 			UUID cuID = null;
 
 			List<SlotFiller> content = null;
@@ -238,7 +238,7 @@ public class IETrainingDataGenerator {
 							&& splits[2].length() > 0) {
 						content = new ArrayList<SlotFiller>();
 						// new SlotFiller
-						jobAdID = Integer.parseInt(splits[0]);
+						// jobAdID = Integer.parseInt(splits[0]);
 						cuID = UUID.fromString(splits[1]);
 						classID = Class.valueOf(splits[2]);
 					}
@@ -246,9 +246,9 @@ public class IETrainingDataGenerator {
 					String token = splits[3];
 					token = PhraseCleaner.removeUnneccessaryWhitespace(token);
 
-					int position = Integer.parseInt(splits[4]);
+					// int position = Integer.parseInt(splits[4]);
 
-					content.add(new SlotFiller(token, position));
+					content.add(new SlotFiller(token, classID));
 
 				} else if (splits.length == 0 && line.trim().isEmpty()) {
 					if (classID.equals(classToAnnotate)) {

@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.Phaser;
 
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.data.Sentence;
+import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.util.PhraseCleaner;
 
@@ -66,24 +66,22 @@ public class DepCompetenceFinder {
 						if (particleExists(sd, i + 1)) {
 							// get dependants of particle
 						}
-					}
-					else if ("V".equals(restriction)) {
+					} else if ("V".equals(restriction)) {
 						// second verb needed in OC position
 						if (secondVerbExists(sd, i + 1)) {
 							// second verb should be in verbsOfInterest
 							// subject of first verb must be checked
 						}
-					}
-					else if ("AP".equals(restriction)) {
+					} else if ("AP".equals(restriction)) {
 						// apposition needed
 						if (appositionExists(sd, i + 1)) {
 
 						}
-					}
-					else{
-						//there are no restrictions
-						//problem: when we have 2 verbs....
-						filler.addAll(lookForCompetences(lemmas[i], i + 1, sd, cu));
+					} else {
+						// there are no restrictions
+						// problem: when we have 2 verbs....
+						filler.addAll(lookForCompetences(lemmas[i], i + 1, sd,
+								cu));
 					}
 					/*
 					 * add result to list of results
@@ -91,7 +89,7 @@ public class DepCompetenceFinder {
 					if (!filler.isEmpty())
 						results.addAll(filler);
 				}
-				
+
 			}
 		}
 		return results;
@@ -128,7 +126,7 @@ public class DepCompetenceFinder {
 	}
 
 	private List<SlotFiller> lookForCompetences(String lemma, int verbID,
-			Sentence sd, Paragraph cu) {
+			Sentence sd, Paragraph par) {
 		List<SlotFiller> filler = new ArrayList<>();
 
 		int[] heads = sd.getHeads();
@@ -151,7 +149,7 @@ public class DepCompetenceFinder {
 						/*
 						 * Process, i.e. look for competences in verb's objects
 						 */
-						filler.addAll(getObjects(lemma, verbID, sd, cu));
+						filler.addAll(getObjects(lemma, verbID, sd, par));
 					} else if ("NN".equals(sbPOS)) {
 						System.out.println(String.format(
 								"Subject is a Noun (%s)", dependant));
@@ -162,11 +160,8 @@ public class DepCompetenceFinder {
 						String argument = getPhrase(i, sd,
 								new TreeSet<Integer>());
 
-						/*
-						 * Achtung: pro Satz wird neu nummeriert. Token pos == i
-						 * stimmt nicht
-						 */
-						filler.add(new SlotFiller(argument, i));
+						filler.add(new SlotFiller(argument, Class.forID(par
+								.getActualClassID())));
 					}
 					break;
 				}
@@ -205,7 +200,7 @@ public class DepCompetenceFinder {
 	}
 
 	private List<SlotFiller> getObjects(String lemma, int verbID, Sentence sd,
-			Paragraph cu) {
+			Paragraph par) {
 		List<SlotFiller> filler = new ArrayList<>();
 
 		int[] heads = sd.getHeads();
@@ -223,7 +218,8 @@ public class DepCompetenceFinder {
 							lemma.toUpperCase(), dependant, dependency));
 					String argument = getPhrase(i, sd, new TreeSet<Integer>());
 
-					filler.add(new SlotFiller(argument, i));
+					filler.add(new SlotFiller(argument, Class.forID(par
+							.getActualClassID())));
 				}
 			}
 		}

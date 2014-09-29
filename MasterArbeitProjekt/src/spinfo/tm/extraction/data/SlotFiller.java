@@ -1,16 +1,17 @@
 package spinfo.tm.extraction.data;
 
-
 /**
  * Slotfiller for an Information Extraction Template.
  * 
  * @author neumannm
  * 
  */
+/*
+ * TODO Kopplung an Paragraph oder JobAd?
+ */
 public class SlotFiller {
 
 	private String content;
-	private int tokenPos;
 	private Class c;
 
 	/**
@@ -18,12 +19,14 @@ public class SlotFiller {
 	 * 
 	 * @param token
 	 *            Token for Slot Filler
-	 * @param tokenPos
-	 *            position of the filler in the paragraph
 	 */
-	public SlotFiller(String token, int tokenPos) {
-		this.content = token;
-		this.tokenPos = tokenPos;
+	public SlotFiller(String token, Class c) {
+		setContent(token);
+		setC(c);
+	}
+
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	public void setC(Class c) {
@@ -43,18 +46,9 @@ public class SlotFiller {
 		return content;
 	}
 
-	/**
-	 * Get position of the Slot Filler in higher unit.
-	 * 
-	 * @return position
-	 */
-	public int getTokenPosition() {
-		return tokenPos;
-	}
-
 	@Override
 	public String toString() {
-		return this.content + " (at " + this.tokenPos + ")";
+		return this.content + "(" + this.c + ")";
 	}
 
 	/*
@@ -67,7 +61,7 @@ public class SlotFiller {
 		if (obj instanceof SlotFiller) {
 			SlotFiller other = (SlotFiller) obj;
 			return this.content.trim().equalsIgnoreCase(other.content.trim())
-					&& this.tokenPos == other.tokenPos;
+					&& this.c.equals(other.c);
 		}
 		return super.equals(obj);
 	}
