@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -13,11 +12,17 @@ import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.preprocessing.FeatureUnitTokenizer;
 import spinfo.tm.util.IETrainingDataGenerator;
+import spinfo.tm.util.StopwordFilter;
 
 public class IE_Evaluator {
 
 	private static final String IE_TRAININGDATAFILE = "data/trainingIE_140816.csv";
 	private static int fp = 0, tp = 0, fn = 0;
+	private static FeatureUnitTokenizer tokenizer;
+
+	static {
+		tokenizer = new FeatureUnitTokenizer();
+	}
 
 	public static void evaluate(Map<Paragraph, List<SlotFiller>> allResults) {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
@@ -66,56 +71,56 @@ public class IE_Evaluator {
 		}
 	}
 
-	private static void compare(List<SlotFiller> result, List<SlotFiller> gold) {
-		boolean foundSth = false;
+	private static void compare(List<SlotFiller> result, List<SlotFiller> gold)
+			throws IOException {
+		List<String> resTokens;
 		for (SlotFiller resFiller : result) {
-			foundSth = false;
-			goldloop: for (SlotFiller goldFiller : gold) {
-				hasLargeEnoughIntersection(resFiller.getContent(), goldFiller.getContent(), 0.8);
-				
-				
-				// TODO: manual evaluation or automatically detect overlap
-				if (goldFiller.getContent().contains(resFiller.getContent())
-						|| resFiller.getContent().contains(
-								goldFiller.getContent())) {
-					foundSth = true;
-					System.out.println(resFiller.getContent() + "\t|\t"
-							+ goldFiller.getContent());
+			resTokens = tokenizer.tokenize(resFiller.getContent());
+			List<String> goldTokens;
+			int max = Integer.MIN_VALUE;
 
-					double matchingPortion = calculateMatchingPortion(
-							resFiller.getContent(), goldFiller.getContent());
-					System.out.println(matchingPortion);
-					tp++;
+			System.out.println("#################################");
+			goldloop: for (SlotFiller goldFiller : gold) {
+				goldTokens = tokenizer.tokenize(goldFiller.getContent());
+				System.out.println(resFiller.getContent() + "\t|\t"
+						+ goldFiller.getContent());
+
+				int is = calculateIntersectionSize(resTokens, goldTokens);
+				if (is > max)
+					max = is;
+
+				if (max == goldTokens.size()) {
 					break goldloop;
 				}
-				// else {
-				// // ask user?
-				// if (isPositiveMatch(resFiller.getContent(),
-				// goldFiller.getContent())) {
-				// foundSth = true;
-				// break goldloop;
-				// }
-				// }
 			}
-			if (!foundSth) {
+			if (max > 0) {
+				tp++; // for each result that has at least 1 common token with
+						// gold --> tp++
+				System.out.println(">>>TRUE POSITIVE: "
+						+ resFiller.getContent());
+			} else {
 				System.err.println("False positive: " + resFiller.getContent());
 				// for each result that has no match in gold --> fp++
 				fp++;
 			}
 		}
 
+		List<String> goldTokens;
 		for (SlotFiller goldFiller : gold) {
-			foundSth = false;
+			goldTokens = tokenizer.tokenize(goldFiller.getContent());
+			int max = Integer.MIN_VALUE;
+
 			resLoop: for (SlotFiller resFiller : result) {
-				if (resFiller.getContent().contains(goldFiller.getContent())
-						|| goldFiller.getContent().contains(
-								resFiller.getContent())) {
-					foundSth = true;
-					tp++;
+				resTokens = tokenizer.tokenize(resFiller.getContent());
+				int is = calculateIntersectionSize(resTokens, goldTokens);
+				if (is > max)
+					max = is;
+
+				if (max == goldTokens.size()) {
 					break resLoop;
 				}
 			}
-			if (!foundSth) {
+			if (max <= 0) {
 				System.err
 						.println("False negative: " + goldFiller.getContent());
 				// for each gold that has no match in result --> fn++
@@ -124,45 +129,41 @@ public class IE_Evaluator {
 		}
 	}
 
-	private static boolean isPositiveMatch(String resultContent,
-			String goldContent) {
-		System.out.println(String.format("Is <%s> a match for <%s>?",
-				resultContent, goldContent));
-		Scanner in = new Scanner(System.in);
-		int read = 0;
-		read = in.nextInt();
-		return read == 1;
-	}
+	// private static boolean isPositiveMatch(String resultContent,
+	// String goldContent) {
+	// System.out.println(String.format("Is <%s> a match for <%s>?",
+	// resultContent, goldContent));
+	// Scanner in = new Scanner(System.in);
+	// int read = 0;
+	// read = in.nextInt();
+	// return read == 1;
+	// }
 
-	private static double calculateMatchingPortion(String result, String gold) {
-		String[] resultTokens = result.split(" ");
-		String[] goldTokens = gold.split(" ");
+	private static int calculateIntersectionSize(List<String> resTokens,
+			List<String> goldTokens) throws IOException {
 
-		double portion = resultTokens.length / (double) goldTokens.length;
-		return portion > 1.0 ? 1.0 : portion;
-	}
+		StopwordFilter filter = new StopwordFilter(new File(
+				"data/stopwords.txt"));
 
-	private static boolean hasLargeEnoughIntersection(String s1, String s2,
-			double percentage) {
-		FeatureUnitTokenizer tokenizer = new FeatureUnitTokenizer();
-		Set<String> s1Tokens = new TreeSet<>(tokenizer.tokenize(s1));
-		Set<String> s2Tokens = new TreeSet<>(tokenizer.tokenize(s2));
+		Set<String> result = new TreeSet<>(filter.filterStopwords(resTokens));
+		Set<String> gold = new TreeSet<>(filter.filterStopwords(goldTokens));
 
-		System.out.println(s1Tokens.size());
-		System.out.println(s2Tokens.size());
+		if (result.isEmpty() || result.size() == 0) {
+			System.out.println();
+		}
 
-		
-		s1Tokens.retainAll(s2Tokens); // intersection
-		System.out.println(s1Tokens.size());
+		System.out.println(result);
+		System.out.println(gold);
 
-		
-		s1Tokens.removeAll(s2Tokens); // subtraction
-		System.out.println(s1Tokens.size());
+		System.out.println("Anzahl Tokens result: " + result.size());
+		System.out.println("Anzahl Tokens gold: " + gold.size());
 
-		s1Tokens.addAll(s2Tokens); // union
-		System.out.println(s1Tokens.size());
+		result.retainAll(gold); // intersection
+		System.out.println("Anzahl Tokens gemeinsam: " + result.size());
 
-		return false;
+		int intersection = result.size();
+		System.out.println("---------");
 
+		return intersection;
 	}
 }
