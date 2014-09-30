@@ -92,9 +92,9 @@ public class IETrainingDataGenerator {
 
 			answer = in.readLine();
 
-			if (answer.equals("stop"))
+			if ("stop".equals(answer))
 				break paragraphLoop;
-			if (answer.equals("x")) {
+			if ("x".equals(answer)) {
 				continue paragraphLoop;
 			} else {
 				String[] answers = answer.split(",\\s?");

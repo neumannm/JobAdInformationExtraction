@@ -5,10 +5,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeSet;
 
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
+import spinfo.tm.preprocessing.FeatureUnitTokenizer;
 import spinfo.tm.util.IETrainingDataGenerator;
 
 public class IE_Evaluator {
@@ -68,6 +71,9 @@ public class IE_Evaluator {
 		for (SlotFiller resFiller : result) {
 			foundSth = false;
 			goldloop: for (SlotFiller goldFiller : gold) {
+				hasLargeEnoughIntersection(resFiller.getContent(), goldFiller.getContent(), 0.8);
+				
+				
 				// TODO: manual evaluation or automatically detect overlap
 				if (goldFiller.getContent().contains(resFiller.getContent())
 						|| resFiller.getContent().contains(
@@ -81,15 +87,15 @@ public class IE_Evaluator {
 					System.out.println(matchingPortion);
 					tp++;
 					break goldloop;
-				} 
-//				else {
-//					// ask user?
-//					if (isPositiveMatch(resFiller.getContent(),
-//							goldFiller.getContent())) {
-//						foundSth = true;
-//						break goldloop;
-//					}
-//				}
+				}
+				// else {
+				// // ask user?
+				// if (isPositiveMatch(resFiller.getContent(),
+				// goldFiller.getContent())) {
+				// foundSth = true;
+				// break goldloop;
+				// }
+				// }
 			}
 			if (!foundSth) {
 				System.err.println("False positive: " + resFiller.getContent());
@@ -136,6 +142,27 @@ public class IE_Evaluator {
 		return portion > 1.0 ? 1.0 : portion;
 	}
 
-	private void editDistance(String s1, String s2) {
+	private static boolean hasLargeEnoughIntersection(String s1, String s2,
+			double percentage) {
+		FeatureUnitTokenizer tokenizer = new FeatureUnitTokenizer();
+		Set<String> s1Tokens = new TreeSet<>(tokenizer.tokenize(s1));
+		Set<String> s2Tokens = new TreeSet<>(tokenizer.tokenize(s2));
+
+		System.out.println(s1Tokens.size());
+		System.out.println(s2Tokens.size());
+
+		
+		s1Tokens.retainAll(s2Tokens); // intersection
+		System.out.println(s1Tokens.size());
+
+		
+		s1Tokens.removeAll(s2Tokens); // subtraction
+		System.out.println(s1Tokens.size());
+
+		s1Tokens.addAll(s2Tokens); // union
+		System.out.println(s1Tokens.size());
+
+		return false;
+
 	}
 }

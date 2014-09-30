@@ -129,8 +129,6 @@ public class ParserTest {
 			pw.write(sd.toString());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} finally {
-			pw.close();
-		}
+		} 
 	}
 }
