@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -58,7 +59,7 @@ public class IE_TDTester {
 
 		gen.annotate(filteredParagraphs);
 
-		Map<Paragraph, List<SlotFiller>> templates = gen.getTrainingData();
+		Map<Paragraph, Set<SlotFiller>> templates = gen.getTrainingData();
 
 		Assert.assertNotNull(templates);
 		Assert.assertFalse(templates.isEmpty());
@@ -99,7 +100,7 @@ public class IE_TDTester {
 	public void testGetTrainingData() throws IOException {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
 				"data/trainingIE_140816.csv"), Class.COMPETENCE);
-		Map<Paragraph, List<SlotFiller>> templates;
+		Map<Paragraph, Set<SlotFiller>> templates;
 		try {
 			templates = gen.getTrainingData();
 			int pcount = 0;

@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -104,7 +105,7 @@ public class CompetenceFinderTest {
 		DepCompetenceFinder finder = new DepCompetenceFinder(verbsOfInterest);
 
 		for (UUID id : filteredClassifyUnits.keySet()) {
-			List<SlotFiller> competences = finder
+			Set<SlotFiller> competences = finder
 					.findCompetences(filteredClassifyUnits.get(id));
 			System.out.println(id);
 			System.out.println(competences);
@@ -127,7 +128,7 @@ public class CompetenceFinderTest {
 
 		DepCompetenceFinder finder = new DepCompetenceFinder(verbsOfInterest);
 
-		List<SlotFiller> competences = finder.findCompetences(cu);
+		Set<SlotFiller> competences = finder.findCompetences(cu);
 		System.out.println(competences);
 		System.out.println("****************\n");
 	}

@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import spinfo.tm.data.Paragraph;
@@ -30,7 +31,7 @@ public class DepCompetenceFinderWorkflow {
 
 		File parsedParagraphsFile = new File(PARSEDPARAGRAPHSFILE);
 		if (!parsedParagraphsFile.exists()) {
-			logger.info("Datei mit gefilterten Paragraphs nicht vorhanden. Erstelle...");
+			logger.info("Datei mit geparsten Paragraphs nicht vorhanden. Erstelle...");
 			createParsedParagraphsFile(parsedParagraphsFile);
 		}
 
@@ -39,11 +40,11 @@ public class DepCompetenceFinderWorkflow {
 
 		Map<String, String> verbsOfInterest = readVerbsOfInterest(VERBSOFINTERESTFILE);
 		DepCompetenceFinder finder = new DepCompetenceFinder(verbsOfInterest);
-		Map<Paragraph, List<SlotFiller>> allResults = new HashMap<Paragraph, List<SlotFiller>>();
+		Map<Paragraph, Set<SlotFiller>> allResults = new HashMap<Paragraph, Set<SlotFiller>>();
 
 		int count = 0;
 		for (Paragraph par : parsedParagraphs) {
-			List<SlotFiller> results = finder.findCompetences(par);
+			Set<SlotFiller> results = finder.findCompetences(par);
 			count += results.size();
 			for (SlotFiller slotFiller : results) {
 				System.out.println(slotFiller);
@@ -140,9 +141,9 @@ public class DepCompetenceFinderWorkflow {
 					+ filteredParagraphs.size());
 
 			ParagraphParser parser = new ParagraphParser();
-			filteredParagraphs = parser.parse(filteredParagraphs);
+			List<Paragraph> parsedParagraphs = parser.parse(filteredParagraphs);
 
-			ReaderWriter.saveToBinaryFile(filteredParagraphs,
+			ReaderWriter.saveToBinaryFile(parsedParagraphs,
 					parsedParagraphsFile);
 
 		} catch (IOException e) {

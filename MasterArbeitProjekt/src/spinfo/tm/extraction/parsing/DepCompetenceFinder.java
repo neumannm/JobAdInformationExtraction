@@ -2,6 +2,7 @@ package spinfo.tm.extraction.parsing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -9,7 +10,6 @@ import java.util.TreeSet;
 
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.data.Sentence;
-import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.util.PhraseCleaner;
 
@@ -39,8 +39,8 @@ public class DepCompetenceFinder {
 		this.verbsOfInterest = verbsOfInterest;
 	}
 
-	public List<SlotFiller> findCompetences(Paragraph cu) {
-		List<SlotFiller> results = new ArrayList<SlotFiller>();
+	public Set<SlotFiller> findCompetences(Paragraph cu) {
+		Set<SlotFiller> results = new HashSet<SlotFiller>();
 
 		Map<Integer, Sentence> parsedCU = cu.getSentenceData();
 		Sentence sd;
@@ -160,8 +160,7 @@ public class DepCompetenceFinder {
 						String argument = getPhrase(i, sd,
 								new TreeSet<Integer>());
 
-						filler.add(new SlotFiller(argument, Class.forID(par
-								.getActualClassID())));
+						filler.add(new SlotFiller(argument, par.getID()));
 					}
 					break;
 				}
@@ -218,8 +217,7 @@ public class DepCompetenceFinder {
 							lemma.toUpperCase(), dependant, dependency));
 					String argument = getPhrase(i, sd, new TreeSet<Integer>());
 
-					filler.add(new SlotFiller(argument, Class.forID(par
-							.getActualClassID())));
+					filler.add(new SlotFiller(argument, par.getID()));
 				}
 			}
 		}

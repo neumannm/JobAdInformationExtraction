@@ -111,7 +111,7 @@ public class Preparation {
 
 	@Test
 	public void testReadParsedSentencesFromFile() {
-		List<Sentence> readSentences = ReaderWriter.readSentencesFromBinary(OUTPUTFILE);
+		List<Sentence> readSentences = ReaderWriter.readSentencesFromBinary(new File(OUTPUTFILE));
 
 		Assert.assertEquals(210, readSentences.size());
 

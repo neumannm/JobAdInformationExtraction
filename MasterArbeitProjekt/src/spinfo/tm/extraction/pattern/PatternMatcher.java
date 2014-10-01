@@ -1,8 +1,6 @@
 package spinfo.tm.extraction.pattern;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,35 +9,42 @@ import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 
-/*
- * Soll über RegExes die Kompetenzen aus den Paragraphen ziehen.
+/**
+ * For extracting content ({@linkSlotFiller}) from @link{Paragraph}s by using
+ * regular expressions (regex).
  * 
- * TODO: Ausfüllen der Templates
+ * @author neumannm
  * 
  */
 public class PatternMatcher {
 
 	private Map<Pattern, Class> regExes;
 
+	/**
+	 * 
+	 */
 	public PatternMatcher() {
 		setupRegexes();
 	}
 
-	public List<SlotFiller> getContentOfInterest(Paragraph paragraph) {
-		List<SlotFiller> list = new ArrayList<SlotFiller>();
+	/**
+	 * @param paragraph
+	 * @return
+	 */
+	public Map<SlotFiller, Pattern> getContentOfInterest(Paragraph paragraph) {
+		Map<SlotFiller, Pattern> toReturn = new HashMap<>();
 		String content = paragraph.getContent();
 
 		// List of matches for 1 paragraph:
-		List<String> results = match(content);
-		for (String result : results) {
-			list.add(new SlotFiller(result, Class.forID(paragraph
-					.getActualClassID())));
+		Map<String, Pattern> results = match(content);
+		for (String result : results.keySet()) {
+			toReturn.put(new SlotFiller(result, paragraph.getID()), results.get(result));
 		}
-		return list;
+		return toReturn;
 	}
 
-	private List<String> match(String input) {
-		List<String> matchedContent = new ArrayList<>();
+	private Map<String, Pattern> match(String input) {
+		Map<String, Pattern> matchedContent = new HashMap<>();
 
 		String token;
 		Matcher m;
@@ -47,7 +52,7 @@ public class PatternMatcher {
 			m = pattern.matcher(input);
 			while (m.find()) {
 				token = m.group();
-				matchedContent.add(token.trim());
+				matchedContent.put(token.trim(), pattern);
 				// System.out.println(String.format(
 				// "Matched %s \n\twith Pattern %s", token,
 				// pattern.pattern()));
@@ -91,7 +96,7 @@ public class PatternMatcher {
 		/*
 		 * 'X ist erforderlich'
 		 */
-		lookahead = "(ist|sind|wird|wäre(n)?) (wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet)";
+		lookahead = "(ist|sind|wird|werden|wäre(n)?) (wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet)";
 		p = Pattern.compile("([^.\\n]+?)(?=\\b" + lookahead + ")");
 		regExes.put(p, Class.COMPETENCE);
 
@@ -100,8 +105,8 @@ public class PatternMatcher {
 		 */
 		lookbehind = "ist|sind|wird|wäre(n)?+";
 		lookahead = "wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet";
-		p = Pattern.compile("(?<=\\b" + lookbehind + ")([^.\\n]+?)(" + lookahead
-				+ ")");
+		p = Pattern.compile("(?<=\\b" + lookbehind + ")([^.\\n]+?)("
+				+ lookahead + ")");
 		regExes.put(p, Class.COMPETENCE);
 
 		/*
@@ -197,6 +202,9 @@ public class PatternMatcher {
 
 	}
 
+	/**
+	 * @return map of all defined RegExes and their classes
+	 */
 	public Map<Pattern, Class> getRegExes() {
 		return regExes;
 	}

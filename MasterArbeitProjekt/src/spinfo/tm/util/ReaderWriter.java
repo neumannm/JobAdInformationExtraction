@@ -22,13 +22,20 @@ public class ReaderWriter {
 	public static List<Paragraph> readParagraphsFromCSV(String fileName)
 			throws IOException {
 		File trainingDataFile = new File(fileName);
+
+		if (!trainingDataFile.exists()) {
+			System.err.println("Base file does not exist! Aborting...");
+			System.exit(1);
+		}
+
 		TrainingDataReader tdg = new TrainingDataReader(trainingDataFile);
 
 		List<Paragraph> paragraphs = tdg.getTrainingData();
 		return paragraphs;
 	}
 
-	public static List<Paragraph> readParagraphsFromBinary(File parsedSectionsFile) {
+	public static List<Paragraph> readParagraphsFromBinary(
+			File parsedSectionsFile) {
 		List<Paragraph> toReturn = new ArrayList<>();
 		ObjectInputStream is = null;
 		try {
@@ -56,11 +63,11 @@ public class ReaderWriter {
 		return toReturn;
 	}
 
-	public static List<Sentence> readSentencesFromBinary(String fileName) {
+	public static List<Sentence> readSentencesFromBinary(File file) {
 		List<Sentence> toReturn = new ArrayList<>();
 		ObjectInputStream is = null;
 		try {
-			is = new ObjectInputStream(new FileInputStream(fileName));
+			is = new ObjectInputStream(new FileInputStream(file));
 			Object readObject;
 			while (true) {
 				readObject = is.readObject();
@@ -114,12 +121,10 @@ public class ReaderWriter {
 		return toReturn;
 	}
 
-	public static void saveToBinaryFile(Collection<?> data,
-			File file) {
+	public static void saveToBinaryFile(Collection<?> data, File file) {
 		ObjectOutputStream os = null;
 		try {
-			os = new ObjectOutputStream(
-					new FileOutputStream(file));
+			os = new ObjectOutputStream(new FileOutputStream(file));
 			for (Object o : data) {
 				os.writeObject(o);
 			}

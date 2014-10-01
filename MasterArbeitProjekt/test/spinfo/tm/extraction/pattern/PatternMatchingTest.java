@@ -3,8 +3,10 @@ package spinfo.tm.extraction.pattern;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,14 +76,12 @@ public class PatternMatchingTest {
 		String content = "Unsere Anforderungen:\n" + "- Zuverlässigkeit\n"
 				+ "- Kompetenz\n" + "- Sie sind einfach ganz toll";
 		Paragraph paragraph = new Paragraph(content, 0);
-		List<SlotFiller> result = pm.getContentOfInterest(paragraph);
-		List<SlotFiller> vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Zuverlässigkeit", Class.forID(paragraph
-				.getActualClassID())));
-		vorlage.add(new SlotFiller("Kompetenz", Class.forID(paragraph
-				.getActualClassID())));
-		vorlage.add(new SlotFiller("Sie sind einfach ganz toll", Class
-				.forID(paragraph.getActualClassID())));
+		Set<SlotFiller> result = pm.getContentOfInterest(paragraph).keySet();
+		Set<SlotFiller> vorlage = new HashSet<SlotFiller>();
+		vorlage.add(new SlotFiller("Zuverlässigkeit", paragraph.getID()));
+		vorlage.add(new SlotFiller("Kompetenz", paragraph.getID()));
+		vorlage.add(new SlotFiller("Sie sind einfach ganz toll", paragraph
+				.getID()));
 
 		printResults(vorlage, result);
 
@@ -90,26 +90,22 @@ public class PatternMatchingTest {
 				+ "Die Bewerberin sollte viel Make-up haben. "
 				+ "Und der/die Bewerber/in sollte seine/ihre eigenen Klamotten mitbringen";
 		paragraph = new Paragraph(content, 0);
-		result = pm.getContentOfInterest(paragraph);
-		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("fit", Class.forID(paragraph
-				.getActualClassID())));
-		vorlage.add(new SlotFiller("viel Make-up", Class.forID(paragraph
-				.getActualClassID())));
-		vorlage.add(new SlotFiller("seine/ihre eigenen Klamotten", Class
-				.forID(paragraph.getActualClassID())));
+		result = pm.getContentOfInterest(paragraph).keySet();
+		vorlage = new HashSet<SlotFiller>();
+		vorlage.add(new SlotFiller("fit", paragraph.getID()));
+		vorlage.add(new SlotFiller("viel Make-up", paragraph.getID()));
+		vorlage.add(new SlotFiller("seine/ihre eigenen Klamotten", paragraph
+				.getID()));
 
 		printResults(vorlage, result);
 
 		/* Jobbezeichnung */
 		content = "Wir suchen eine/n Bankkauffrau/-mann. Wir suchen weiterhin eine/n Frisör/in.";
 		paragraph = new Paragraph(content, 0);
-		result = pm.getContentOfInterest(paragraph);
-		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Bankkauffrau/-mann", Class.forID(paragraph
-				.getActualClassID())));
-		vorlage.add(new SlotFiller("Frisör/in", Class.forID(paragraph
-				.getActualClassID())));
+		result = pm.getContentOfInterest(paragraph).keySet();
+		vorlage = new HashSet<SlotFiller>();
+		vorlage.add(new SlotFiller("Bankkauffrau/-mann", paragraph.getID()));
+		vorlage.add(new SlotFiller("Frisör/in", paragraph.getID()));
 
 		printResults(vorlage, result);
 
@@ -121,26 +117,22 @@ public class PatternMatchingTest {
 				+ "Weiterhin wird Wissen vorausgesetzt. Es wird außerdem gewünscht, "
 				+ "dass Sie nett sind. Gute Manieren wären wünschenswert."; // TODO
 		paragraph = new Paragraph(content, 0);
-		result = pm.getContentOfInterest(paragraph);
-		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Zuverlässigkeit", Class.forID(paragraph
-				.getActualClassID())));
-		vorlage.add(new SlotFiller("weiterhin wird Wissen", Class
-				.forID(paragraph.getActualClassID())));
-		vorlage.add(new SlotFiller("Gute Manieren", Class.forID(paragraph
-				.getActualClassID())));
+		result = pm.getContentOfInterest(paragraph).keySet();
+		vorlage = new HashSet<SlotFiller>();
+		vorlage.add(new SlotFiller("Zuverlässigkeit", paragraph.getID()));
+		vorlage.add(new SlotFiller("weiterhin wird Wissen", paragraph.getID()));
+		vorlage.add(new SlotFiller("Gute Manieren", paragraph.getID()));
 
 		printResults(vorlage, result);
 
 		/* vorausgesetzt wird X / Voraussetzung ist X */
 		content = "Vorausgesetzt wird gutes Benehmen. Voraussetzung ist unbedingt höfliches Auftreten. Und noch mehr.";
 		paragraph = new Paragraph(content, 0);
-		result = pm.getContentOfInterest(paragraph);
-		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("gutes Benehmen", Class.forID(paragraph
-				.getActualClassID())));
-		vorlage.add(new SlotFiller("unbedingt höfliches Auftreten", Class
-				.forID(paragraph.getActualClassID())));
+		result = pm.getContentOfInterest(paragraph).keySet();
+		vorlage = new HashSet<SlotFiller>();
+		vorlage.add(new SlotFiller("gutes Benehmen", paragraph.getID()));
+		vorlage.add(new SlotFiller("unbedingt höfliches Auftreten", paragraph
+				.getID()));
 
 		printResults(vorlage, result);
 
@@ -152,16 +144,15 @@ public class PatternMatchingTest {
 				+ "Dass Sie gut riechen wird erwartet. Bereitschaft zu harter Arbeit wird erwartet. "
 				+ "Auch Stil und gutes Aussehen werden erwartet."; // TODO
 		paragraph = new Paragraph(content, 0);
-		result = pm.getContentOfInterest(paragraph);
-		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Dass Sie schicke Anzüge besitzen", Class
-				.forID(paragraph.getActualClassID())));
-		vorlage.add(new SlotFiller("Dass Sie gut riechen", Class
-				.forID(paragraph.getActualClassID())));
-		vorlage.add(new SlotFiller("Auch Stil und gutes Aussehen", Class
-				.forID(paragraph.getActualClassID())));
-		vorlage.add(new SlotFiller("Bereitschaft zu harter Arbeit", Class
-				.forID(paragraph.getActualClassID())));
+		result = pm.getContentOfInterest(paragraph).keySet();
+		vorlage = new HashSet<SlotFiller>();
+		vorlage.add(new SlotFiller("Dass Sie schicke Anzüge besitzen",
+				paragraph.getID()));
+		vorlage.add(new SlotFiller("Dass Sie gut riechen", paragraph.getID()));
+		vorlage.add(new SlotFiller("Auch Stil und gutes Aussehen", paragraph
+				.getID()));
+		vorlage.add(new SlotFiller("Bereitschaft zu harter Arbeit", paragraph
+				.getID()));
 
 		printResults(vorlage, result);
 
@@ -169,32 +160,27 @@ public class PatternMatchingTest {
 		content = "Darum setzen wir schicke Anzüge voraus. "
 				+ "Wir setzen dass Sie schön sind voraus. Außerdem müssen Sie klug sein."; // TODO
 		paragraph = new Paragraph(content, 0);
-		result = pm.getContentOfInterest(paragraph);
-		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("schicke Anzüge", Class.forID(paragraph
-				.getActualClassID())));
-		vorlage.add(new SlotFiller("dass Sie schön sind", Class.forID(paragraph
-				.getActualClassID())));
+		result = pm.getContentOfInterest(paragraph).keySet();
+		vorlage = new HashSet<SlotFiller>();
+		vorlage.add(new SlotFiller("schicke Anzüge", paragraph.getID()));
+		vorlage.add(new SlotFiller("dass Sie schön sind", paragraph.getID()));
 
 		printResults(vorlage, result);
 
 		/* -heit/-keit */
 		content = "Wir wünschen uns Ehrlichkeit, Pünktlichkeit und Zuverlässigkeit. Aber nicht zu viel davon.";
 		paragraph = new Paragraph(content, 0);
-		result = pm.getContentOfInterest(paragraph);
-		vorlage = new ArrayList<SlotFiller>();
-		vorlage.add(new SlotFiller("Ehrlichkeit", Class.forID(paragraph
-				.getActualClassID())));
-		vorlage.add(new SlotFiller("Pünktlichkeit", Class.forID(paragraph
-				.getActualClassID())));
-		vorlage.add(new SlotFiller("Zuverlässigkeit", Class.forID(paragraph
-				.getActualClassID())));
+		result = pm.getContentOfInterest(paragraph).keySet();
+		vorlage = new HashSet<SlotFiller>();
+		vorlage.add(new SlotFiller("Ehrlichkeit", paragraph.getID()));
+		vorlage.add(new SlotFiller("Pünktlichkeit", paragraph.getID()));
+		vorlage.add(new SlotFiller("Zuverlässigkeit", paragraph.getID()));
 
 		printResults(vorlage, result);
 
 	}
 
-	private void printResults(List<SlotFiller> vorlage, List<SlotFiller> result) {
+	private void printResults(Set<SlotFiller> vorlage, Set<SlotFiller> result) {
 		for (SlotFiller slotFiller : vorlage) {
 			System.out.println(String.format("Vorlage: '%s' - contained: %s",
 					slotFiller, result.contains(slotFiller)));
@@ -215,7 +201,7 @@ public class PatternMatchingTest {
 
 		int count = 0;
 		for (Paragraph p : paragraphs) {
-			List<SlotFiller> result = pm.getContentOfInterest(p);
+			Set<SlotFiller> result = pm.getContentOfInterest(p).keySet();
 			count += result.size();
 			for (SlotFiller slotFiller : result) {
 				System.out.println(slotFiller);

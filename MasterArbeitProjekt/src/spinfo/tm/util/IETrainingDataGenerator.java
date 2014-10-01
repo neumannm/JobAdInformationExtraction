@@ -9,8 +9,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -30,7 +32,7 @@ public class IETrainingDataGenerator {
 
 	private Class classToAnnotate;
 	private File tdFile;
-	private Map<Paragraph, List<SlotFiller>> trainedData;
+	private Map<Paragraph, Set<SlotFiller>> trainedData;
 
 	public IETrainingDataGenerator(File trainingDataFile, Class classToAnnotate) {
 		setClassToAnnotate(classToAnnotate);
@@ -39,7 +41,7 @@ public class IETrainingDataGenerator {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		trainedData = new TreeMap<Paragraph, List<SlotFiller>>();
+		trainedData = new TreeMap<Paragraph, Set<SlotFiller>>();
 	}
 
 	private void setTdFile(File trainingDataFile) throws IOException {
@@ -105,8 +107,7 @@ public class IETrainingDataGenerator {
 						String token = (String) result[0];
 						// int position = (int) result[1];
 
-						SlotFiller filler = new SlotFiller(token,
-								Class.forID(item.getActualClassID()));
+						SlotFiller filler = new SlotFiller(token, item.getID());
 						trainedData.get(item).add(filler);
 
 					} catch (IllegalArgumentException e) {
@@ -186,16 +187,16 @@ public class IETrainingDataGenerator {
 		return PhraseCleaner.removeUnneccessaryWhitespace(sb.toString());
 	}
 
-	private void writeToFile(Map<Paragraph, List<SlotFiller>> trainedData2)
+	private void writeToFile(Map<Paragraph, Set<SlotFiller>> data)
 			throws IOException {
 		PrintWriter out = new PrintWriter(new FileWriter(tdFile));
 
 		out.println("JobAd ID\tUnit ID\tClass\tToken\tPosition");
-		for (Paragraph cu : trainedData2.keySet()) {
+		for (Paragraph cu : data.keySet()) {
 			out.print(cu.getParentID() + "\t"); // id of job ad
 			out.print(cu.getID() + "\t"); // CU ID
 			out.print(classToAnnotate + "\t"); // which class
-			for (SlotFiller sf : trainedData2.get(cu)) {
+			for (SlotFiller sf : data.get(cu)) {
 				out.print(sf.getContent() + "\t");
 				out.print("\n\t\t");
 			}
@@ -215,20 +216,19 @@ public class IETrainingDataGenerator {
 	 * @return List of manually annotated IETemplates
 	 * @throws IOException
 	 */
-	public Map<Paragraph, List<SlotFiller>> getTrainingData()
-			throws IOException {
+	public Map<Paragraph, Set<SlotFiller>> getTrainingData() throws IOException {
 
 		if (trainedData.isEmpty()) {
-			trainedData = new TreeMap<Paragraph, List<SlotFiller>>();
+			trainedData = new TreeMap<Paragraph, Set<SlotFiller>>();
 
 			BufferedReader in = new BufferedReader(new FileReader(tdFile));
 			String line = in.readLine();// 1st line contains headings
 
 			Class classID = null;
 			// int jobAdID = 0;
-			UUID cuID = null;
+			UUID parID = null;
 
-			List<SlotFiller> content = null;
+			Set<SlotFiller> content = null;
 			while ((line = in.readLine()) != null) {
 
 				String[] splits = line.split("\t");
@@ -236,10 +236,10 @@ public class IETrainingDataGenerator {
 
 					if (splits[0].length() > 0 && splits[1].length() > 0
 							&& splits[2].length() > 0) {
-						content = new ArrayList<SlotFiller>();
+						content = new HashSet<SlotFiller>();
 						// new SlotFiller
 						// jobAdID = Integer.parseInt(splits[0]);
-						cuID = UUID.fromString(splits[1]);
+						parID = UUID.fromString(splits[1]);
 						classID = Class.valueOf(splits[2]);
 					}
 
@@ -248,12 +248,12 @@ public class IETrainingDataGenerator {
 
 					// int position = Integer.parseInt(splits[4]);
 
-					content.add(new SlotFiller(token, classID));
+					content.add(new SlotFiller(token, parID));
 
 				} else if (splits.length == 0 && line.trim().isEmpty()) {
 					if (classID.equals(classToAnnotate)) {
 						trainedData.put(
-								UniversalMapper.getParagraphforID(cuID),
+								UniversalMapper.getParagraphforID(parID),
 								content);
 					}
 				} else {

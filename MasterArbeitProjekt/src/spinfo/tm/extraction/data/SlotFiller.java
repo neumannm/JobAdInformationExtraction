@@ -1,5 +1,7 @@
 package spinfo.tm.extraction.data;
 
+import java.util.UUID;
+
 /**
  * Slotfiller for an Information Extraction Template.
  * 
@@ -13,6 +15,7 @@ public class SlotFiller {
 
 	private String content;
 	private Class c;
+	private UUID parentID;
 
 	/**
 	 * Constructor for a Slot Filler
@@ -20,9 +23,13 @@ public class SlotFiller {
 	 * @param token
 	 *            Token for Slot Filler
 	 */
-	public SlotFiller(String token, Class c) {
+	public SlotFiller(String token, UUID parentID) {
 		setContent(token);
-		setC(c);
+		setParentID(parentID);
+	}
+
+	private void setParentID(UUID parentID) {
+		this.parentID = parentID;
 	}
 
 	public void setContent(String content) {
@@ -37,6 +44,10 @@ public class SlotFiller {
 		return c;
 	}
 
+	public UUID getParentID() {
+		return parentID;
+	}
+
 	/**
 	 * Get content of the Slot Filler
 	 * 
@@ -48,7 +59,7 @@ public class SlotFiller {
 
 	@Override
 	public String toString() {
-		return this.content + "(" + this.c + ")";
+		return this.content + " (" + this.parentID + ")";
 	}
 
 	/*
@@ -61,7 +72,7 @@ public class SlotFiller {
 		if (obj instanceof SlotFiller) {
 			SlotFiller other = (SlotFiller) obj;
 			return this.content.trim().equalsIgnoreCase(other.content.trim())
-					&& this.c.equals(other.c);
+					&& this.parentID.equals(other.parentID);
 		}
 		return super.equals(obj);
 	}

@@ -24,22 +24,22 @@ public class IE_Evaluator {
 		tokenizer = new FeatureUnitTokenizer();
 	}
 
-	public static void evaluate(Map<Paragraph, List<SlotFiller>> allResults) {
+	public static void evaluate(Map<Paragraph, Set<SlotFiller>> allResults) {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
 				IE_TRAININGDATAFILE), Class.COMPETENCE);
 
-		Map<Paragraph, List<SlotFiller>> manuallyLabeled;
+		Map<Paragraph, Set<SlotFiller>> manuallyLabeled;
 
 		try {
 			manuallyLabeled = gen.getTrainingData();
 			for (Paragraph par : allResults.keySet()) {
 				if (manuallyLabeled.containsKey(par)) {
-					List<SlotFiller> result = allResults.get(par);
-					List<SlotFiller> gold = manuallyLabeled.get(par);
+					Set<SlotFiller> result = allResults.get(par);
+					Set<SlotFiller> gold = manuallyLabeled.get(par);
 					compare(result, gold); // vergleiche die Slotfiller
 											// von diesem Paragraphen
 				} else {
-					List<SlotFiller> list = allResults.get(par);
+					Set<SlotFiller> list = allResults.get(par);
 					for (SlotFiller slotFiller : list) {
 						System.err.println("False positive: "
 								+ slotFiller.getContent());
@@ -71,7 +71,7 @@ public class IE_Evaluator {
 		}
 	}
 
-	private static void compare(List<SlotFiller> result, List<SlotFiller> gold)
+	private static void compare(Set<SlotFiller> result, Set<SlotFiller> gold)
 			throws IOException {
 		List<String> resTokens;
 		for (SlotFiller resFiller : result) {
