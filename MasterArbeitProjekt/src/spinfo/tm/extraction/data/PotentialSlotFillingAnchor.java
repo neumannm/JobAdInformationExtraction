@@ -122,8 +122,7 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	}
 
 	private void setHasSuffixOfInterest() {
-		if (token.matches("[A-ZÄÖÜ].*heit") 
-				|| token.matches("[A-ZÄÖÜ].*keit")
+		if (token.matches("[A-ZÄÖÜ].*heit") || token.matches("[A-ZÄÖÜ].*keit")
 				|| token.matches("[A-ZÄÖÜ].*ung")
 				|| token.matches("[A-ZÄÖÜ].*schaft")
 				|| token.matches("[A-ZÄÖÜ].*nis(sen?)?")
@@ -150,21 +149,59 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	}
 
 	/*
-	 * bisschen gehackt (Vergleich läuft nur über gleiches Token und gleiche
-	 * Section ID, in der sich das Token befindet - es kann aber evtl. auch
-	 * zweimal das gleiche Token in der gleichen Section auftrete n...)
+	 * does not work with my code...
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = 1;
+//		result = prime * result
+//				+ ((parentUUID == null) ? 0 : parentUUID.toString().hashCode());
+//		result = prime * result + ((token == null) ? 0 : token.hashCode());
+//		return result;
+//	}
+
+	/*
+	 * bisschen gehackt (Vergleich läuft nur über gleiches Token/POS und gleiche
+	 * Paragraph ID, in der sich das Token befindet - es kann aber evtl. auch
+	 * zweimal das gleiche Token im gleichen Paragraph auftreten...)
 	 * (non-Javadoc)
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof PotentialSlotFillingAnchor) {
-			PotentialSlotFillingAnchor other = (PotentialSlotFillingAnchor) obj;
-			return this.token.equals(other.token)
-					&& this.parentUUID.toString().equals(
-							other.parentUUID.toString());
-		}
-		return false;
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof PotentialSlotFillingAnchor))
+			return false;
+		PotentialSlotFillingAnchor other = (PotentialSlotFillingAnchor) obj;
+		if (token == null) {
+			if (other.token != null)
+				return false;
+		} else if (!token.equals(other.token))
+			return false;
+		if (parentUUID == null) {
+			if (other.parentUUID != null)
+				return false;
+		} else if (!parentUUID.toString().equals(other.parentUUID.toString()))
+			return false;
+		return true;
 	}
+//	
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (obj instanceof PotentialSlotFillingAnchor) {
+//			PotentialSlotFillingAnchor other = (PotentialSlotFillingAnchor) obj;
+//			return this.token.equals(other.token)
+//					&& this.parentUUID.toString().equals(
+//							other.parentUUID.toString());
+//		}
+//		return false;
+//	}
 }

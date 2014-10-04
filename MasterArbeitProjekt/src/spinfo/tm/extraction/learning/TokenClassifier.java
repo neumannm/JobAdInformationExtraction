@@ -72,6 +72,9 @@ public class TokenClassifier {
 					same++;
 				}
 			}
+			else{
+				System.out.println("...");
+			}
 		}
 		/* Und berechnen daraus den Anteil korrekter Werte: */
 		return same / (float) classified.size();

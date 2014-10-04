@@ -15,6 +15,7 @@ import java.util.List;
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.data.Sentence;
 import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
+import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.preprocessing.TrainingDataReader;
 
 public class ReaderWriter {
@@ -34,12 +35,11 @@ public class ReaderWriter {
 		return paragraphs;
 	}
 
-	public static List<Paragraph> readParagraphsFromBinary(
-			File parsedSectionsFile) {
+	public static List<Paragraph> readParagraphsFromBinary(File paragraphsFile) {
 		List<Paragraph> toReturn = new ArrayList<>();
-		ObjectInputStream is = null;
-		try {
-			is = new ObjectInputStream(new FileInputStream(parsedSectionsFile));
+		try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(
+				paragraphsFile))) {
+
 			Object readObject;
 			while (true) {
 				readObject = is.readObject();
@@ -53,21 +53,15 @@ public class ReaderWriter {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 		return toReturn;
 	}
 
 	public static List<Sentence> readSentencesFromBinary(File file) {
 		List<Sentence> toReturn = new ArrayList<>();
-		ObjectInputStream is = null;
-		try {
-			is = new ObjectInputStream(new FileInputStream(file));
+		try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(
+				file))) {
+
 			Object readObject;
 			while (true) {
 				readObject = is.readObject();
@@ -81,23 +75,16 @@ public class ReaderWriter {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 		return toReturn;
 	}
 
-	public static List<PotentialSlotFillingAnchor> readPotentialAnchorsFromBinary(
-			File potentialFillersFile) {
+	public static List<PotentialSlotFillingAnchor> readSlotFillingAnchorsFromBinary(
+			File anchorsFile) {
 		List<PotentialSlotFillingAnchor> toReturn = new ArrayList<>();
-		ObjectInputStream is = null;
-		try {
-			is = new ObjectInputStream(
-					new FileInputStream(potentialFillersFile));
+		try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(
+				anchorsFile))) {
+
 			Object readObject;
 			while (true) {
 				readObject = is.readObject();
@@ -111,20 +98,35 @@ public class ReaderWriter {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+		}
+		return toReturn;
+	}
+
+	public static List<SlotFiller> readPotentialFillersFromBinary(File file) {
+		List<SlotFiller> toReturn = new ArrayList<>();
+		try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(
+				file))) {
+
+			Object readObject;
+			while (true) {
+				readObject = is.readObject();
+				if (readObject instanceof SlotFiller) {
+					toReturn.add((SlotFiller) readObject);
+				}
 			}
+		} catch (EOFException e) {
+			return toReturn;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
 		return toReturn;
 	}
 
 	public static void saveToBinaryFile(Collection<?> data, File file) {
-		ObjectOutputStream os = null;
-		try {
-			os = new ObjectOutputStream(new FileOutputStream(file));
+		try (ObjectOutputStream os = new ObjectOutputStream(
+				new FileOutputStream(file))) {
 			for (Object o : data) {
 				os.writeObject(o);
 			}
@@ -132,12 +134,6 @@ public class ReaderWriter {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				os.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 }

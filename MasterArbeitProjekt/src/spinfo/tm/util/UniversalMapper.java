@@ -16,10 +16,9 @@ public class UniversalMapper {
 	private static final String ALLPARAGRAPHSFILE = "data/allParagraphs.bin";
 
 	static {
-		ObjectInputStream is = null;
-		try {
-			is = new ObjectInputStream(
-					new FileInputStream(ALLPARAGRAPHSFILE));
+		try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(
+				ALLPARAGRAPHSFILE))) {
+
 			Object readObject;
 			while (true) {
 				readObject = is.readObject();
@@ -33,12 +32,6 @@ public class UniversalMapper {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 

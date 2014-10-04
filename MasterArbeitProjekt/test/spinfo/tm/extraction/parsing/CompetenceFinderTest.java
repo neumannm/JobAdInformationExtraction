@@ -67,10 +67,9 @@ public class CompetenceFinderTest {
 		}
 
 		Map<String, String> toReturn = new HashMap<String, String>();
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(inputFile)));
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+				new FileInputStream(inputFile)));) {
+
 			String line;
 			while ((line = reader.readLine()) != null) {
 				String[] split = line.split(":");
@@ -85,15 +84,8 @@ public class CompetenceFinderTest {
 					return null;
 				}
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 		return toReturn;
 	}

@@ -1,5 +1,6 @@
 package spinfo.tm.extraction.data;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -8,10 +9,12 @@ import java.util.UUID;
  * @author neumannm
  * 
  */
-/*
- * TODO Kopplung an Paragraph oder JobAd?
- */
-public class SlotFiller {
+public class SlotFiller implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2889857331591898502L;
 
 	private String content;
 	private Class c;
@@ -65,15 +68,42 @@ public class SlotFiller {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((content == null) ? 0 : content.hashCode());
+		result = prime * result
+				+ ((parentID == null) ? 0 : parentID.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof SlotFiller) {
-			SlotFiller other = (SlotFiller) obj;
-			return this.content.trim().equalsIgnoreCase(other.content.trim())
-					&& this.parentID.equals(other.parentID);
-		}
-		return super.equals(obj);
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof SlotFiller))
+			return false;
+		SlotFiller other = (SlotFiller) obj;
+		if (content == null) {
+			if (other.content != null)
+				return false;
+		} else if (!content.trim().equalsIgnoreCase(other.content.trim()))
+			return false;
+		if (parentID == null) {
+			if (other.parentID != null)
+				return false;
+		} else if (!parentID.equals(other.parentID))
+			return false;
+		return true;
 	}
 }
