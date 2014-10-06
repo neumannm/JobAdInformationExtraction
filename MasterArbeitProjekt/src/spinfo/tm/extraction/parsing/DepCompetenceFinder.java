@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.data.Sentence;
@@ -20,69 +21,128 @@ import spinfo.tm.util.PhraseCleaner;
  * @author neumannm
  * 
  */
+// TODO: split conjunctions in conjuncts
 public class DepCompetenceFinder {
 
-	private Map<String, String> verbsOfInterest; // key: verb; value:
-													// restrictions
-
-	// TODO: make use of restrictions!
-	// TODO: split conjunctions in conjuncts
-
-	public DepCompetenceFinder() {
-		if (verbsOfInterest == null) {
-			verbsOfInterest = new HashMap<String, String>();
-		}
-	}
+	// key: verb; value: restrictions
+	private Map<String, String> verbsOfInterest;
 
 	public DepCompetenceFinder(Map<String, String> verbsOfInterest) {
-		this();
-		this.verbsOfInterest = verbsOfInterest;
+		if (!(verbsOfInterest == null)) {
+			this.verbsOfInterest = verbsOfInterest;
+		} else
+			this.verbsOfInterest = new HashMap<String, String>();
 	}
 
-	public Set<SlotFiller> findCompetences(Paragraph cu) {
+	public Set<SlotFiller> findCompetences(Paragraph par) {
+		// if (par.getID().equals(
+		// UUID.fromString("fe52c6f3-2fe8-4159-8c0a-7751acd86fc8"))) {
+		// System.out.println();
+		// }
+
 		Set<SlotFiller> results = new HashSet<SlotFiller>();
 
-		Map<Integer, Sentence> parsedCU = cu.getSentenceData();
+		Map<Integer, Sentence> parsedCU = par.getSentenceData();
 		Sentence sd;
 		for (Integer sentence : parsedCU.keySet()) {
 			sd = parsedCU.get(sentence);
 
 			System.out.println("\n" + sd.toString());
 
+			boolean subjectIsNoun = subjectIsNoun(sd);
+			int subjectID = getSubjectID(sd);
+
 			String[] lemmas = sd.getLemmas();
 
-			for (int i = 0; i < lemmas.length; i++) {
-				if (verbsOfInterest.containsKey(lemmas[i])) {
+			for (int arrayIndex = 0; arrayIndex < lemmas.length; arrayIndex++) {
+				if (verbsOfInterest.containsKey(lemmas[arrayIndex])) {
+
+					int verbID = arrayIndex + 1;
+
 					// lemma i is verb of interest - this sentence may contain
 					// slotfillers
 					List<SlotFiller> filler = new ArrayList<>();
-
-					String restriction = verbsOfInterest.get(lemmas[i]);
 					// are there any restrictions like required appositions or
 					// particles?
+					String restriction = verbsOfInterest
+							.get(lemmas[arrayIndex]);
 
-					if ("PTKVZ".equals(restriction)) {
-						// particle needed in SVP position
-						if (particleExists(sd, i + 1)) {
-							// get dependants of particle
-						}
-					} else if ("V".equals(restriction)) {
-						// second verb needed in OC position
-						if (secondVerbExists(sd, i + 1)) {
-							// second verb should be in verbsOfInterest
-							// subject of first verb must be checked
-						}
-					} else if ("AP".equals(restriction)) {
-						// apposition needed
-						if (appositionExists(sd, i + 1)) {
-
-						}
-					} else {
+					if (restriction == null) {
 						// there are no restrictions
-						// problem: when we have 2 verbs....
-						filler.addAll(lookForCompetences(lemmas[i], i + 1, sd,
-								cu));
+						// must still check if there's a second verb
+						int secondVerbID = getSecondVerbID(sd, verbID);
+
+						if (secondVerbID != -1) {
+							// there is a second verb
+							List<SlotFiller> objectsV2 = getObjects(
+									lemmas[secondVerbID - 1], secondVerbID, sd,
+									par);
+							if (objectsV2.isEmpty()) {
+								filler.addAll(getObjects(lemmas[verbID - 1],
+										verbID, sd, par));
+							} else
+								filler.addAll(objectsV2);
+						}
+
+						else if (subjectIsNoun) {
+							filler.add(getSubjectNP(sd, par, subjectID));
+						} else
+							filler.addAll(getObjects(lemmas[arrayIndex],
+									verbID, sd, par));
+					} else {
+						switch (restriction) {
+						case "PTKVZ":
+							// particle needed in SVP position
+							if (particleExists(sd, verbID)) {
+								// okay, get competence
+								if (subjectIsNoun) {
+									filler.add(getSubjectNP(sd, par, subjectID));
+								} else
+									// TODO: particle not part of result!
+									filler.addAll(getObjects(
+											lemmas[arrayIndex], verbID, sd, par));
+							} else {
+								// no particle found - continue looking for
+								// other verbs
+								continue;
+							}
+							break;
+						case "V":
+							// second verb (that is of interest) needed in OC
+							// position --> if subj == PPER|null, then obj of
+							// second verb must be competence
+							int secondVerbID = getSecondVerbID(sd, verbID);
+
+							if (secondVerbID != -1) {
+
+								List<SlotFiller> objectsV2 = getObjects(
+										lemmas[secondVerbID - 1], secondVerbID,
+										sd, par);
+								if (objectsV2.isEmpty()) {
+									filler.addAll(getObjects(
+											lemmas[verbID - 1], verbID, sd, par));
+//									break;
+								} else
+									filler.addAll(objectsV2);
+							} else
+								break; // requirement not fulfilled
+							break;
+						case "AP":
+							// aposition needed
+							int apoID = getAppositionID(sd, arrayIndex + 1);
+							if (apoID >= 0) {
+								filler.add(new SlotFiller(getPhrase(apoID, sd,
+										new TreeSet<Integer>()), par.getID()));
+							}
+							break;
+						default:
+							// there are other restrictions
+							System.err.println("Restriction " + restriction
+									+ " not defined!");
+							break;
+						}
 					}
+
 					/*
 					 * add result to list of results
 					 */
@@ -95,24 +155,83 @@ public class DepCompetenceFinder {
 		return results;
 	}
 
-	private boolean appositionExists(Sentence sd, int id) {
-		int[] heads = sd.getHeads();
-		for (int i = 0; i < heads.length; i++) {
-			if (heads[i] == id && sd.getDepLabels()[i].equals("OP")) {
-				return sd.getPOSTags()[i].startsWith("AP");
+	private int getSubjectID(Sentence sd) {
+		String[] depLabels = sd.getDepLabels();
+		for (int i = 0; i < depLabels.length; i++) {
+			if ("SB".equals(depLabels[i])) {
+				return i + 1;
+			}
+		}
+		return -1;
+	}
+
+	private boolean subjectIsNoun(Sentence sd) {
+		String subjectPOS = null;
+		subjectPOS = getSubjectPOS(sd);
+
+		if (subjectPOS == null) {
+			// no subject
+			return false;
+		} else {
+			switch (subjectPOS) {
+			case "PPER":
+				return false;
+			case "NN":
+				return true;
+			default:
+				// other (should not happen)
+				System.err
+						.println("Subject has other POS than PPER or NN or null");
+				break;
 			}
 		}
 		return false;
 	}
 
-	private boolean secondVerbExists(Sentence sd, int id) {
-		int[] heads = sd.getHeads();
-		for (int i = 0; i < heads.length; i++) {
-			if (heads[i] == id && sd.getDepLabels()[i].equals("OC")) {
-				return sd.getPOSTags()[i].startsWith("V");
+	private SlotFiller getSubjectNP(Sentence sd, Paragraph par, int subjectID) {
+		// arrayIndex = subjectID - 1
+		String subject = sd.getTokens()[subjectID - 1];
+		System.out.println(String.format("Subject is a Noun (%s)", subject));
+		/*
+		 * process, i.e. Subject and Dependants seem to be the competences
+		 */
+		String argument = getPhrase(subjectID, sd, new TreeSet<Integer>());
+
+		SlotFiller filler = new SlotFiller(argument, par.getID());
+		return filler;
+	}
+
+	private String getSubjectPOS(Sentence sd) {
+		String[] depLabels = sd.getDepLabels();
+		for (int i = 0; i < depLabels.length; i++) {
+			if ("SB".equals(depLabels[i])) {
+				return sd.getPOSTags()[i];
 			}
 		}
-		return false;
+		return null;
+	}
+
+	private int getAppositionID(Sentence sd, int verbID) {
+		int[] heads = sd.getHeads();
+		for (int i = 0; i < heads.length; i++) {
+			if (heads[i] == verbID && sd.getDepLabels()[i].equals("OP")
+					&& sd.getPOSTags()[i].startsWith("AP")) {
+				return i + 1;
+			}
+		}
+		return -1;
+	}
+
+	private int getSecondVerbID(Sentence sd, int firstVerbID) {
+		int[] heads = sd.getHeads();
+		for (int i = 0; i < heads.length; i++) {
+			if (heads[i] == firstVerbID && sd.getDepLabels()[i].equals("OC")
+					&& sd.getPOSTags()[i].startsWith("V")
+					&& verbsOfInterest.containsKey(sd.getLemmas()[i])) {
+				return i + 1;
+			}
+		}
+		return -1;
 	}
 
 	private boolean particleExists(Sentence sd, int id) {
@@ -125,97 +244,26 @@ public class DepCompetenceFinder {
 		return false;
 	}
 
-	private List<SlotFiller> lookForCompetences(String lemma, int verbID,
-			Sentence sd, Paragraph par) {
-		List<SlotFiller> filler = new ArrayList<>();
-
-		int[] heads = sd.getHeads();
-		for (int i = 0; i < heads.length; i++) {
-			if (heads[i] == verbID) {
-				// lemma an dieser stelle hat als kopf das verb mit der geg. id
-				String dependant = sd.getTokens()[i];
-				String dependantLemma = sd.getLemmas()[i];
-				String dependency = sd.getDepLabels()[i];
-
-				if ("SB".equals(dependency)) {
-					String sbPOS = sd.getPOSTags()[i];
-					/*
-					 * check subject: is it a noun phrase or pronoun?
-					 */
-					if ("PPER".equals(sbPOS)
-							&& ("wir".equals(dependantLemma) || "Sie"
-									.equals(dependant))) {
-						System.out.println("Subject is a Pronoun");
-						/*
-						 * Process, i.e. look for competences in verb's objects
-						 */
-						filler.addAll(getObjects(lemma, verbID, sd, par));
-					} else if ("NN".equals(sbPOS)) {
-						System.out.println(String.format(
-								"Subject is a Noun (%s)", dependant));
-						/*
-						 * process, i.e. Subject and Dependants seem to be the
-						 * competences
-						 */
-						String argument = getPhrase(i, sd,
-								new TreeSet<Integer>());
-
-						filler.add(new SlotFiller(argument, par.getID()));
-					}
-					break;
-				}
-
-				/*
-				 * tried to make use of modifiers but they are not connected to
-				 * the object but to the verb... is that a problem??
-				 */
-				else if ("PD".equals(dependency)) {
-					System.out
-							.println(String
-									.format("\tDependant '%s' is possibly modifier for verb %s (REL: %s, POS: %s)",
-											dependant, lemma, dependency,
-											sd.getPOSTags()[i]));
-					if ("ADJD".equals(sd.getPOSTags()[i])) {
-						// TODO predicate modifier for competence
-					}
-					if ("VVPP".equals(sd.getPOSTags()[i])) {
-						// TODO modifier for competence
-					}
-					if ("NN".equals(sd.getPOSTags()[i])) {
-						// TODO predicate is possibly also competence (like in
-						// 'erforderlich sind Sprachkenntnisse' etc.)
-					}
-				} else if ("MO".equals(dependency)) {
-					System.out
-							.println(String
-									.format("\tDependant '%s' is possibly modifier for verb %s (REL: %s, POS: %s)",
-											dependant, lemma, dependency,
-											sd.getPOSTags()[i]));
-					// TODO use modifier for competence
-				}
-			}
-		}
-		return filler;
-	}
-
-	private List<SlotFiller> getObjects(String lemma, int verbID, Sentence sd,
+	private List<SlotFiller> getObjects(String head, int headID, Sentence sd,
 			Paragraph par) {
 		List<SlotFiller> filler = new ArrayList<>();
 
 		int[] heads = sd.getHeads();
 		for (int i = 0; i < heads.length; i++) {
-			if (heads[i] == verbID) {
+			if (heads[i] == headID) {
 				// lemma an dieser stelle hat als kopf das verb mit der geg. id
 				String dependant = sd.getTokens()[i];
 				// String dependantLemma = sd.plemmas[i];
 				String dependency = sd.getDepLabels()[i];
 
 				if ("OA".equals(dependency) || "OA2".equals(dependency)
-						|| "OC".equals(dependency) || "OP".equals(dependency)) {
+						|| "OC".equals(dependency) || "OP".equals(dependency)
+						|| "PD".equals(dependency)) {
 					System.out.println(String.format(
 							"Found object for verb '%s':\t %s (DEP: %s )",
-							lemma.toUpperCase(), dependant, dependency));
-					String argument = getPhrase(i, sd, new TreeSet<Integer>());
+							head.toUpperCase(), dependant, dependency));
+					String argument = getPhrase(i + 1, sd,
+							new TreeSet<Integer>());
 
 					filler.add(new SlotFiller(argument, par.getID()));
 				}
@@ -224,35 +272,32 @@ public class DepCompetenceFinder {
 		return filler;
 	}
 
-	private String getPhrase(int index, Sentence sd, Set<Integer> components) {
+	private String getPhrase(int headID, Sentence sd, Set<Integer> components) {
 
-		int id = index + 1; // ID am Anfang der Zeile
-
-		// String lemma = sd.plemmas[index];
-		// String form = sd.forms[index];
+		// String lemma = sd.plemmas[headID-1];
+		// String form = sd.forms[headID-1];
 
 		int[] heads = sd.getHeads();
 		for (int i = 0; i < heads.length; i++) {
-			if (heads[i] == id) {
-				// String dependant = sd.forms[i];
-				// String dependency = sd.plabels[i];
+			if (heads[i] == headID) {
+				String dependant = sd.getTokens()[i];
+				String dependency = sd.getDepLabels()[i];
 
 				// System.out.println(String.format(
 				// "Found dependant for lemma '%s':\t %s (DEP: %s )",
 				// lemma.toUpperCase(), dependant, dependency));
 
-				getPhrase(i, sd, components);
+				getPhrase(i + 1, sd, components);
 			}
 		}
-
-		components.add(index);
+		components.add(headID);
 
 		/*
 		 * Phrase zusammensetzen
 		 */
 		StringBuffer sb = new StringBuffer();
 		for (Integer i : components) {
-			sb.append(sd.getTokens()[i]).append(" ");
+			sb.append(sd.getTokens()[i - 1]).append(" ");
 		}
 
 		/*

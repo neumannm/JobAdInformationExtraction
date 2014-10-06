@@ -16,5 +16,6 @@ setzen:PTKVZ
 sollen:V
 suchen:
 verfügen:AP
+voraussetzen
 werden:V
 wünschen:

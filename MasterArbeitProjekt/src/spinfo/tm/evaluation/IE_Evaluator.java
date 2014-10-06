@@ -54,7 +54,7 @@ public class IE_Evaluator {
 			}
 
 			System.out.println("True positives: " + tp);
-			System.out.println("False positives:" + fp);
+			System.out.println("False positives: " + fp);
 			System.out.println("False negatives: " + fn);
 
 			float precision = tp / ((float) tp + fp);

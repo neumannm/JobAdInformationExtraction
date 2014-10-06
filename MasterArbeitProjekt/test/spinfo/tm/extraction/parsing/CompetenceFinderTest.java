@@ -9,49 +9,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import org.junit.Test;
 
 import spinfo.tm.data.Paragraph;
-import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
-import spinfo.tm.preprocessing.TrainingDataReader;
-import spinfo.tm.util.ClassFilter;
+import spinfo.tm.util.DataAccessor;
 
 public class CompetenceFinderTest {
 
-	private Map<UUID, Paragraph> filteredClassifyUnits;
+	private List<Paragraph> parsedParagraphs;
 	private Map<String, String> verbsOfInterest;
 
-	private static final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
 	private static final String VERBSFILE = "models/verbsOfInterest.txt";
 
 	public void setUp() throws IOException {
-		File trainingDataFile = new File(TRAININGDATAFILE);
-		TrainingDataReader tdg = new TrainingDataReader(trainingDataFile);
-
-		List<Paragraph> paragraphs = tdg.getTrainingData();
-		System.out.println("Anzahl ClassifyUnits insgesamt: "
-				+ paragraphs.size());
-
-		Class[] classesToAnnotate = { Class.COMPETENCE,
-				Class.COMPANY_COMPETENCE, Class.JOB_COMPETENCE };
-
-		List<Paragraph> filteredParagraphs = ClassFilter.filter(paragraphs,
-				classesToAnnotate);
-
-		System.out.println("Anzahl ClassifyUnits gefiltert: "
-				+ filteredParagraphs.size());
-
-		filteredClassifyUnits = new HashMap<>();
-
-		ParagraphParser parser = new ParagraphParser();
-
-		for (Paragraph cu : filteredParagraphs) {
-			parser.parse(cu);
-			filteredClassifyUnits.put(cu.getID(), cu);
-		}
+		parsedParagraphs = DataAccessor.getParsedCompetenceParagraphs();
 
 		verbsOfInterest = readVerbsOfInterest(VERBSFILE);
 
@@ -96,10 +69,9 @@ public class CompetenceFinderTest {
 
 		DepCompetenceFinder finder = new DepCompetenceFinder(verbsOfInterest);
 
-		for (UUID id : filteredClassifyUnits.keySet()) {
-			Set<SlotFiller> competences = finder
-					.findCompetences(filteredClassifyUnits.get(id));
-			System.out.println(id);
+		for (Paragraph par : parsedParagraphs) {
+			Set<SlotFiller> competences = finder.findCompetences(par);
+			System.out.println(par);
 			System.out.println(competences);
 			System.out.println("****************\n");
 		}
