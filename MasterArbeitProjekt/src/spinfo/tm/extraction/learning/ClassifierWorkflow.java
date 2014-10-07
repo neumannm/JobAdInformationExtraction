@@ -82,16 +82,16 @@ public class ClassifierWorkflow {
 			List<PotentialSlotFillingAnchor> trainingSet) {
 
 		Float accuracy = tokenClassifier.accuracy(classified, trainingSet);
-		System.out.println("\nEvaluation result (accuracy): " + accuracy);
+		System.out.println("\nAccuracy: " + accuracy);
 
 		Float precision = tokenClassifier.precision(classified, trainingSet);
-		System.out.println("\nEvaluation result (precision): " + precision);
+		System.out.println("Precision: " + precision);
 
 		Float recall = tokenClassifier.recall(classified, trainingSet);
-		System.out.println("\nEvaluation result (recall): " + recall);
+		System.out.println("Recall: " + recall);
 
 		Float f = tokenClassifier.fMeasure(classified, trainingSet);
-		System.out.println("\nEvaluation result (f1-measure): " + f);
+		System.out.println("F1: " + f);
 
 	}
 

@@ -33,24 +33,15 @@ public class IE_TDTester {
 
 	@Before
 	public void setUp() throws IOException {
-		File trainingDataFile = new File(
-				"data/SingleClassTrainingDataFiltered.csv");
-		/* Training data generation */
-		TrainingDataReader tdg = new TrainingDataReader(trainingDataFile);
-
-		paragraphs = tdg.getTrainingData();
+		paragraphs = DataAccessor.getAllParagraphs();
 		System.out.println("Anzahl ClassifyUnits insgesamt: "
 				+ paragraphs.size());
 	}
 
 	@Test
 	public void testAnnotate() throws IOException {
-		Class[] classesToAnnotate = { Class.COMPETENCE,
-				Class.COMPANY_COMPETENCE, Class.JOB_COMPETENCE };
-
-		List<Paragraph> filteredParagraphs = ClassFilter.filter(paragraphs,
-				classesToAnnotate);
-
+		List<Paragraph> filteredParagraphs = DataAccessor
+				.getFilteredCompetenceParagraphs();
 		System.out.println("Anzahl ClassifyUnits gefiltert: "
 				+ filteredParagraphs.size());
 
@@ -111,7 +102,7 @@ public class IE_TDTester {
 				System.out.println(templates.get(paragraph));
 				fcount += templates.get(paragraph).size();
 			}
-			
+
 			System.out.println(pcount);
 			System.out.println(fcount);
 		} catch (IOException e) {

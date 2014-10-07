@@ -1,6 +1,5 @@
 package spinfo.tm.extraction.pattern;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,18 +14,13 @@ import org.junit.Test;
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
-import spinfo.tm.preprocessing.TrainingDataReader;
+import spinfo.tm.util.DataAccessor;
 
 public class PatternMatchingTest {
 	private List<Paragraph> paragraphs = new ArrayList<Paragraph>();
 
 	private void setUp() throws IOException {
-		File trainingDataFile = new File(
-				"data/SingleClassTrainingDataFiltered.csv");
-		/* Training data generation */
-		TrainingDataReader tdg = new TrainingDataReader(trainingDataFile);
-
-		paragraphs = tdg.getTrainingData();
+		paragraphs = DataAccessor.getAllParagraphs();
 		System.out.println("Anzahl ClassifyUnits insgesamt: "
 				+ paragraphs.size());
 

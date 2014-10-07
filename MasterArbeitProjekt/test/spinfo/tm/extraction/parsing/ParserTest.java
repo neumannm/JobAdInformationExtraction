@@ -1,13 +1,12 @@
 package spinfo.tm.extraction.parsing;
+
 import is2.data.SentenceData09;
 import is2.io.CONLLReader09;
-import is2.io.CONLLWriter09;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,35 +16,22 @@ import org.junit.Before;
 import org.junit.Test;
 
 import spinfo.tm.data.Paragraph;
-import spinfo.tm.extraction.data.Class;
-import spinfo.tm.extraction.parsing.Paragraph2SentenceDataConverter;
-import spinfo.tm.extraction.parsing.ParagraphParser;
-import spinfo.tm.preprocessing.TrainingDataReader;
-import spinfo.tm.util.ClassFilter;
+import spinfo.tm.util.DataAccessor;
 
 public class ParserTest {
 
 	private List<Paragraph> paragraphs;
 	private Map<UUID, Paragraph> filteredClassifyUnits;
 
-	private static final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
-	private static final String TRAININGDATAPARSEDFILE = "data/SingleClassTrainingDataParsed.txt";
-
 	@Before
 	public void setUp() throws IOException {
-		File trainingDataFile = new File(TRAININGDATAFILE);
-		TrainingDataReader tdg = new TrainingDataReader(trainingDataFile);
 
-		paragraphs = tdg.getTrainingData();
+		paragraphs = DataAccessor.getAllParagraphs();
 		System.out.println("Anzahl ClassifyUnits insgesamt: "
 				+ paragraphs.size());
 
-		Class[] classesToAnnotate = { Class.COMPETENCE,
-				Class.COMPANY_COMPETENCE, Class.JOB_COMPETENCE };
-
-		List<Paragraph> filteredParagraphs = ClassFilter.filter(paragraphs,
-				classesToAnnotate);
-
+		List<Paragraph> filteredParagraphs = DataAccessor
+				.getFilteredCompetenceParagraphs();
 		System.out.println("Anzahl ClassifyUnits gefiltert: "
 				+ filteredParagraphs.size());
 
@@ -54,25 +40,6 @@ public class ParserTest {
 		for (Paragraph cu : filteredParagraphs) {
 			filteredClassifyUnits.put(cu.getID(), cu);
 		}
-	}
-
-	@Test
-	public void test() throws IOException {
-		ParagraphParser parser = new ParagraphParser();
-		Writer w = new PrintWriter("output.csv");
-		CONLLWriter09 writer = new is2.io.CONLLWriter09(w);
-
-		Map<String, SentenceData09> parsed;
-		for (UUID cuID : filteredClassifyUnits.keySet()) {
-			Paragraph classifyUnit = filteredClassifyUnits.get(cuID);
-			parser.parse(classifyUnit);
-
-//			for (Integer sentence : classifyUnit.getSentenceData().keySet()) {
-//				writer.write(classifyUnit.getSentenceData().get(sentence),
-//						CONLLWriter09.NO_ROOT);
-//			}
-		}
-		writer.finishWriting();
 	}
 
 	@Test
@@ -129,6 +96,6 @@ public class ParserTest {
 			pw.write(sd.toString());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} 
+		}
 	}
 }

@@ -1,13 +1,8 @@
 package spinfo.tm.preprocessing;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import junit.framework.Assert;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import spinfo.tm.preprocessing.OpenNLPTokenizer;
 
 public class OpenNLPTokenzierTest {
 

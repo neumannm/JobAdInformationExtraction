@@ -73,7 +73,7 @@ public class TokenClassifier {
 				}
 			}
 			else{
-				System.out.println("...");
+//				System.out.println("...");
 			}
 		}
 		/* Und berechnen daraus den Anteil korrekter Werte: */
@@ -104,6 +104,8 @@ public class TokenClassifier {
 				}
 			}
 		}
+		System.out.println("True positives: " + tp);
+		System.out.println("False positives: " + fp);
 		/* Und berechnen daraus die Precision: P = (TP / (TP + FP)) */
 		return tp / ((float) tp + fp);
 	}
@@ -132,6 +134,8 @@ public class TokenClassifier {
 				}
 			}
 		}
+		System.out.println("True positives: " + tp);
+		System.out.println("False negatives: " + fn);
 		/* Und berechnen daraus den Recall: R = (TP / (TP + FN)) */
 		return tp / ((float) tp + fn);
 	}

@@ -35,11 +35,6 @@ public class TextNormalizerTest {
 
 	@Test
 	public void testListSymbols() {
-		// final String INVERTED_QUESTION_MARK = "\\u00bf";
-		// final String HYPHENATION_POINT = "\\u2027";
-		// final String MIDDLE_DOT = "\u00b7";
-		// final String BULLET = "\u2022";
-
 		final char INVERTED_QUESTION_MARK = '\u00bf';
 		final char HYPHENATION_POINT = '\u2027';
 		final char MIDDLE_DOT = '\u00b7';

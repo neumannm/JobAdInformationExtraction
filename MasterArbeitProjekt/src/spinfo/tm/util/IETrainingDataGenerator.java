@@ -184,7 +184,7 @@ public class IETrainingDataGenerator {
 		/*
 		 * Entferne Leerzeichen vor Satzzeichen
 		 */
-		return PhraseCleaner.removeUnneccessaryWhitespace(sb.toString());
+		return TextCleaner.removeUnneccessaryWhitespace(sb.toString());
 	}
 
 	private void writeToFile(Map<Paragraph, Set<SlotFiller>> data)
@@ -244,7 +244,7 @@ public class IETrainingDataGenerator {
 					}
 
 					String token = splits[3];
-					token = PhraseCleaner.removeUnneccessaryWhitespace(token);
+					token = TextCleaner.removeUnneccessaryWhitespace(token);
 
 					// int position = Integer.parseInt(splits[4]);
 

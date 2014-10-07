@@ -3,7 +3,7 @@ package spinfo.tm.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PhraseCleaner {
+public class TextCleaner {
 
 	public static String removeUnneccessaryWhitespace(String s){
 		return s.replaceAll("\\s(?=[.,;:?!\"'*\\)\\s])", "").replaceAll("(?<=[\\(\\s])\\s", "").trim();

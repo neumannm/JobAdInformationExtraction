@@ -103,7 +103,7 @@ public class PatternMatcher {
 		/*
 		 * '... wird X erwartet' etc.
 		 */
-		lookbehind = "ist|sind|wird|wäre(n)?+";
+		lookbehind = "ist|sind|wird|werden|wäre(n)?+";
 		lookahead = "wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet";
 		p = Pattern.compile("(?<=\\b" + lookbehind + ")([^.\\n]+?)("
 				+ lookahead + ")");
@@ -112,7 +112,7 @@ public class PatternMatcher {
 		/*
 		 * 'erwartet wird X' etc.
 		 */
-		lookbehind = "(wünschenswert|erforderlich|vorausgesetzt|gewünscht|erwartet) (ist|sind|wird|wäre(n)?+)\\b";
+		lookbehind = "(wünschenswert|erforderlich|vorausgesetzt|voraussetzung|gewünscht|erwartet) (ist|sind|wird|wäre(n)?+)\\b";
 		p = Pattern.compile("(?<=" + lookbehind + ")([^.\\n]+)",
 				Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
@@ -120,7 +120,7 @@ public class PatternMatcher {
 		/*
 		 * 'vorausgesetzt wird X'
 		 */
-		lookbehind = "(vorausgesetzt wird |Voraussetzung ist |wir erwarten |wünschen (?:wir )?uns )\\b";
+		lookbehind = "(wir erwarten |wünschen (?:wir )?uns )\\b";
 		p = Pattern.compile("(?<=" + lookbehind + ")(.+?)(?=\\.)",
 				Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);

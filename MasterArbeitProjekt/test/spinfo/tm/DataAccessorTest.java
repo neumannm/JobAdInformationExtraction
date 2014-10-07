@@ -30,7 +30,6 @@ public class DataAccessorTest {
 		Assert.assertEquals(110, filteredCompetenceParagraphs.size());
 		for (Paragraph paragraph : filteredCompetenceParagraphs) {
 			Assert.assertTrue(paragraph.getSentenceData() == null);
-			System.out.println(paragraph);
 		}
 	}
 
@@ -38,7 +37,7 @@ public class DataAccessorTest {
 	public void testSentences() {
 		List<Sentence> parsedSentencesFromFilteredParagraphs = DataAccessor
 				.getParsedSentencesFromFilteredParagraphs();
-		Assert.assertEquals(210, parsedSentencesFromFilteredParagraphs.size());
+		Assert.assertEquals(211, parsedSentencesFromFilteredParagraphs.size());
 	}
 
 	@Test
@@ -68,6 +67,6 @@ public class DataAccessorTest {
 	public void testPotentialAnchors() {
 		List<PotentialSlotFillingAnchor> potentialAnchors = DataAccessor
 				.getPotentialAnchors();
-		Assert.assertEquals(4362, potentialAnchors.size());
+		Assert.assertEquals(4920, potentialAnchors.size());
 	}
 }

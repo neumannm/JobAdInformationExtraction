@@ -7,12 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.UUID;
 
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.data.Sentence;
 import spinfo.tm.extraction.data.SlotFiller;
-import spinfo.tm.util.PhraseCleaner;
+import spinfo.tm.util.TextCleaner;
 
 /**
  * Use parsed data to find Competences by inspecting dependency relations
@@ -280,8 +279,8 @@ public class DepCompetenceFinder {
 		int[] heads = sd.getHeads();
 		for (int i = 0; i < heads.length; i++) {
 			if (heads[i] == headID) {
-				String dependant = sd.getTokens()[i];
-				String dependency = sd.getDepLabels()[i];
+//				String dependant = sd.getTokens()[i];
+//				String dependency = sd.getDepLabels()[i];
 
 				// System.out.println(String.format(
 				// "Found dependant for lemma '%s':\t %s (DEP: %s )",
@@ -303,6 +302,6 @@ public class DepCompetenceFinder {
 		/*
 		 * Entferne Leerzeichen vor Satzzeichen
 		 */
-		return PhraseCleaner.removeUnneccessaryWhitespace(sb.toString());
+		return TextCleaner.removeUnneccessaryWhitespace(sb.toString());
 	}
 }

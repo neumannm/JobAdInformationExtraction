@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import spinfo.tm.data.Paragraph;
-import spinfo.tm.util.PhraseCleaner;
+import spinfo.tm.util.TextCleaner;
 
 /**
  * Class to annotate ClassifyUnits manually with (one or more) classIDs
@@ -67,7 +67,7 @@ public class TrainingDataReader {
 					classID != 0) {
 
 						Paragraph utc = new Paragraph(
-								PhraseCleaner.normalizeListSymbols(content
+								TextCleaner.normalizeListSymbols(content
 										.toString()), parentID, paragraphID);
 						// System.out.println(parentID);
 						// System.out.println(paragraphID);
@@ -96,7 +96,7 @@ public class TrainingDataReader {
 			if (/** classes.length **/
 			classID != 0) {
 				Paragraph utc = new Paragraph(
-						PhraseCleaner.normalizeListSymbols(content.toString()),
+						TextCleaner.normalizeListSymbols(content.toString()),
 						parentID, paragraphID);
 				// System.out.println(parentID);
 				// System.out.println(paragraphID);

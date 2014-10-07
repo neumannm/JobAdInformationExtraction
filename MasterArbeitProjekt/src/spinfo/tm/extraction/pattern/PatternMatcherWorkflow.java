@@ -23,10 +23,9 @@ public class PatternMatcherWorkflow {
 
 		int count = 0;
 		for (Paragraph p : filteredParagraphs) {
-			Map<SlotFiller, Pattern> result = pm.getContentOfInterest(p); // TODO:
-																			// for
-																			// regex
-																			// evaluation
+			//save pattern that matched each slot filler for evaluation
+			Map<SlotFiller, Pattern> result = pm.getContentOfInterest(p); 
+			
 			Set<SlotFiller> resultFiller = result.keySet();
 			count += resultFiller.size();
 			for (SlotFiller slotFiller : resultFiller) {
@@ -35,12 +34,13 @@ public class PatternMatcherWorkflow {
 			if (!resultFiller.isEmpty())
 				allResults.put(p, resultFiller);
 			System.out.println("\n***********************\n");
+			
+			
+//			evaluateRegExes(result);
 		}
 
 		System.out.println("Anzahl Ergebnisse: " + count);
 
 		IE_Evaluator.evaluate(allResults);
-
-		// TODO: regex evaluate??
 	}
 }
