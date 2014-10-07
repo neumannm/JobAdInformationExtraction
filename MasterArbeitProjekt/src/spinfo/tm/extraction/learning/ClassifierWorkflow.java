@@ -10,6 +10,10 @@ import spinfo.tm.evaluation.util.TrainingTestSets;
 import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 import spinfo.tm.util.DataAccessor;
 
+/**
+ * @author neumannm
+ *
+ */
 public class ClassifierWorkflow {
 
 	private static Logger logger;

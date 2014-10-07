@@ -14,6 +14,11 @@ import spinfo.tm.preprocessing.FeatureUnitTokenizer;
 import spinfo.tm.util.IETrainingDataGenerator;
 import spinfo.tm.util.StopwordFilter;
 
+/**
+ * Class for evaluation of results.
+ * 
+ * @author neumannm
+ */
 public class IE_Evaluator {
 
 	private static final String IE_TRAININGDATAFILE = "data/trainingIE_140816.csv";
@@ -24,6 +29,14 @@ public class IE_Evaluator {
 		tokenizer = new FeatureUnitTokenizer();
 	}
 
+	/**
+	 * Evaluates the results through comparison with the manually annotated
+	 * training data
+	 * 
+	 * @param allResults
+	 *            results of extraction process, i.e. mapping of paragraphs to
+	 *            extracted fillers
+	 */
 	public static void evaluate(Map<Paragraph, Set<SlotFiller>> allResults) {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
 				IE_TRAININGDATAFILE), Class.COMPETENCE);

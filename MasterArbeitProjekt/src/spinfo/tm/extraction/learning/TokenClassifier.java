@@ -7,6 +7,13 @@ import java.util.Map;
 
 import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 
+/**
+ * Classifier for tokens. Classifies a given token as either belonging to the
+ * predefined class or not.
+ * 
+ * @author neumannm
+ * 
+ */
 public class TokenClassifier {
 
 	private ClassifierStrategy classifier;
@@ -71,9 +78,8 @@ public class TokenClassifier {
 				if (isCompetence.equals(anchor.isCompetence())) {
 					same++;
 				}
-			}
-			else{
-//				System.out.println("...");
+			} else {
+				// System.out.println("...");
 			}
 		}
 		/* Und berechnen daraus den Anteil korrekter Werte: */

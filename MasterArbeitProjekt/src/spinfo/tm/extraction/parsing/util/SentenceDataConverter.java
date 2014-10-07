@@ -8,8 +8,25 @@ import java.util.UUID;
 
 import spinfo.tm.data.Sentence;
 
+/**
+ * Helper class for conversion of the MATE specific parsing data into own
+ * format.
+ * 
+ * @author neumannm
+ * 
+ */
 public class SentenceDataConverter {
 
+	/**
+	 * Converts MATE specific parsing data into own format. (see
+	 * {@link Sentence})
+	 * 
+	 * @param processed
+	 *            sentences processed by mate tools
+	 * @param parentID
+	 *            unique ID of the paragraph
+	 * @return mapping of sentence number to sentence data
+	 */
 	public static Map<Integer, Sentence> convert(
 			Map<Integer, SentenceData09> processed, UUID parentID) {
 

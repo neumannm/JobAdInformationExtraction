@@ -1,12 +1,11 @@
 package spinfo.tm.data;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 /**
- * Represents a paragraph in a Job Ad (typically a paragraph)
+ * Represents a paragraph in a Job Ad
  * 
  * @author neumannm
  * 
@@ -22,12 +21,8 @@ public class Paragraph implements Comparable<Paragraph>, Serializable {
 	private int parentID;
 	private int classID;
 	private UUID id;
-	private List<String> featureUnits;
-	private double[] featureVector;
 
 	private Map<Integer, Sentence> sentences;
-
-	// private Set<Sentence> sentences;
 
 	/**
 	 * Create a new paragraph with specified ID.
@@ -59,49 +54,21 @@ public class Paragraph implements Comparable<Paragraph>, Serializable {
 	}
 
 	/**
-	 * @return
-	 */
-	public List<String> getFeatureUnits() {
-		return featureUnits;
-	}
-
-	/**
-	 * @param featureUnits
-	 */
-	public void setFeatureUnits(List<String> featureUnits) {
-		this.featureUnits = featureUnits;
-	}
-
-	/**
-	 * @return
-	 */
-	public double[] getFeatureVector() {
-		return featureVector;
-	}
-
-	/**
-	 * @param featureVector
-	 */
-	public void setFeatureVector(double[] featureVector) {
-		this.featureVector = featureVector;
-	}
-
-	/**
-	 * @return
+	 * @return this paragraph's unique ID
 	 */
 	public UUID getID() {
 		return id;
 	}
 
 	/**
-	 * @return
+	 * @return textual content of the paragraph
 	 */
 	public String getContent() {
 		return content;
 	}
 
 	/**
-	 * @return
+	 * @return ID of the parent of this paragraph, i.e. of the job ad it belongs to
 	 */
 	public int getParentID() {
 		return parentID;
@@ -117,7 +84,7 @@ public class Paragraph implements Comparable<Paragraph>, Serializable {
 	}
 
 	/**
-	 * @return
+	 * @return class ID this paragraph definitively belongs to (determined through classification)
 	 */
 	public int getActualClassID() {
 		return classID;
@@ -148,7 +115,8 @@ public class Paragraph implements Comparable<Paragraph>, Serializable {
 	}
 
 	/**
-	 * @param data
+	 * set the sentence data
+	 * @param data sentence data = parse result for each sentence
 	 */
 	public void setSentenceData(Map<Integer, Sentence> data) {
 		this.sentences = data;

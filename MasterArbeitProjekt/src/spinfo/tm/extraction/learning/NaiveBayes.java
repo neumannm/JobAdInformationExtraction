@@ -7,6 +7,8 @@ import java.util.Set;
 import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 
 /**
+ * Naive Bayes Implementation of a classifier strategy.
+ * 
  * @author neumannm
  * 
  */

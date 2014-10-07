@@ -35,18 +35,38 @@ public class SlotFiller implements Serializable {
 		this.parentID = parentID;
 	}
 
+	/**
+	 * Set the slot filler's string content.
+	 * 
+	 * @param content
+	 */
 	public void setContent(String content) {
 		this.content = content;
 	}
 
+	/**
+	 * Set the class this Filler belongs to.
+	 * 
+	 * @param c
+	 */
 	public void setC(Class c) {
 		this.c = c;
 	}
 
+	/**
+	 * Get the class this Filler belongs to.
+	 * 
+	 * @return class this Filler belongs to
+	 */
 	public Class getC() {
 		return c;
 	}
 
+	/**
+	 * Get ID of the filler's higher unit (i.e. paragraph)
+	 * 
+	 * @return ID of the filler's higher unit (i.e. paragraph)
+	 */
 	public UUID getParentID() {
 		return parentID;
 	}
@@ -60,6 +80,11 @@ public class SlotFiller implements Serializable {
 		return content;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return this.content + " (" + this.parentID + ")";

@@ -28,6 +28,13 @@ public enum Class {
 		}
 	}
 
+	/**
+	 * Returns the class given its ID
+	 * 
+	 * @param id
+	 *            integer value of class
+	 * @return enum value for id
+	 */
 	public static Class forID(Integer id) {
 		return idToValueMap.get(id);
 	}
