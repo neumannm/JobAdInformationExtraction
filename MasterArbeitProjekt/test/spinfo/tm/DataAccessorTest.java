@@ -30,6 +30,7 @@ public class DataAccessorTest {
 		Assert.assertEquals(110, filteredCompetenceParagraphs.size());
 		for (Paragraph paragraph : filteredCompetenceParagraphs) {
 			Assert.assertTrue(paragraph.getSentenceData() == null);
+			System.out.println(paragraph);
 		}
 	}
 

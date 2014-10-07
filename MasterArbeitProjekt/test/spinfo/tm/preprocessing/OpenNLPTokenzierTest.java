@@ -1,4 +1,7 @@
 package spinfo.tm.preprocessing;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import junit.framework.Assert;
 
 import org.junit.BeforeClass;
@@ -26,7 +29,7 @@ public class OpenNLPTokenzierTest {
 		String[] sentences = splitter.splitIntoSentences(paragraph);
 
 		Assert.assertEquals(3, sentences.length);
-
+		
 		for (String sentence : sentences) {
 			System.out.println("SENTENCE:\t" + sentence);
 		}

@@ -41,7 +41,7 @@ public class Paragraph implements Comparable<Paragraph>, Serializable {
 	 */
 	public Paragraph(String content, int parentID, UUID id) {
 		super();
-		this.content = content;
+		this.content = content.trim();
 		this.parentID = parentID;
 		this.id = id;
 	}

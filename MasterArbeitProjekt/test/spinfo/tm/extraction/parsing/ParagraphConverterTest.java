@@ -1,12 +1,9 @@
 package spinfo.tm.extraction.parsing;
 import is2.data.SentenceData09;
 
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-
-import spinfo.tm.extraction.parsing.Paragraph2SentenceDataConverter;
 
 public class ParagraphConverterTest {
 

@@ -70,7 +70,7 @@ public class PatternMatcher {
 		/*
 		 * lists element ((?>\P{M}\p{M}*)+) = any number of graphemes
 		 */
-		lookbehind = "^(-\\*|-|\\*|\\u2027|\\d\\.?+\\)?+)\\p{Blank}?";
+		lookbehind = "^\\[\\*\\] ";
 		p = Pattern.compile("(?<=" + lookbehind + ")(?=(\\P{M}\\p{M}*)+$).+",
 				Pattern.MULTILINE);
 		regExes.put(p, Class.COMPETENCE);

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import spinfo.tm.data.Paragraph;
+import spinfo.tm.util.PhraseCleaner;
 
 /**
  * Class to annotate ClassifyUnits manually with (one or more) classIDs
@@ -55,21 +56,23 @@ public class TrainingDataReader {
 			StringBuffer content = new StringBuffer();
 			int parentID = 0;
 			UUID paragraphID = null;
-			
-			//boolean[] classes = new boolean[0];
+
+			// boolean[] classes = new boolean[0];
 			int classID = 0;
 			while (line != null) {
 				String[] splits = line.split("\t");
 				if (splits.length == 3) {
 
-					if (/**classes.length**/classID != 0) {
+					if (/** classes.length **/
+					classID != 0) {
 
-						Paragraph utc = new Paragraph(content.toString(),
-								parentID, paragraphID);
-//						System.out.println(parentID);
-//						System.out.println(paragraphID);
-//						System.out.println(content);
-						//utc.setClassIDs(classes);
+						Paragraph utc = new Paragraph(
+								PhraseCleaner.normalizeListSymbols(content
+										.toString()), parentID, paragraphID);
+						// System.out.println(parentID);
+						// System.out.println(paragraphID);
+						// System.out.println(content);
+						// utc.setClassIDs(classes);
 						utc.setActualClassID(classID);
 						classifiedData.add(utc);
 					}
@@ -78,11 +81,11 @@ public class TrainingDataReader {
 					content = new StringBuffer();
 					// content.append(splits[3] + "\n");
 					classID = Integer.parseInt(splits[2]);
-//					String[] ids = splits[2].split(" ");
-//					classes = new boolean[ids.length];
-//					for (int i = 0; i < classes.length; i++) {
-//						classes[i] = Boolean.parseBoolean(ids[i]);
-//					}
+					// String[] ids = splits[2].split(" ");
+					// classes = new boolean[ids.length];
+					// for (int i = 0; i < classes.length; i++) {
+					// classes[i] = Boolean.parseBoolean(ids[i]);
+					// }
 
 				} else {
 					content.append(line + "\n");
@@ -90,14 +93,16 @@ public class TrainingDataReader {
 				line = in.readLine();
 
 			}
-			if (/**classes.length**/ classID != 0) {
-				Paragraph utc = new Paragraph(content.toString().trim(),
+			if (/** classes.length **/
+			classID != 0) {
+				Paragraph utc = new Paragraph(
+						PhraseCleaner.normalizeListSymbols(content.toString()),
 						parentID, paragraphID);
-//				System.out.println(parentID);
-//				System.out.println(paragraphID);
-//				System.out.println(content);
+				// System.out.println(parentID);
+				// System.out.println(paragraphID);
+				// System.out.println(content);
 				utc.setActualClassID(classID);
-				//utc.setClassIDs(classes);
+				// utc.setClassIDs(classes);
 				classifiedData.add(utc);
 			}
 			in.close();
