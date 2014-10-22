@@ -1,6 +1,6 @@
 package spinfo.tm.preprocessing;
-import junit.framework.Assert;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

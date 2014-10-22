@@ -14,7 +14,6 @@ import org.junit.Test;
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
-import spinfo.tm.preprocessing.TrainingDataReader;
 
 /**
  * Test Class for Information Extraction Training.
