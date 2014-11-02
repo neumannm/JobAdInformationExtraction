@@ -45,6 +45,7 @@ public class IE_Evaluator {
 
 		try {
 			manuallyLabeled = gen.getTrainingData();
+			
 			for (Paragraph par : allResults.keySet()) {
 				if (manuallyLabeled.containsKey(par)) {
 					Set<SlotFiller> result = allResults.get(par);
@@ -141,16 +142,6 @@ public class IE_Evaluator {
 			}
 		}
 	}
-
-	// private static boolean isPositiveMatch(String resultContent,
-	// String goldContent) {
-	// System.out.println(String.format("Is <%s> a match for <%s>?",
-	// resultContent, goldContent));
-	// Scanner in = new Scanner(System.in);
-	// int read = 0;
-	// read = in.nextInt();
-	// return read == 1;
-	// }
 
 	private static int calculateIntersectionSize(List<String> resTokens,
 			List<String> goldTokens) throws IOException {

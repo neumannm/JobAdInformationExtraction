@@ -17,6 +17,11 @@ import spinfo.tm.util.DataAccessor;
 public class ClassifierWorkflow {
 
 	private static Logger logger;
+	
+	private static Float sumOfAccuracies = 0f;
+	private static Float sumOfPrecisions = 0f;
+	private static Float sumOfF1 = 0f;
+	private static Float sumOfRecalls = 0f;
 
 	public static void main(String[] args) {
 		logger = Logger.getLogger("ClassifierWorkflow");
@@ -57,28 +62,32 @@ public class ClassifierWorkflow {
 			for (PotentialSlotFillingAnchor potAnchor : classified.keySet()) {
 				if (classified.get(potAnchor)) {
 					trueCount++;
-					System.out.println("Is potential anchor: "
-							+ potAnchor.getToken());
+//					System.out.println("Is potential anchor: "+ potAnchor.getToken());
 				} else {
 					falseCount++;
 				}
 			}
-			System.out
-					.println("\nNumber of potential SlotFillers classified as TRUE: "
-							+ trueCount);
-			System.out
-					.println("Number of potential SlotFillers classified as FALSE: "
-							+ falseCount);
-			System.out
-					.println("Number of all classified potential SlotFillers: "
-							+ classified.size());
+//			System.out
+//					.println("\nNumber of potential SlotFillers classified as TRUE: "
+//							+ trueCount);
+//			System.out
+//					.println("Number of potential SlotFillers classified as FALSE: "
+//							+ falseCount);
+//			System.out
+//					.println("Number of all classified potential SlotFillers: "
+//							+ classified.size());
 
 			evaluate(tokenClassifier, classified, wholeTrainingSet);
 
 			System.out.println("************************");
 
 		}
-
+		
+		System.out.println("Overall accuracy: " + (sumOfAccuracies / (float) numberOfCrossValidGroups));
+		System.out.println("Overall precision: " + (sumOfPrecisions / (float) numberOfCrossValidGroups));
+		System.out.println("Overall recall: " + (sumOfRecalls / (float) numberOfCrossValidGroups));
+		System.out.println("Overall f1: " + (sumOfF1 / (float) numberOfCrossValidGroups));
+		
 	}
 
 	private static void evaluate(TokenClassifier tokenClassifier,
@@ -87,15 +96,19 @@ public class ClassifierWorkflow {
 
 		Float accuracy = tokenClassifier.accuracy(classified, trainingSet);
 		System.out.println("\nAccuracy: " + accuracy);
+		sumOfAccuracies += accuracy;
 
 		Float precision = tokenClassifier.precision(classified, trainingSet);
 		System.out.println("Precision: " + precision);
+		sumOfPrecisions += precision;
 
 		Float recall = tokenClassifier.recall(classified, trainingSet);
 		System.out.println("Recall: " + recall);
+		sumOfRecalls += recall;
 
 		Float f = tokenClassifier.fMeasure(classified, trainingSet);
 		System.out.println("F1: " + f);
+		sumOfF1 += f;
 
 	}
 

@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import opennlp.tools.sentdetect.SentenceDetector;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.tokenize.Tokenizer;
@@ -119,7 +120,7 @@ public class PlayTests {
 		String posTaggerModelPath = "models/ger-tagger+lemmatizer+morphology+graph-based-3.6/tag-ger-3.6.model";
 		String parserModelPath = "models/ger-tagger+lemmatizer+morphology+graph-based-3.6/parser-ger-3.6.model";
 
-		SentenceDetectorME detector = new SentenceDetectorME(new SentenceModel(
+		SentenceDetector sentenceDetector = new SentenceDetectorME(new SentenceModel(
 				sentenceModelFile));
 		Tokenizer tokenizer = new TokenizerME(new TokenizerModel(
 				tokenizerModelFile));
@@ -129,17 +130,17 @@ public class PlayTests {
 		Tagger posTagger = new Tagger(posTaggerModelPath);
 		Parser depParser = new Parser(parserModelPath);
 
-		String[] sentences = detector.sentDetect(paragraphText);
+		String[] sentences = sentenceDetector.sentDetect(paragraphText);
 
 		SentenceData09 sentenceData;
-		Map<Integer, SentenceData09> allSentencesData = new HashMap<>();
+		Set<SentenceData09> allSentencesData = new HashSet<>();
 
-		for (int i = 0; i < sentences.length; i++) {
+		for (String sentence : sentences) {
 
 			sentenceData = new SentenceData09();
 
 			ArrayList<String> forms = new ArrayList<String>();
-			String[] tokens = tokenizer.tokenize(sentences[i]);
+			String[] tokens = tokenizer.tokenize(sentence);
 
 			forms.add(CONLLReader09.ROOT);
 
@@ -154,13 +155,9 @@ public class PlayTests {
 			sentenceData = depParser.apply(sentenceData);
 
 			// kurz:
-			// sentenceData =
-			// depParser.apply(posTagger.apply(morphTagger.apply(lemmatizer.apply(sentenceData))));
+			sentenceData = depParser.apply(posTagger.apply(morphTagger.apply(lemmatizer.apply(sentenceData))));
 
-			allSentencesData.put(i, sentenceData);
-
-			paragraph.setSentenceData(SentenceDataConverter.convert(
-					allSentencesData, paragraph.getID()));
+			allSentencesData.add(sentenceData);
 		}
 
 		for (Sentence sentence : paragraph.getSentenceData().values()) {

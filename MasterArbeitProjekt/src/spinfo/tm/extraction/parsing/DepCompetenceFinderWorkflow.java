@@ -41,6 +41,12 @@ public class DepCompetenceFinderWorkflow {
 
 		System.out.println("Anzahl Ergebnisse: " + count);
 
+		for (Paragraph paragraph : allResults.keySet()) {
+			for (SlotFiller filler : allResults.get(paragraph)) {
+				System.out.println(filler);
+			}
+			System.out.println("--------------");
+		}
 		IE_Evaluator.evaluate(allResults);
 	}
 

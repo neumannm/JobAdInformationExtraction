@@ -13,6 +13,9 @@ import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 
 public class SlotFillingAnchorGenerator {
 
+	/*
+	 * currently not used
+	 */
 	public static Map<Paragraph, List<PotentialSlotFillingAnchor>> generate(List<Paragraph> paragraphs) {
 		Map<Paragraph, List<PotentialSlotFillingAnchor>> toReturn = new HashMap<Paragraph, List<PotentialSlotFillingAnchor>>();
 		List<PotentialSlotFillingAnchor> anchors;
