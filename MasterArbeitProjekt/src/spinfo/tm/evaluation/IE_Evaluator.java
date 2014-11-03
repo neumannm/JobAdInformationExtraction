@@ -12,6 +12,7 @@ import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.preprocessing.FeatureUnitTokenizer;
 import spinfo.tm.util.IETrainingDataGenerator;
+import spinfo.tm.util.ResultWriter;
 import spinfo.tm.util.StopwordFilter;
 
 /**
@@ -36,8 +37,11 @@ public class IE_Evaluator {
 	 * @param allResults
 	 *            results of extraction process, i.e. mapping of paragraphs to
 	 *            extracted fillers
+	 * @param originClassName
+	 *            name of the class where the results come from
 	 */
-	public static void evaluate(Map<Paragraph, Set<SlotFiller>> allResults) {
+	public static void evaluate(Map<Paragraph, Set<SlotFiller>> allResults,
+			String originClassName) {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
 				IE_TRAININGDATAFILE), Class.COMPETENCE);
 
@@ -45,7 +49,7 @@ public class IE_Evaluator {
 
 		try {
 			manuallyLabeled = gen.getTrainingData();
-			
+
 			for (Paragraph par : allResults.keySet()) {
 				if (manuallyLabeled.containsKey(par)) {
 					Set<SlotFiller> result = allResults.get(par);
@@ -79,6 +83,9 @@ public class IE_Evaluator {
 
 			float f1 = (2 * precision * recall) / ((float) precision + recall);
 			System.out.println("F1: " + f1);
+
+			ResultWriter.writeEvaluationResults(precision, recall, f1,
+					originClassName);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -147,7 +154,7 @@ public class IE_Evaluator {
 			List<String> goldTokens) throws IOException {
 
 		StopwordFilter filter = new StopwordFilter(new File(
-				"data/stopwords.txt"));
+				"models/stopwords.txt"));
 
 		Set<String> result = new TreeSet<>(filter.filterStopwords(resTokens));
 		Set<String> gold = new TreeSet<>(filter.filterStopwords(goldTokens));

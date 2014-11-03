@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.data.Sentence;
@@ -22,6 +23,7 @@ import spinfo.tm.util.TextCleaner;
  */
 // TODO: split conjunctions in conjuncts
 public class DepCompetenceFinder {
+	private static Logger logger = Logger.getLogger("DepCompetenceFinder");
 
 	// key: verb; value: restrictions
 	private Map<String, String> verbsOfInterest;
@@ -34,11 +36,6 @@ public class DepCompetenceFinder {
 	}
 
 	public Set<SlotFiller> findCompetences(Paragraph par) {
-		// if (par.getID().equals(
-		// UUID.fromString("fe52c6f3-2fe8-4159-8c0a-7751acd86fc8"))) {
-		// System.out.println();
-		// }
-
 		Set<SlotFiller> results = new HashSet<SlotFiller>();
 
 		Map<Integer, Sentence> parsedCU = par.getSentenceData();
@@ -46,7 +43,7 @@ public class DepCompetenceFinder {
 		for (Integer sentence : parsedCU.keySet()) {
 			sd = parsedCU.get(sentence);
 
-			System.out.println("\n" + sd.toString());
+			logger.info("\n" + sd.toString());
 
 			boolean subjectIsNoun = subjectIsNoun(sd);
 			int subjectID = getSubjectID(sd);
@@ -120,7 +117,7 @@ public class DepCompetenceFinder {
 								if (objectsV2.isEmpty()) {
 									filler.addAll(getObjects(
 											lemmas[verbID - 1], verbID, sd, par));
-//									break;
+									// break;
 								} else
 									filler.addAll(objectsV2);
 							} else
@@ -136,7 +133,7 @@ public class DepCompetenceFinder {
 							break;
 						default:
 							// there are other restrictions
-							System.err.println("Restriction " + restriction
+							logger.severe("Restriction " + restriction
 									+ " not defined!");
 							break;
 						}
@@ -179,8 +176,7 @@ public class DepCompetenceFinder {
 				return true;
 			default:
 				// other (should not happen)
-				System.err
-						.println("Subject has other POS than PPER or NN or null");
+				logger.warning("Subject has other POS than PPER or NN or null");
 				break;
 			}
 		}
@@ -190,7 +186,7 @@ public class DepCompetenceFinder {
 	private SlotFiller getSubjectNP(Sentence sd, Paragraph par, int subjectID) {
 		// arrayIndex = subjectID - 1
 		String subject = sd.getTokens()[subjectID - 1];
-		System.out.println(String.format("Subject is a Noun (%s)", subject));
+		logger.info(String.format("Subject is a Noun (%s)", subject));
 		/*
 		 * process, i.e. Subject and Dependants seem to be the competences
 		 */
@@ -258,7 +254,7 @@ public class DepCompetenceFinder {
 				if ("OA".equals(dependency) || "OA2".equals(dependency)
 						|| "OC".equals(dependency) || "OP".equals(dependency)
 						|| "PD".equals(dependency)) {
-					System.out.println(String.format(
+					logger.info(String.format(
 							"Found object for verb '%s':\t %s (DEP: %s )",
 							head.toUpperCase(), dependant, dependency));
 					String argument = getPhrase(i + 1, sd,
@@ -272,19 +268,17 @@ public class DepCompetenceFinder {
 	}
 
 	private String getPhrase(int headID, Sentence sd, Set<Integer> components) {
-
-		// String lemma = sd.plemmas[headID-1];
-		// String form = sd.forms[headID-1];
+		String lemma = sd.getLemmas()[headID - 1];
 
 		int[] heads = sd.getHeads();
 		for (int i = 0; i < heads.length; i++) {
 			if (heads[i] == headID) {
-//				String dependant = sd.getTokens()[i];
-//				String dependency = sd.getDepLabels()[i];
+				String dependant = sd.getTokens()[i];
+				String dependency = sd.getDepLabels()[i];
 
-				// System.out.println(String.format(
-				// "Found dependant for lemma '%s':\t %s (DEP: %s )",
-				// lemma.toUpperCase(), dependant, dependency));
+				logger.info(String.format(
+						"Found dependant for lemma '%s':\t %s (DEP: %s )",
+						lemma.toUpperCase(), dependant, dependency));
 
 				getPhrase(i + 1, sd, components);
 			}

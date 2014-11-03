@@ -209,12 +209,14 @@ public class PatternMatchingTest {
 	}
 
 	@Test
-	public void printRegExes() {
+	public void printCompetenceRegExes() {
 		PatternMatcher pm = new PatternMatcher();
 		Map<Pattern, Class> regExes = pm.getRegExes();
 		for (Pattern p : regExes.keySet()) {
-			System.out.println(p.pattern());
-			System.out.println();
+			if (regExes.get(p).equals(Class.COMPETENCE)) {
+				System.out.println(p.pattern());
+				System.out.println();
+			}
 		}
 	}
 }

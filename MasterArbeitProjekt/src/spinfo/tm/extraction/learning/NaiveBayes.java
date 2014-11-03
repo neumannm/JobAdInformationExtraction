@@ -243,14 +243,14 @@ public class NaiveBayes implements ClassifierStrategy {
 		Integer pTokenFreq = pTokenFreqsForClass
 				.get(anchor.getPrecedingToken());
 
-//		evidence += partialEvidence(pTokenFreqsForClass, pTokenFreq);
+		evidence += partialEvidence(pTokenFreqsForClass, pTokenFreq);
 
 		Map<String, Integer> fTokenFreqsForClass = followingTokenFrequenciesPerClass
 				.get(c);
 		Integer fTokenFreq = fTokenFreqsForClass
 				.get(anchor.getFollowingToken());
 
-//		evidence += partialEvidence(fTokenFreqsForClass, fTokenFreq);
+		evidence += partialEvidence(fTokenFreqsForClass, fTokenFreq);
 
 		Map<String, Integer> pPOSFreqsForClass = precedingPOSFrequenciesPerClass
 				.get(c);
@@ -268,7 +268,7 @@ public class NaiveBayes implements ClassifierStrategy {
 				.get(c);
 		Integer tokenFreq = tokenFreqsForClass.get(anchor.getToken());
 
-//		evidence += partialEvidence(tokenFreqsForClass, tokenFreq);
+		evidence += partialEvidence(tokenFreqsForClass, tokenFreq);
 
 		Map<String, Integer> POSFreqForClass = POSFrequenciesPerClass.get(c);
 		Integer POSFreq = POSFreqForClass.get(anchor.getPOS());
@@ -286,13 +286,13 @@ public class NaiveBayes implements ClassifierStrategy {
 		Integer punctFreq = punctFreqForClass.get(anchor
 				.isPunctuationFollowing());
 
-//		evidence += partialEvidence(punctFreqForClass, punctFreq);
+		evidence += partialEvidence(punctFreqForClass, punctFreq);
 
 		Map<Boolean, Integer> upperFreqForClass = upperCaseStartFrequenciesPerClass
 				.get(c);
 		Integer upperCaseFreq = upperFreqForClass.get(anchor
 				.startsWithUpperCase());
-//		evidence += partialEvidence(upperFreqForClass, upperCaseFreq);
+		evidence += partialEvidence(upperFreqForClass, upperCaseFreq);
 
 		return evidence;
 	}

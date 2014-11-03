@@ -23,7 +23,7 @@ public class CompetenceFinderTest {
 
 	private static final String VERBSFILE = "models/verbsOfInterest.txt";
 
-	public void setUp() throws IOException {
+	private void setUp() throws IOException {
 		parsedParagraphs = DataAccessor.getParsedCompetenceParagraphs();
 
 		verbsOfInterest = readVerbsOfInterest(VERBSFILE);

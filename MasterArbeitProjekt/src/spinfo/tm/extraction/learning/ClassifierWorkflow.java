@@ -1,23 +1,31 @@
 package spinfo.tm.extraction.learning;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import spinfo.tm.data.Paragraph;
 import spinfo.tm.evaluation.util.CrossvalidationGroupBuilder;
 import spinfo.tm.evaluation.util.TrainingTestSets;
 import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 import spinfo.tm.util.DataAccessor;
+import spinfo.tm.util.ResultWriter;
+import spinfo.tm.util.UniversalMapper;
 
 /**
+ * Workflow zur Klassifizierung von Tokens eines Paragraphen als
+ * Kompetenz-Anker.
+ * 
  * @author neumannm
- *
+ * 
  */
 public class ClassifierWorkflow {
 
 	private static Logger logger;
-	
+
 	private static Float sumOfAccuracies = 0f;
 	private static Float sumOfPrecisions = 0f;
 	private static Float sumOfF1 = 0f;
@@ -44,6 +52,7 @@ public class ClassifierWorkflow {
 		Iterator<TrainingTestSets<PotentialSlotFillingAnchor>> iterator = cvgb
 				.iterator();
 		/**/
+		Map<Paragraph, List<PotentialSlotFillingAnchor>> classifiedAsAnchors = new HashMap<>();
 
 		while (iterator.hasNext()) {
 			TrainingTestSets<PotentialSlotFillingAnchor> testSets = iterator
@@ -58,36 +67,49 @@ public class ClassifierWorkflow {
 
 			Map<PotentialSlotFillingAnchor, Boolean> classified = tokenClassifier
 					.classify(testSet);
+
 			int trueCount = 0, falseCount = 0;
 			for (PotentialSlotFillingAnchor potAnchor : classified.keySet()) {
 				if (classified.get(potAnchor)) {
 					trueCount++;
-//					System.out.println("Is potential anchor: "+ potAnchor.getToken());
+					logger.info("Is potential anchor: " + potAnchor.getToken());
+					Paragraph par = UniversalMapper.getParagraphforID(potAnchor
+							.getParentUUID());
+					if (!classifiedAsAnchors.containsKey(par))
+						classifiedAsAnchors.put(par,
+								new ArrayList<PotentialSlotFillingAnchor>());
+					classifiedAsAnchors.get(par).add(potAnchor);
 				} else {
 					falseCount++;
 				}
 			}
-//			System.out
-//					.println("\nNumber of potential SlotFillers classified as TRUE: "
-//							+ trueCount);
-//			System.out
-//					.println("Number of potential SlotFillers classified as FALSE: "
-//							+ falseCount);
-//			System.out
-//					.println("Number of all classified potential SlotFillers: "
-//							+ classified.size());
+			logger.info("\nNumber of potential SlotFillers classified as TRUE: "
+					+ trueCount);
+			logger.info("Number of potential SlotFillers classified as FALSE: "
+					+ falseCount);
+			logger.info("Number of all classified potential SlotFillers: "
+					+ classified.size());
 
 			evaluate(tokenClassifier, classified, wholeTrainingSet);
 
-			System.out.println("************************");
+			logger.info("************************");
 
 		}
+
+		float accuracy = sumOfAccuracies / (float) numberOfCrossValidGroups;
+		float precision = sumOfPrecisions / (float) numberOfCrossValidGroups;
+		float recall = sumOfRecalls / (float) numberOfCrossValidGroups;
+		float f1 = sumOfF1 / (float) numberOfCrossValidGroups;
 		
-		System.out.println("Overall accuracy: " + (sumOfAccuracies / (float) numberOfCrossValidGroups));
-		System.out.println("Overall precision: " + (sumOfPrecisions / (float) numberOfCrossValidGroups));
-		System.out.println("Overall recall: " + (sumOfRecalls / (float) numberOfCrossValidGroups));
-		System.out.println("Overall f1: " + (sumOfF1 / (float) numberOfCrossValidGroups));
+		logger.info("Overall accuracy: " + accuracy);
+		logger.info("Overall precision: " + precision);
+		logger.info("Overall recall: " + recall);
+		logger.info("Overall f1: " + f1);
 		
+		ResultWriter.writeClassificationExtractionResults(classifiedAsAnchors,
+				ClassifierWorkflow.class.getSimpleName());
+
+		ResultWriter.writeEvaluationResults(precision, recall, f1, ClassifierWorkflow.class.getSimpleName());
 	}
 
 	private static void evaluate(TokenClassifier tokenClassifier,
@@ -95,19 +117,19 @@ public class ClassifierWorkflow {
 			List<PotentialSlotFillingAnchor> trainingSet) {
 
 		Float accuracy = tokenClassifier.accuracy(classified, trainingSet);
-		System.out.println("\nAccuracy: " + accuracy);
+		logger.info("\nAccuracy: " + accuracy);
 		sumOfAccuracies += accuracy;
 
 		Float precision = tokenClassifier.precision(classified, trainingSet);
-		System.out.println("Precision: " + precision);
+		logger.info("Precision: " + precision);
 		sumOfPrecisions += precision;
 
 		Float recall = tokenClassifier.recall(classified, trainingSet);
-		System.out.println("Recall: " + recall);
+		logger.info("Recall: " + recall);
 		sumOfRecalls += recall;
 
 		Float f = tokenClassifier.fMeasure(classified, trainingSet);
-		System.out.println("F1: " + f);
+		logger.info("F1: " + f);
 		sumOfF1 += f;
 
 	}

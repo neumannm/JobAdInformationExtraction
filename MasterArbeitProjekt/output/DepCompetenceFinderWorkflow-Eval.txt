@@ -1,0 +1,4 @@
+Evaluation results from Extraction with DepCompetenceFinderWorkflow
+Precision: 0.7098446
+Recall: 0.4892857
+F1: 0.57928115

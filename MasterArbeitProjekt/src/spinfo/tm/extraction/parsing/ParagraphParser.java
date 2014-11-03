@@ -8,9 +8,7 @@ import is2.tools.Tool;
 
 import java.util.List;
 import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.logging.Logger;
 
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.parsing.util.SentenceDataConverter;
@@ -23,8 +21,8 @@ public class ParagraphParser {
 	private Tool depParser;
 	private Paragraph2SentenceDataConverter conv = new Paragraph2SentenceDataConverter();
 
-	private final static Logger log = LogManager
-			.getLogger(ParagraphParser.class);
+	private final static Logger logger = Logger.getLogger(ParagraphParser.class
+			.getSimpleName());
 
 	public ParagraphParser() {
 		System.setProperty("log4j.configurationFile", "utils/log4j2.xml");
@@ -32,19 +30,19 @@ public class ParagraphParser {
 	}
 
 	private void setUpTools() {
-		log.info("\nReading the model of the lemmatizer");
+		logger.info("\nReading the model of the lemmatizer");
 		lemmatizer = new Lemmatizer(
 				"models/ger-tagger+lemmatizer+morphology+graph-based-3.6/lemma-ger-3.6.model");
 
-		log.info("\nReading the model of the morphologic tagger");
+		logger.info("\nReading the model of the morphologic tagger");
 		morphTagger = new is2.mtag.Tagger(
 				"models/ger-tagger+lemmatizer+morphology+graph-based-3.6/morphology-ger-3.6.model");
 
-		log.info("\nReading the model of the POS tagger");
+		logger.info("\nReading the model of the POS tagger");
 		posTagger = new Tagger(
 				"models/ger-tagger+lemmatizer+morphology+graph-based-3.6/tag-ger-3.6.model");
 
-		log.info("\nReading the model of the dependency parser");
+		logger.info("\nReading the model of the dependency parser");
 		depParser = new Parser(
 				"models/ger-tagger+lemmatizer+morphology+graph-based-3.6/parser-ger-3.6.model");
 
@@ -72,16 +70,16 @@ public class ParagraphParser {
 	}
 
 	public SentenceData09 applyTools(SentenceData09 sentenceData) {
-		log.info("Applying the lemmatizer");
+		logger.info("Applying the lemmatizer");
 		sentenceData = lemmatizer.apply(sentenceData);
 
-		log.info("\nApplying the morphologic tagger");
+		logger.info("\nApplying the morphologic tagger");
 		sentenceData = morphTagger.apply(sentenceData);
 
-		log.info("\nApplying the part-of-speech tagger");
+		logger.info("\nApplying the part-of-speech tagger");
 		sentenceData = posTagger.apply(sentenceData);
 
-		log.info("\nApplying the parser");
+		logger.info("\nApplying the parser");
 		sentenceData = depParser.apply(sentenceData);
 
 		return sentenceData;

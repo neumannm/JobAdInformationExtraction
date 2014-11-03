@@ -1,8 +1,5 @@
 package spinfo.tm;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.util.List;
 
 import org.junit.Assert;
@@ -31,13 +28,6 @@ public class DataAccessorTest {
 				.getFilteredCompetenceParagraphs();
 		Assert.assertEquals(110, filteredCompetenceParagraphs.size());
 		
-		PrintStream out;
-		try {
-			out = new PrintStream(new FileOutputStream("C:/Users/Mandy/Dropbox/Studium/Materialien/Prüfungen/MA-Arbeit/FilteredParagraphs.txt"));
-			System.setOut(out);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
 		for (Paragraph paragraph : filteredCompetenceParagraphs) {
 			Assert.assertTrue(paragraph.getSentenceData() == null);
 			System.out.println(paragraph.getContent());

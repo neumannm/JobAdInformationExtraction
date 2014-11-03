@@ -1,0 +1,4 @@
+Evaluation results from Extraction with ClassifierWorkflow
+Precision: 0.33134204
+Recall: 0.95638496
+F1: 0.49098969

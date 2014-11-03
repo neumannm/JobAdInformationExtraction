@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,12 +20,6 @@ import spinfo.tm.extraction.data.SlotFiller;
  * @author neumannm
  * 
  */
-/*
- * TODO: map UUIDs to paragraphs; map jobAdIDs to jobAds
- * 
- * pattern matching over whole text of job ad! (classification is carried out
- * before IE)
- */
 public class IE_TDTester {
 	private List<Paragraph> paragraphs = new ArrayList<Paragraph>();
 
@@ -35,31 +28,6 @@ public class IE_TDTester {
 		paragraphs = DataAccessor.getAllParagraphs();
 		System.out.println("Anzahl ClassifyUnits insgesamt: "
 				+ paragraphs.size());
-	}
-
-	@Test
-	public void testAnnotate() throws IOException {
-		List<Paragraph> filteredParagraphs = DataAccessor
-				.getFilteredCompetenceParagraphs();
-		System.out.println("Anzahl ClassifyUnits gefiltert: "
-				+ filteredParagraphs.size());
-
-		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(
-				"trainingIE_140816.csv"), Class.COMPETENCE);
-
-		gen.annotate(filteredParagraphs);
-
-		Map<Paragraph, Set<SlotFiller>> templates = gen.getTrainingData();
-
-		Assert.assertNotNull(templates);
-		Assert.assertFalse(templates.isEmpty());
-
-		for (Paragraph cu : templates.keySet()) {
-			System.out.println(cu);
-			for (SlotFiller content : templates.get(cu)) {
-				System.out.println(content);
-			}
-		}
 	}
 
 	@Test
@@ -85,7 +53,6 @@ public class IE_TDTester {
 		}
 	}
 
-	// TODO: anpassen in getTrainingData()
 	@Test
 	public void testGetTrainingData() throws IOException {
 		IETrainingDataGenerator gen = new IETrainingDataGenerator(new File(

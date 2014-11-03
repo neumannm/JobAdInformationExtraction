@@ -21,6 +21,14 @@ import spinfo.tm.util.IETrainingDataGenerator;
 import spinfo.tm.util.ReaderWriter;
 import spinfo.tm.util.SlotFillingAnchorGenerator;
 
+/**
+ * Run this class as Application to prepare your workspace for running the
+ * Worflows. Reads and creates all necessary data and saves them in binary files for use
+ * in the Information Extraction Task.
+ * 
+ * @author neumannm
+ * 
+ */
 public class Preparation {
 
 	/*

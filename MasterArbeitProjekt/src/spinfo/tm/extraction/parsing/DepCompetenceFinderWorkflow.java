@@ -9,17 +9,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import spinfo.tm.data.Paragraph;
 import spinfo.tm.evaluation.IE_Evaluator;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.util.DataAccessor;
+import spinfo.tm.util.ResultWriter;
 
+/**
+ * Workflow zur Extraktion von Kompetenz-Phrasen aus Paragraphen mithilfe eines Dependenzparsers.
+ * 
+ * @author neumannm
+ *
+ */
 public class DepCompetenceFinderWorkflow {
 
 	private static final String VERBSOFINTERESTFILE = "models/verbsOfInterest.txt";
 
+	private static Logger logger;
+
 	public static void main(String[] args) {
+		logger = Logger.getLogger("DepCompetenceFinderWorkflow");
 
 		List<Paragraph> parsedParagraphs = DataAccessor
 				.getParsedCompetenceParagraphs();
@@ -39,7 +50,7 @@ public class DepCompetenceFinderWorkflow {
 				allResults.put(par, results);
 		}
 
-		System.out.println("Anzahl Ergebnisse: " + count);
+		logger.info("Anzahl Ergebnisse: " + count);
 
 		for (Paragraph paragraph : allResults.keySet()) {
 			for (SlotFiller filler : allResults.get(paragraph)) {
@@ -47,19 +58,23 @@ public class DepCompetenceFinderWorkflow {
 			}
 			System.out.println("--------------");
 		}
-		IE_Evaluator.evaluate(allResults);
+		
+		
+		IE_Evaluator.evaluate(allResults, DepCompetenceFinderWorkflow.class.getSimpleName());
+		
+		ResultWriter.writeManualExtractionResults(allResults, DepCompetenceFinderWorkflow.class.getSimpleName());
 	}
 
 	private static Map<String, String> readVerbsOfInterest(String file) {
 		File inputFile = new File(file);
 		if (!inputFile.getName().endsWith(".txt")) {
-			System.err.println("Wrong file format");
+			logger.severe("Wrong file format");
 			return null;
 		}
 
 		Map<String, String> toReturn = new HashMap<String, String>();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(inputFile)))){		
+				new FileInputStream(inputFile)))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				String[] split = line.split(":");
@@ -70,41 +85,13 @@ public class DepCompetenceFinderWorkflow {
 				if (split.length == 2)
 					toReturn.put(split[0], split[1]);
 				else {
-					System.err.println("Wrong format");
+					logger.severe("Wrong format");
 					return null;
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
+		}
 		return toReturn;
 	}
-
-	// private static List<String> readVerbsOfInterest(String fileName) {
-	// List<String> verbs = null;
-	//
-	// File file = new File(fileName);
-	// BufferedReader r = null;
-	// try {
-	// verbs = new ArrayList<String>();
-	// r = new BufferedReader(new InputStreamReader(new FileInputStream(
-	// file)));
-	// String line;
-	// while ((line = r.readLine()) != null) {
-	// if(line.split("\\s").length != 1) {
-	// throw new IllegalArgumentException("File has wrong format");
-	// }
-	// verbs.add(line.trim());
-	// }
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// } finally {
-	// try {
-	// r.close();
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// return verbs;
-	// }
 }

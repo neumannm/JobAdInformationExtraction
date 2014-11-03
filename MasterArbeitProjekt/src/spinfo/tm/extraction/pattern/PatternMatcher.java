@@ -2,6 +2,7 @@ package spinfo.tm.extraction.pattern;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +20,8 @@ import spinfo.tm.extraction.data.SlotFiller;
 public class PatternMatcher {
 
 	private Map<Pattern, Class> regExes;
+
+	private static Logger logger = Logger.getLogger("PatternMatcher");
 
 	/**
 	 * 
@@ -38,7 +41,8 @@ public class PatternMatcher {
 		// List of matches for 1 paragraph:
 		Map<String, Pattern> results = match(content);
 		for (String result : results.keySet()) {
-			toReturn.put(new SlotFiller(result, paragraph.getID()), results.get(result));
+			toReturn.put(new SlotFiller(result, paragraph.getID()),
+					results.get(result));
 		}
 		return toReturn;
 	}
@@ -53,9 +57,8 @@ public class PatternMatcher {
 			while (m.find()) {
 				token = m.group();
 				matchedContent.put(token.trim(), pattern);
-				// System.out.println(String.format(
-				// "Matched %s \n\twith Pattern %s", token,
-				// pattern.pattern()));
+				logger.info(String.format("Matched %s \n\twith Pattern %s",
+						token, pattern.pattern()));
 			}
 		}
 		return matchedContent;
@@ -120,7 +123,7 @@ public class PatternMatcher {
 		/*
 		 * 'vorausgesetzt wird X'
 		 */
-		lookbehind = "(wir erwarten |wünschen (?:wir )?uns )\\b";
+		lookbehind = "((wir erwarten )|(wünschen (?:wir )?uns ))\\b";
 		p = Pattern.compile("(?<=" + lookbehind + ")(.+?)(?=\\.)",
 				Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);
@@ -185,17 +188,9 @@ public class PatternMatcher {
 		regExes.put(p, Class.COMPETENCE);
 
 		/*
-		 * 'erwarten wir'
-		 * 
-		 * lookbehind = ""; lookahead = ""; p = Pattern .compile("(?<=" +
-		 * lookbehind + ")(.+?)(?=" + lookahead + ")"); // regExes.put(p,
-		 * Class.COMPETENCE); // ...
-		 */
-
-		/*
 		 * 'Sie verfügen über / verfügen Sie über ...'
 		 */
-		lookbehind = "(Sie verfügen über)|(verfügen Sie über)|(Sie sind)|(Sie haben)";
+		lookbehind = "((Sie verfügen|verfügen Sie) über)|(Sie (sind|haben))";
 		p = Pattern.compile("(?<=" + lookbehind + ")[^\\.\\n]+",
 				Pattern.CASE_INSENSITIVE);
 		regExes.put(p, Class.COMPETENCE);

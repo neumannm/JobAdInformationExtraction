@@ -1,0 +1,4 @@
+Evaluation results from Extraction with PatternMatcherWorkflow
+Precision: 0.8606195
+Recall: 0.8512035
+F1: 0.85588557
