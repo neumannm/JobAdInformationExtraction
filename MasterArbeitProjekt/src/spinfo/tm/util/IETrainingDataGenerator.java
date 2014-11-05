@@ -34,6 +34,16 @@ public class IETrainingDataGenerator {
 	private File tdFile;
 	private Map<Paragraph, Set<SlotFiller>> trainedData;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param trainingDataFile
+	 *            file where the manually annotated phrases are or will be saved
+	 *            to.
+	 * @param classToAnnotate
+	 *            class (in terms of content) of the phrases that will be or
+	 *            have been annotated
+	 */
 	public IETrainingDataGenerator(File trainingDataFile, Class classToAnnotate) {
 		setClassToAnnotate(classToAnnotate);
 		try {
@@ -50,6 +60,13 @@ public class IETrainingDataGenerator {
 			tdFile.createNewFile();
 	}
 
+	/**
+	 * Do the manual annotation.
+	 * 
+	 * @param paragraphsOfInterest
+	 *            List of all paragraphs that should be annotated.
+	 * @throws IOException
+	 */
 	public void annotate(List<Paragraph> paragraphsOfInterest)
 			throws IOException {
 		int start = 0;
@@ -206,7 +223,7 @@ public class IETrainingDataGenerator {
 		out.close();
 	}
 
-	public void setClassToAnnotate(Class classToAnnotate) {
+	private void setClassToAnnotate(Class classToAnnotate) {
 		this.classToAnnotate = classToAnnotate;
 	}
 

@@ -12,6 +12,13 @@ import spinfo.tm.data.Paragraph;
 import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 import spinfo.tm.extraction.data.SlotFiller;
 
+/**
+ * Helper class to write the extraction and evaluation results to human readable
+ * files.
+ * 
+ * @author neumannm
+ * 
+ */
 public class ResultWriter {
 
 	private static final File outputDir = new File("output");
@@ -22,6 +29,17 @@ public class ResultWriter {
 		}
 	}
 
+	/**
+	 * Write the results of manual extraction (by means of pattern matching or
+	 * dependency parser) to a .csv file (data separated by tabs, so technically
+	 * tsv).
+	 * 
+	 * @param allResults
+	 *            mapping of paragraphs to the phrases that have been extracted
+	 * @param originClassName
+	 *            class that generated the results (to be used for output
+	 *            filename)
+	 */
 	public static void writeManualExtractionResults(
 			Map<Paragraph, Set<SlotFiller>> allResults, String originClassName) {
 		PrintWriter out = null;
@@ -49,6 +67,20 @@ public class ResultWriter {
 		}
 	}
 
+	/**
+	 * Write the evaluation results to a text (.txt) file specifying precision,
+	 * recall and F1 score.
+	 * 
+	 * @param precision
+	 *            precision score
+	 * @param recall
+	 *            recall score
+	 * @param f1
+	 *            F1 score
+	 * @param originClassName
+	 *            class that generated the results (to be used for output
+	 *            filename)
+	 */
 	public static void writeEvaluationResults(float precision, float recall,
 			float f1, String originClassName) {
 		PrintWriter out = null;
@@ -70,6 +102,17 @@ public class ResultWriter {
 		}
 	}
 
+	/**
+	 * Write the results of automatic extraction (by means of a classifier) to a
+	 * .csv file (data separated by tabs, so technically tsv).
+	 * 
+	 * @param allResults
+	 *            mapping of paragraphs to the tokens that were classified as
+	 *            anchors for competence phrases
+	 * @param originClassName
+	 *            class that generated the results (to be used for output
+	 *            filename)
+	 */
 	public static void writeClassificationExtractionResults(
 			Map<Paragraph, List<PotentialSlotFillingAnchor>> allResults,
 			String originClassName) {
@@ -96,7 +139,5 @@ public class ResultWriter {
 			out.flush();
 			out.close();
 		}
-
 	}
-
 }

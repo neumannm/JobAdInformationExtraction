@@ -10,6 +10,12 @@ import spinfo.tm.data.Sentence;
 import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 import spinfo.tm.extraction.data.SlotFiller;
 
+/**
+ * Helper class to access all data that is used by the various components.
+ * 
+ * @author neumannm
+ * 
+ */
 public class DataAccessor {
 
 	private static final String ALL_PARAGRAPHS_FILE = "data/allParagraphs.bin";
@@ -127,35 +133,73 @@ public class DataAccessor {
 		DataAccessor.annotatedFillers = annotatedFillers;
 	}
 
-	public static void setAnnotatedAnchors(
+	private static void setAnnotatedAnchors(
 			List<PotentialSlotFillingAnchor> annotatedAnchors) {
 		DataAccessor.annotatedAnchors = annotatedAnchors;
 	}
 
+	/**
+	 * Get all paragraphs.
+	 * 
+	 * @return paragraphs
+	 */
 	public static List<Paragraph> getAllParagraphs() {
 		return allParagraphs;
 	}
 
+	/**
+	 * Get paragraphs that are already filtered according to class 'competence'
+	 * 
+	 * @return filtered paragraphs
+	 */
 	public static List<Paragraph> getFilteredCompetenceParagraphs() {
 		return filteredCompetenceParagraphs;
 	}
 
+	/**
+	 * Get paragraphs that have already been processed by the dependency parser.
+	 * 
+	 * @return parsed paragraphs
+	 */
 	public static List<Paragraph> getParsedCompetenceParagraphs() {
 		return parsedCompetenceParagraphs;
 	}
 
+	/**
+	 * Get all sentences from the parsed paragraphs.
+	 * 
+	 * @return parsed sentences
+	 */
 	public static List<Sentence> getParsedSentencesFromFilteredParagraphs() {
 		return parsedSentencesFromFilteredParagraphs;
 	}
 
+	/**
+	 * Get manually annotated competence anchors.
+	 * 
+	 * @return list of {@link PotentialSlotFillingAnchor} objects that are
+	 *         manually annotated
+	 */
 	public static List<PotentialSlotFillingAnchor> getAnnotatedAnchors() {
 		return annotatedAnchors;
 	}
 
+	/**
+	 * Get manually annotated slot fillers.
+	 * 
+	 * @return List of {@link SlotFiller} objects that represent manually
+	 *         annotated competence phrases.
+	 */
 	public static List<SlotFiller> getAnnotatedFillers() {
 		return annotatedFillers;
 	}
 
+	/**
+	 * Get a list of potential competence anchors, i.e. all tokens of all
+	 * paragraphs.
+	 * 
+	 * @return list of potential competence anchors
+	 */
 	public static List<PotentialSlotFillingAnchor> getPotentialAnchors() {
 		return potentialAnchors;
 	}

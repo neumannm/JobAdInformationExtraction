@@ -11,9 +11,6 @@ import java.util.UUID;
  */
 public class SlotFiller implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2889857331591898502L;
 
 	private String content;
@@ -25,6 +22,8 @@ public class SlotFiller implements Serializable {
 	 * 
 	 * @param token
 	 *            Token for Slot Filler
+	 * @param parentID
+	 *            unique ID of the paragraph this SlotFiller is associated with
 	 */
 	public SlotFiller(String token, UUID parentID) {
 		setContent(token);

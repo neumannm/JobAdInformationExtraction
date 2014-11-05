@@ -44,5 +44,4 @@ public class SentenceDataConverter {
 
 		return converted;
 	}
-
 }

@@ -11,7 +11,7 @@ import spinfo.tm.extraction.data.Class;
 import spinfo.tm.extraction.data.SlotFiller;
 
 /**
- * For extracting content ({@linkSlotFiller}) from @link{Paragraph}s by using
+ * For extracting content ({@link SlotFiller}) from @link{Paragraph}s by using
  * regular expressions (regex).
  * 
  * @author neumannm
@@ -24,15 +24,19 @@ public class PatternMatcher {
 	private static Logger logger = Logger.getLogger("PatternMatcher");
 
 	/**
-	 * 
+	 * Constructor. Sets up regexes to be used for extraction.
 	 */
 	public PatternMatcher() {
 		setupRegexes();
 	}
 
 	/**
+	 * Get phrases that are likely to denote competences.
+	 * 
 	 * @param paragraph
-	 * @return
+	 *            paragraph to be examined
+	 * @return mapping between {@link SlotFiller} objects and the paragraph they
+	 *         belong to
 	 */
 	public Map<SlotFiller, Pattern> getContentOfInterest(Paragraph paragraph) {
 		Map<SlotFiller, Pattern> toReturn = new HashMap<>();
@@ -198,6 +202,8 @@ public class PatternMatcher {
 	}
 
 	/**
+	 * Get all regexes used by this class.
+	 * 
 	 * @return map of all defined RegExes and their classes
 	 */
 	public Map<Pattern, Class> getRegExes() {

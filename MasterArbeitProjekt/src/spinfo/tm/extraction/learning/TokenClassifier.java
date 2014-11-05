@@ -110,8 +110,8 @@ public class TokenClassifier {
 				}
 			}
 		}
-//		System.out.println("True positives: " + tp);
-//		System.out.println("False positives: " + fp);
+		// System.out.println("True positives: " + tp);
+		// System.out.println("False positives: " + fp);
 		/* Und berechnen daraus die Precision: P = (TP / (TP + FP)) */
 		return tp / ((float) tp + fp);
 	}
@@ -140,14 +140,14 @@ public class TokenClassifier {
 				}
 			}
 		}
-//		System.out.println("True positives: " + tp);
-//		System.out.println("False negatives: " + fn);
+		// System.out.println("True positives: " + tp);
+		// System.out.println("False negatives: " + fn);
 		/* Und berechnen daraus den Recall: R = (TP / (TP + FN)) */
 		return tp / ((float) tp + fn);
 	}
 
 	/**
-	 * Calculates the f-measure of the classification result.
+	 * Calculates the f1-measure of the classification result.
 	 * 
 	 * @param classified
 	 *            The classification result

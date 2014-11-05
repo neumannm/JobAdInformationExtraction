@@ -29,6 +29,7 @@ public class Sentence implements Serializable, Comparable<Sentence> {
 	private int positionInParagraph;
 
 	/**
+	 * Constructor.
 	 * @param tokens
 	 *            - Tokens of the sentence (unmodified)
 	 * @param POSTags
@@ -68,6 +69,7 @@ public class Sentence implements Serializable, Comparable<Sentence> {
 	}
 
 	/**
+	 * Get the unique ID of the paragraph this sentence belongs to.
 	 * @return ID of the paragraph this sentence belongs to
 	 */
 	public UUID getParagraphID() {
@@ -75,13 +77,15 @@ public class Sentence implements Serializable, Comparable<Sentence> {
 	}
 
 	/**
-	 * @return lemmata in this sentence
+	 * Get the sentence's lemmas.
+	 * @return lemmas in this sentence
 	 */
 	public String[] getLemmas() {
 		return lemmas;
 	}
 
 	/**
+	 * Get the sentence's morphological information for each token.
 	 * @return morphological tags for each token
 	 */
 	public String[] getMorphTags() {
@@ -89,6 +93,7 @@ public class Sentence implements Serializable, Comparable<Sentence> {
 	}
 
 	/**
+	 * Get the POS tag of each token in the sentence.
 	 * @return part of speech tags for each token
 	 */
 	public String[] getPOSTags() {
@@ -96,6 +101,7 @@ public class Sentence implements Serializable, Comparable<Sentence> {
 	}
 
 	/**
+	 * Get the sentence's tokens.
 	 * @return this sentence's tokens
 	 */
 	public String[] getTokens() {
@@ -103,6 +109,7 @@ public class Sentence implements Serializable, Comparable<Sentence> {
 	}
 
 	/**
+	 * Get the position of this sentence in the paragraph (in terms of index).
 	 * @return position of this sentence in the paragraph
 	 */
 	public int getPositionInParagraph() {
@@ -110,6 +117,7 @@ public class Sentence implements Serializable, Comparable<Sentence> {
 	}
 
 	/**
+	 * Get the ID of the syntactical head for each token (according to dependency grammar).
 	 * @return heads for each token
 	 */
 	public int[] getHeads() {
@@ -117,6 +125,7 @@ public class Sentence implements Serializable, Comparable<Sentence> {
 	}
 
 	/**
+	 * Get the type of dependency to the head of each token.
 	 * @return dependency labels for each token
 	 */
 	public String[] getDepLabels() {

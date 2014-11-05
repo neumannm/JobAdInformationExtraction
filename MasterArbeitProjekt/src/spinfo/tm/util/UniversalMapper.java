@@ -10,6 +10,12 @@ import java.util.UUID;
 
 import spinfo.tm.data.Paragraph;
 
+/**
+ * Helper class that allows rertrieving of paragraph objects if ID is given.
+ * 
+ * @author neumannm
+ * 
+ */
 public class UniversalMapper {
 
 	private static Map<UUID, Paragraph> paragraphIDMap = new HashMap<>();
@@ -35,6 +41,13 @@ public class UniversalMapper {
 		}
 	}
 
+	/**
+	 * Get the paragraph object that has a specific ID.
+	 * 
+	 * @param id
+	 *            the paragraph's ID
+	 * @return paragraph with the specified ID
+	 */
 	public static Paragraph getParagraphforID(UUID id) {
 		return paragraphIDMap.get(id);
 	}

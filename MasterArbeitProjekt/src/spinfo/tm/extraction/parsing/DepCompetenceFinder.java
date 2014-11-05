@@ -28,6 +28,13 @@ public class DepCompetenceFinder {
 	// key: verb; value: restrictions
 	private Map<String, String> verbsOfInterest;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param verbsOfInterest
+	 *            verbs that trigger competence extraction, mapped to a
+	 *            restriction (or null if there is none)
+	 */
 	public DepCompetenceFinder(Map<String, String> verbsOfInterest) {
 		if (!(verbsOfInterest == null)) {
 			this.verbsOfInterest = verbsOfInterest;
@@ -35,6 +42,14 @@ public class DepCompetenceFinder {
 			this.verbsOfInterest = new HashMap<String, String>();
 	}
 
+	/**
+	 * Return a set of phrases that are likely to denote competences for a given
+	 * paragraph.
+	 * 
+	 * @param par
+	 *            the paragraph to be examined
+	 * @return set of phrases ({@link SlotFiller})
+	 */
 	public Set<SlotFiller> findCompetences(Paragraph par) {
 		Set<SlotFiller> results = new HashSet<SlotFiller>();
 

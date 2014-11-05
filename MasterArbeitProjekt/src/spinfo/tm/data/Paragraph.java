@@ -84,14 +84,15 @@ public class Paragraph implements Comparable<Paragraph>, Serializable {
 	}
 
 	/**
-	 * @return class ID this paragraph definitively belongs to (determined through classification)
+	 * Get the class ID this paragraph definitively belongs to (determined through classification)
+	 * @return class ID
 	 */
 	public int getActualClassID() {
 		return classID;
 	}
 
 	/**
-	 * @param classID
+	 * @param classID class ID this paragraph definitively belongs to (determined through classification).
 	 */
 	public void setActualClassID(int classID) {
 		this.classID = classID;
@@ -108,6 +109,7 @@ public class Paragraph implements Comparable<Paragraph>, Serializable {
 	}
 
 	/**
+	 * Get the paragraph's sentence data.
 	 * @return mapping of sentence position to sentence data
 	 */
 	public Map<Integer, Sentence> getSentenceData() {
@@ -115,7 +117,7 @@ public class Paragraph implements Comparable<Paragraph>, Serializable {
 	}
 
 	/**
-	 * set the sentence data
+	 * Set the sentence data.
 	 * @param data sentence data = parse result for each sentence
 	 */
 	public void setSentenceData(Map<Integer, Sentence> data) {

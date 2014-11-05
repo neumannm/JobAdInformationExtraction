@@ -10,11 +10,20 @@ import opennlp.tools.tokenize.Tokenizer;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 
+/**
+ * Use the Apache OpenNLP tools to split text into sentences and tokens.
+ * 
+ * @author neumannm
+ * 
+ */
 public class OpenNLPTokenizer {
 
 	private SentenceModel sentencemodel;
 	private TokenizerModel tokenizeModel;
 
+	/**
+	 * Constructor. Sets the models for sentence splitter and tokenizer.
+	 */
 	public OpenNLPTokenizer() {
 		setSentenceSplitModel("models/openNLPmodels/de-sent.bin");
 		setTokenizeModel("models/openNLPmodels/de-token.bin");
@@ -54,6 +63,13 @@ public class OpenNLPTokenizer {
 		}
 	}
 
+	/**
+	 * Splits a paragraph into sentences.
+	 * 
+	 * @param paragraph
+	 *            paragraph to be splitted
+	 * @return Array of sentences
+	 */
 	public String[] splitIntoSentences(String paragraph) {
 		String[] sentences = null;
 
@@ -63,6 +79,13 @@ public class OpenNLPTokenizer {
 		return sentences;
 	}
 
+	/**
+	 * Splits a sentence into tokens.
+	 * 
+	 * @param sentence
+	 *            String to be tokenized, should be result of sentence splitting
+	 * @return Array of tokens
+	 */
 	public String[] tokenizeSentence(String sentence) {
 		String tokens[] = null;
 

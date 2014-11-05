@@ -18,8 +18,23 @@ import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 import spinfo.tm.extraction.data.SlotFiller;
 import spinfo.tm.preprocessing.TrainingDataReader;
 
+/**
+ * Helper class for reading in data from given files and saving data to binary
+ * files.
+ * 
+ * @author neumannm
+ * 
+ */
 public class ReaderWriter {
 
+	/**
+	 * Read in the paragraphs from a .csv file.
+	 * 
+	 * @param fileName
+	 *            name of the file
+	 * @return list of paragraphs contained in the file
+	 * @throws IOException
+	 */
 	public static List<Paragraph> readParagraphsFromCSV(String fileName)
 			throws IOException {
 		File trainingDataFile = new File(fileName);
@@ -35,6 +50,13 @@ public class ReaderWriter {
 		return paragraphs;
 	}
 
+	/**
+	 * Read the paragraphs from binary.
+	 * 
+	 * @param paragraphsFile
+	 *            file that contains the paragraphs
+	 * @return list of paragraphs
+	 */
 	public static List<Paragraph> readParagraphsFromBinary(File paragraphsFile) {
 		List<Paragraph> toReturn = new ArrayList<>();
 		try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(
@@ -57,6 +79,13 @@ public class ReaderWriter {
 		return toReturn;
 	}
 
+	/**
+	 * Read sentences from binary
+	 * 
+	 * @param file
+	 *            file that contains the sentences
+	 * @return list of sentences
+	 */
 	public static List<Sentence> readSentencesFromBinary(File file) {
 		List<Sentence> toReturn = new ArrayList<>();
 		try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(
@@ -79,6 +108,13 @@ public class ReaderWriter {
 		return toReturn;
 	}
 
+	/**
+	 * Read potential anchors from binary file.
+	 * 
+	 * @param anchorsFile
+	 *            file that contains the potential anchors
+	 * @return list of potential anchors
+	 */
 	public static List<PotentialSlotFillingAnchor> readSlotFillingAnchorsFromBinary(
 			File anchorsFile) {
 		List<PotentialSlotFillingAnchor> toReturn = new ArrayList<>();
@@ -102,6 +138,13 @@ public class ReaderWriter {
 		return toReturn;
 	}
 
+	/**
+	 * Read slot fillers from binary file.
+	 * 
+	 * @param file
+	 *            file that contains the slot fillers
+	 * @return list of slot fillers
+	 */
 	public static List<SlotFiller> readPotentialFillersFromBinary(File file) {
 		List<SlotFiller> toReturn = new ArrayList<>();
 		try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(
@@ -124,6 +167,14 @@ public class ReaderWriter {
 		return toReturn;
 	}
 
+	/**
+	 * Save a data collection to a binary file.
+	 * 
+	 * @param data
+	 *            data collection
+	 * @param file
+	 *            file to save the data to
+	 */
 	public static void saveToBinaryFile(Collection<?> data, File file) {
 		try (ObjectOutputStream os = new ObjectOutputStream(
 				new FileOutputStream(file))) {

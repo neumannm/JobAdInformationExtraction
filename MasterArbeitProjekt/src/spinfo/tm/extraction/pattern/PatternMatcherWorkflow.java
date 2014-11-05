@@ -1,6 +1,5 @@
 package spinfo.tm.extraction.pattern;
 
-import java.io.ObjectInputStream.GetField;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,8 @@ import spinfo.tm.util.DataAccessor;
 import spinfo.tm.util.ResultWriter;
 
 /**
- * Workflow zur Extraktion von Kompetenz-Phrasen aus Paragraphen mithilfe regulärer Ausdrücke.
+ * Workflow zur Extraktion von Kompetenz-Phrasen aus Paragraphen mithilfe
+ * regulärer Ausdrücke.
  * 
  * @author neumannm
  */
@@ -23,6 +23,16 @@ public class PatternMatcherWorkflow {
 
 	private static Logger logger;
 
+	/**
+	 * Main method. Run this to extract phrases from paragraphs that denote
+	 * competences using the pattern matching approach.
+	 * 
+	 * Requires file data/filteredParagraphs.bin - Run Preprocessing.main if
+	 * it's not there.
+	 * 
+	 * @param args
+	 *            (not used)
+	 */
 	public static void main(String[] args) {
 		logger = Logger.getLogger("PatternMatcherWorkflow");
 
@@ -51,8 +61,10 @@ public class PatternMatcherWorkflow {
 
 		logger.info("Anzahl Ergebnisse: " + count);
 
-		IE_Evaluator.evaluate(allResults, PatternMatcherWorkflow.class.getSimpleName());
-		
-		ResultWriter.writeManualExtractionResults(allResults, PatternMatcherWorkflow.class.getSimpleName());
+		IE_Evaluator.evaluate(allResults,
+				PatternMatcherWorkflow.class.getSimpleName());
+
+		ResultWriter.writeManualExtractionResults(allResults,
+				PatternMatcherWorkflow.class.getSimpleName());
 	}
 }

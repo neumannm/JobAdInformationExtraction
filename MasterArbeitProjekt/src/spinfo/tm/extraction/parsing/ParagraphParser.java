@@ -24,8 +24,11 @@ public class ParagraphParser {
 	private final static Logger logger = Logger.getLogger(ParagraphParser.class
 			.getSimpleName());
 
+	/**
+	 * Constructor. Create a new ParagraphParser Object. Sets up the tools that
+	 * will be used for parsing a sentence.
+	 */
 	public ParagraphParser() {
-		System.setProperty("log4j.configurationFile", "utils/log4j2.xml");
 		setUpTools();
 	}
 
@@ -48,6 +51,13 @@ public class ParagraphParser {
 
 	}
 
+	/**
+	 * Parse a list of paragraphs and return them.
+	 * 
+	 * @param paragraphs
+	 *            paragraphs to be parsed
+	 * @return paragrapghs enriched with parsing information
+	 */
 	public List<Paragraph> parse(List<Paragraph> paragraphs) {
 		for (Paragraph paragraph : paragraphs) {
 			paragraph = parse(paragraph);
@@ -55,6 +65,13 @@ public class ParagraphParser {
 		return paragraphs;
 	}
 
+	/**
+	 * Parse a paragraph.
+	 * 
+	 * @param paragraph
+	 *            paragraph to be parsed
+	 * @return paragrapgh enriched with parsing information
+	 */
 	public Paragraph parse(Paragraph paragraph) {
 		String paragraphText = paragraph.getContent();
 		Map<Integer, SentenceData09> processed = conv.convert(paragraphText);
@@ -69,7 +86,7 @@ public class ParagraphParser {
 		return paragraph;
 	}
 
-	public SentenceData09 applyTools(SentenceData09 sentenceData) {
+	private SentenceData09 applyTools(SentenceData09 sentenceData) {
 		logger.info("Applying the lemmatizer");
 		sentenceData = lemmatizer.apply(sentenceData);
 
@@ -83,21 +100,5 @@ public class ParagraphParser {
 		sentenceData = depParser.apply(sentenceData);
 
 		return sentenceData;
-	}
-
-	public void resetLemmatizer(String model) {
-		lemmatizer = new Lemmatizer(model);
-	}
-
-	public void resetMorphTagger(String model) {
-		morphTagger = new is2.mtag.Tagger(model);
-	}
-
-	public void resetPOSTagger(String model) {
-		posTagger = new Tagger(model);
-	}
-
-	public void resetParser(String model) {
-		depParser = new Parser(model);
 	}
 }

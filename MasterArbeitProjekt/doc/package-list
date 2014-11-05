@@ -1,7 +1,7 @@
 spinfo.tm
 spinfo.tm.data
 spinfo.tm.evaluation
-spinfo.tm.extraction
+spinfo.tm.evaluation.util
 spinfo.tm.extraction.data
 spinfo.tm.extraction.learning
 spinfo.tm.extraction.parsing

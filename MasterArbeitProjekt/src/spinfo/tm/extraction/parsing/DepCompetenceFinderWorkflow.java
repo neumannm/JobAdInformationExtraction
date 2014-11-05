@@ -18,10 +18,11 @@ import spinfo.tm.util.DataAccessor;
 import spinfo.tm.util.ResultWriter;
 
 /**
- * Workflow zur Extraktion von Kompetenz-Phrasen aus Paragraphen mithilfe eines Dependenzparsers.
+ * Workflow zur Extraktion von Kompetenz-Phrasen aus Paragraphen mithilfe eines
+ * Dependenzparsers.
  * 
  * @author neumannm
- *
+ * 
  */
 public class DepCompetenceFinderWorkflow {
 
@@ -29,6 +30,18 @@ public class DepCompetenceFinderWorkflow {
 
 	private static Logger logger;
 
+	/**
+	 * Main method. Run this to extract phrases from paragraphs that denote
+	 * competences using the dependency parsing approach.
+	 * 
+	 * Requires file data/parsedParagraphs.bin - Run Preprocessing.main if it's
+	 * not there.
+	 * 
+	 * Requires list of trigger verbs in File models/verbsOfInterest.txt
+	 * 
+	 * @param args
+	 *            (not used)
+	 */
 	public static void main(String[] args) {
 		logger = Logger.getLogger("DepCompetenceFinderWorkflow");
 
@@ -58,11 +71,12 @@ public class DepCompetenceFinderWorkflow {
 			}
 			System.out.println("--------------");
 		}
-		
-		
-		IE_Evaluator.evaluate(allResults, DepCompetenceFinderWorkflow.class.getSimpleName());
-		
-		ResultWriter.writeManualExtractionResults(allResults, DepCompetenceFinderWorkflow.class.getSimpleName());
+
+		IE_Evaluator.evaluate(allResults,
+				DepCompetenceFinderWorkflow.class.getSimpleName());
+
+		ResultWriter.writeManualExtractionResults(allResults,
+				DepCompetenceFinderWorkflow.class.getSimpleName());
 	}
 
 	private static Map<String, String> readVerbsOfInterest(String file) {

@@ -34,10 +34,15 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	/**
 	 * Constructor.
 	 * 
-	 * @param token token String
-	 * @param position position of this anchor in the higher unit (e.g. sentence or paragraph)
-	 * @param isCompetence does this token denote a competence?
-	 * @param paragraphID ID of the paragraph this token belongs to
+	 * @param token
+	 *            token String
+	 * @param position
+	 *            position of this anchor in the higher unit (e.g. sentence or
+	 *            paragraph)
+	 * @param isCompetence
+	 *            does this token denote a competence?
+	 * @param paragraphID
+	 *            ID of the paragraph this token belongs to
 	 */
 	public PotentialSlotFillingAnchor(String token, int position,
 			boolean isCompetence, UUID paragraphID) {
@@ -63,6 +68,7 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	/**
 	 * Set if this token denotes a competence.
+	 * 
 	 * @param isCompetence
 	 */
 	public void setCompetence(boolean isCompetence) {
@@ -71,6 +77,7 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	/**
 	 * Set the POS tag of the following token.
+	 * 
 	 * @param followingPOS
 	 */
 	public void setFollowingPOS(String followingPOS) {
@@ -80,6 +87,7 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	/**
 	 * Set the String content of the following token.
+	 * 
 	 * @param followingToken
 	 */
 	public void setFollowingToken(String followingToken) {
@@ -88,6 +96,7 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	/**
 	 * Set the POS tag of the preceding token.
+	 * 
 	 * @param precedingPOS
 	 */
 	public void setPrecedingPOS(String precedingPOS) {
@@ -96,6 +105,7 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	/**
 	 * Set the String content of the preceding token.
+	 * 
 	 * @param precedingToken
 	 */
 	public void setPrecedingToken(String precedingToken) {
@@ -104,6 +114,7 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	/**
 	 * Set this token's POS tag.
+	 * 
 	 * @param pOS
 	 */
 	public void setPOS(String pOS) {
@@ -119,6 +130,7 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	/**
 	 * Get the token's String content.
+	 * 
 	 * @return the token's String content
 	 */
 	public String getToken() {
@@ -127,6 +139,7 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	/**
 	 * Get the token's POS tag.
+	 * 
 	 * @return the token's POS tag
 	 */
 	public String getPOS() {
@@ -135,6 +148,7 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	/**
 	 * Get the unique ID of the paragraph this token is contained in.
+	 * 
 	 * @return unique ID of the paragraph this token is contained in
 	 */
 	public UUID getParentUUID() {
@@ -143,6 +157,7 @@ public class PotentialSlotFillingAnchor implements Serializable {
 
 	/**
 	 * Get the token's position in the higher unit
+	 * 
 	 * @return token position
 	 */
 	public int getTokenPos() {
@@ -150,6 +165,8 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	}
 
 	/**
+	 * Get the POS Tag of the following token.
+	 * 
 	 * @return POS tag of the following token
 	 */
 	public String getFollowingPOS() {
@@ -157,6 +174,8 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	}
 
 	/**
+	 * Get the following token.
+	 * 
 	 * @return String content of the following token
 	 */
 	public String getFollowingToken() {
@@ -164,6 +183,8 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	}
 
 	/**
+	 * Get the POS Tag of the preceding token.
+	 * 
 	 * @return POS tag of the preceding token
 	 */
 	public String getPrecedingPOS() {
@@ -171,6 +192,8 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	}
 
 	/**
+	 * Get the preceding token.
+	 * 
 	 * @return String content of the preceding token
 	 */
 	public String getPrecedingToken() {
@@ -178,15 +201,14 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	}
 
 	/**
+	 * Is the next token a punctuation mark?
+	 * 
 	 * @return true iff following token is a punctuation mark
 	 */
 	public boolean isPunctuationFollowing() {
 		return this.punctuationFollowing;
 	}
 
-	/**
-	 * 
-	 */
 	private void setPunctuationFollowing() {
 		String followingPOS = this.getFollowingPOS();
 		if ("$,".equals(followingPOS) || "$.".equals(followingPOS))
@@ -194,7 +216,11 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	}
 
 	/**
-	 * @return true iff the token has a specific suffix that is very likely to signal a competence
+	 * Has the token a specific suffix? Suffixes: -heit -keit -ung -nis -nisse
+	 * -nissen -ig -lich
+	 * 
+	 * @return true iff the token has a specific suffix that is very likely to
+	 *         signal a competence
 	 */
 	public boolean hasSuffixOfInterest() {
 		return this.hasSuffixOfInterest;
@@ -212,6 +238,8 @@ public class PotentialSlotFillingAnchor implements Serializable {
 	}
 
 	/**
+	 * Does this token start with an upper case letter?
+	 * 
 	 * @return true iff this token starts with an upper case letter
 	 */
 	public boolean startsWithUpperCase() {
@@ -224,7 +252,9 @@ public class PotentialSlotFillingAnchor implements Serializable {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -277,15 +307,4 @@ public class PotentialSlotFillingAnchor implements Serializable {
 			return false;
 		return true;
 	}
-	//
-	// @Override
-	// public boolean equals(Object obj) {
-	// if (obj instanceof PotentialSlotFillingAnchor) {
-	// PotentialSlotFillingAnchor other = (PotentialSlotFillingAnchor) obj;
-	// return this.token.equals(other.token)
-	// && this.parentUUID.toString().equals(
-	// other.parentUUID.toString());
-	// }
-	// return false;
-	// }
 }

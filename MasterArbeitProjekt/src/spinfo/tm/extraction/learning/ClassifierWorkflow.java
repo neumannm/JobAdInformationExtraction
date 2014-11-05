@@ -31,6 +31,16 @@ public class ClassifierWorkflow {
 	private static Float sumOfF1 = 0f;
 	private static Float sumOfRecalls = 0f;
 
+	/**
+	 * Main method. Run this to classify the tokens of each paragraph to
+	 * determine competence anchors.
+	 * 
+	 * Requires file data/potentialSlotFillingAnchors.bin - Run
+	 * Preprocessing.main if it's not there.
+	 * 
+	 * @param args
+	 *            runtime arguments (not used)
+	 */
 	public static void main(String[] args) {
 		logger = Logger.getLogger("ClassifierWorkflow");
 
@@ -100,16 +110,17 @@ public class ClassifierWorkflow {
 		float precision = sumOfPrecisions / (float) numberOfCrossValidGroups;
 		float recall = sumOfRecalls / (float) numberOfCrossValidGroups;
 		float f1 = sumOfF1 / (float) numberOfCrossValidGroups;
-		
+
 		logger.info("Overall accuracy: " + accuracy);
 		logger.info("Overall precision: " + precision);
 		logger.info("Overall recall: " + recall);
 		logger.info("Overall f1: " + f1);
-		
+
 		ResultWriter.writeClassificationExtractionResults(classifiedAsAnchors,
 				ClassifierWorkflow.class.getSimpleName());
 
-		ResultWriter.writeEvaluationResults(precision, recall, f1, ClassifierWorkflow.class.getSimpleName());
+		ResultWriter.writeEvaluationResults(precision, recall, f1,
+				ClassifierWorkflow.class.getSimpleName());
 	}
 
 	private static void evaluate(TokenClassifier tokenClassifier,

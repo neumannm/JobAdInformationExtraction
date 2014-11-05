@@ -53,8 +53,5 @@ public class CrossvalidationGroupBuilder<T> implements Iterable<TrainingTestSets
 			}
 			groups.add(nextGroup);
 		}
-	}
-
-	
+	}	
 }
-

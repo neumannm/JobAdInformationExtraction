@@ -11,12 +11,28 @@ import spinfo.tm.data.Paragraph;
 import spinfo.tm.data.Sentence;
 import spinfo.tm.extraction.data.PotentialSlotFillingAnchor;
 
+/**
+ * Class for generating potential slot filling anchors from paragraphs.
+ * 
+ * @author neumannm
+ * 
+ */
 public class SlotFillingAnchorGenerator {
 
 	/*
 	 * currently not used
 	 */
-	public static Map<Paragraph, List<PotentialSlotFillingAnchor>> generate(List<Paragraph> paragraphs) {
+	/**
+	 * Generate potential slot filling anchors from paragraphs. Retain mapping
+	 * between anchors and paragraphs they belong to.
+	 * 
+	 * @param paragraphs
+	 *            paragraphs
+	 * @return mapping from paragraphs to a list of potential slot filling
+	 *         anchors
+	 */
+	public static Map<Paragraph, List<PotentialSlotFillingAnchor>> generate(
+			List<Paragraph> paragraphs) {
 		Map<Paragraph, List<PotentialSlotFillingAnchor>> toReturn = new HashMap<Paragraph, List<PotentialSlotFillingAnchor>>();
 		List<PotentialSlotFillingAnchor> anchors;
 		for (Paragraph paragraph : paragraphs) {
@@ -28,25 +44,34 @@ public class SlotFillingAnchorGenerator {
 				String[] tokens = sentence.getTokens();
 				PotentialSlotFillingAnchor anchor;
 				for (int i = 0; i < tokens.length; i++) {
-					anchor = new PotentialSlotFillingAnchor(tokens[i], i, false, paragraph.getID());
+					anchor = new PotentialSlotFillingAnchor(tokens[i], i,
+							false, paragraph.getID());
 					anchor.setPOS(sentence.getPOSTags()[i]);
-					if(i>0){
-						anchor.setPrecedingPOS(sentence.getPOSTags()[i-1]);
-						anchor.setPrecedingToken(sentence.getTokens()[i-1]);
+					if (i > 0) {
+						anchor.setPrecedingPOS(sentence.getPOSTags()[i - 1]);
+						anchor.setPrecedingToken(sentence.getTokens()[i - 1]);
 					}
-					if(i<tokens.length-1){
-						anchor.setFollowingPOS(sentence.getPOSTags()[i+1]);
-						anchor.setFollowingToken(sentence.getTokens()[i+1]);
+					if (i < tokens.length - 1) {
+						anchor.setFollowingPOS(sentence.getPOSTags()[i + 1]);
+						anchor.setFollowingToken(sentence.getTokens()[i + 1]);
 					}
 					anchors.add(anchor);
 				}
 			}
 			toReturn.put(paragraph, anchors);
 		}
-		return toReturn;		
+		return toReturn;
 	}
 
-	public static Set<PotentialSlotFillingAnchor> generateAsSet(List<Paragraph> paragraphs) {
+	/**
+	 * Generate potential slot filling anchors from paragraphs.
+	 * 
+	 * @param paragraphs
+	 *            paragraphs
+	 * @return set of potential slot filling anchors
+	 */
+	public static Set<PotentialSlotFillingAnchor> generateAsSet(
+			List<Paragraph> paragraphs) {
 		Set<PotentialSlotFillingAnchor> toReturn = new HashSet<PotentialSlotFillingAnchor>();
 		for (Paragraph paragraph : paragraphs) {
 			Map<Integer, Sentence> sentenceData = paragraph.getSentenceData();
@@ -56,20 +81,21 @@ public class SlotFillingAnchorGenerator {
 				String[] tokens = sentence.getTokens();
 				PotentialSlotFillingAnchor anchor;
 				for (int i = 0; i < tokens.length; i++) {
-					anchor = new PotentialSlotFillingAnchor(tokens[i], i, false, paragraph.getID());
+					anchor = new PotentialSlotFillingAnchor(tokens[i], i,
+							false, paragraph.getID());
 					anchor.setPOS(sentence.getPOSTags()[i]);
-					if(i>0){
-						anchor.setPrecedingPOS(sentence.getPOSTags()[i-1]);
-						anchor.setPrecedingToken(sentence.getTokens()[i-1]);
+					if (i > 0) {
+						anchor.setPrecedingPOS(sentence.getPOSTags()[i - 1]);
+						anchor.setPrecedingToken(sentence.getTokens()[i - 1]);
 					}
-					if(i<tokens.length-1){
-						anchor.setFollowingPOS(sentence.getPOSTags()[i+1]);
-						anchor.setFollowingToken(sentence.getTokens()[i+1]);
+					if (i < tokens.length - 1) {
+						anchor.setFollowingPOS(sentence.getPOSTags()[i + 1]);
+						anchor.setFollowingToken(sentence.getTokens()[i + 1]);
 					}
 					toReturn.add(anchor);
 				}
 			}
 		}
-		return toReturn;	
+		return toReturn;
 	}
 }

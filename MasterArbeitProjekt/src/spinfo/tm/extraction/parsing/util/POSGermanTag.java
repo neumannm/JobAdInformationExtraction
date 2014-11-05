@@ -5,7 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Enum for all POS Tags used by Mate Tools.
+ * Enum for all POS Tags used by Mate Tools. Source: STTS
+ * 
+ * (http
+ * ://www.ims.uni-stuttgart.de/forschung/ressourcen/lexika/TagSets
+ * /stts-table.html)
  * 
  * @author neumannm
  * 

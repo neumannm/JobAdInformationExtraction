@@ -23,8 +23,8 @@ import spinfo.tm.util.SlotFillingAnchorGenerator;
 
 /**
  * Run this class as Application to prepare your workspace for running the
- * Worflows. Reads and creates all necessary data and saves them in binary files for use
- * in the Information Extraction Task.
+ * Worflows. Reads and creates all necessary data and saves them in binary files
+ * for use in the Information Extraction Task.
  * 
  * @author neumannm
  * 
@@ -33,6 +33,13 @@ public class Preparation {
 
 	/*
 	 * Nur ausführen, wenn Dateien nicht vorhanden! (parsen dauert)
+	 */
+	/**
+	 * Main method. Should only be run if the data directory doesn't contain the
+	 * binary files needed by the extraction components, because parsing is time
+	 * and ressource consuming. Increasing java heap space may be required.
+	 * 
+	 * @param args
 	 */
 	public static void main(String[] args) {
 		final String TRAININGDATAFILE = "data/SingleClassTrainingDataFiltered.csv";
